@@ -79,7 +79,6 @@ def t_NUMBER(t):
     return t
 
 t_String = r'".*?"'
-#t_Comment = r'\#.*'
 t_SemiColon = r':'
 t_Difference = r'\\'
 t_OpenCurly = r'\{'
@@ -103,7 +102,7 @@ t_Modulus = r'%'
 
 # Ignored characters 
 t_ignore = " \t"
-#t_ignore_comment = "#.*?"
+t_ignore_COMMENT = r'\#.*'
 
 def t_newline(t): 
     r'\n+'
@@ -111,23 +110,26 @@ def t_newline(t):
         
         
 s = ''
-error_found = False
+errors = ''
+text = ''
         
-        
-def t_error(t): 
-    print("Illegal character '%s'" % t.value[0])
-    error_found = True
+def t_error(t):
+    global errors, text
+    errors += 'Error: Se encontro un caracter inesperado "'+t.value+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(find_column(text, t))+'.\n'
     t.lexer.skip(1)
 
 def main(arg):
+    global errors, text, s
+    errors, text, s = '', '', ''
+    text = ''
     lexer = lex.lex()
     text = open(arg,'r').read()
     lexer.input(text)
     s = ''
     for token in iter(lexer.token, None):
-        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
-    if not error_found:
-        return s
+        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'    
+    if len(errors) != 0: return errors
+    else: return s
     
     
     
