@@ -107,7 +107,7 @@ t_ignore_COMMENT = r'\#.*'
 def t_newline(t): 
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
-        
+
         
 s = ''
 errors = ''
