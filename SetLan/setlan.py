@@ -119,17 +119,10 @@ def t_WHILE(t):
 def t_SET(t):
     r'set'
     return t
-def t_NUMBER(t): 
-    r'\d+' 
-    try: 
-        t.value = int(t.value)
-    except ValueError:
-        print("Integer value too large %d", t.value) 
-        t.value = 0 
-    return t
+t_NUMBER = r'\d+'
 
 # Ignored characters 
-t_ignore = " \t" 
+t_ignore = " \t"
 
 def t_newline(t): 
     r'\n+'
@@ -137,7 +130,11 @@ def t_newline(t):
         
 def t_error(t): 
     print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1) 
+    t.lexer.skip(1)
+    """need to intercept this event to catch the invalid character
+    ***********************************************************
+    ***********************************************************
+    """ 
     
 # Build the lexer
 import ply.lex as lex
