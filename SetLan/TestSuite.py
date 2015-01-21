@@ -10,6 +10,9 @@ class TestSuite(unittest.TestCase):
     
     def testString2(self):
         self.assertEqual(main('Tests/test3.txt'), open('Tests/answer3.txt','r').read())
+        
+    def testSimpleError(self):
+        self.assertEqual(main('Tests/test4.txt'), open('Tests/answer4.txt','r').read())
     
 if __name__ == '__main__':
     unittest.main()

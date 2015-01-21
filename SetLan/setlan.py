@@ -79,7 +79,7 @@ def t_NUMBER(t):
     return t
 
 t_String = r'".*?"'
-t_Comment = r'\#.*'     # TakeNoComment
+#t_Comment = r'\#.*'
 t_SemiColon = r':'
 t_Difference = r'\\'
 t_OpenCurly = r'\{'
@@ -109,39 +109,24 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
         
+        
+s = ''
+error_found = False
+        
+        
 def t_error(t): 
     print("Illegal character '%s'" % t.value[0])
+    error_found = True
     t.lexer.skip(1)
-    """need to modify this event to catch an invalid character
-    ***********************************************************
-    ***********************************************************
-    """ 
-
-
 
 def main(arg):
     lexer = lex.lex()
     text = open(arg,'r').read()
     lexer.input(text)
-    s = ''
     for token in iter(lexer.token, None):
         s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
-    return s
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    if not error_found:
+        return s
     
     
     
