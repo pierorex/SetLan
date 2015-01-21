@@ -123,6 +123,7 @@ def main(arg):
     lexer = lex.lex()
     text = open(arg,'r').read()
     lexer.input(text)
+    s = ''
     for token in iter(lexer.token, None):
         s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
     if not error_found:
