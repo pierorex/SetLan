@@ -224,16 +224,16 @@ class Parser:
         pslice  = YaccProduction(None)   # Production object passed to grammar rules
         errorcount = 0                   # Used during error recovery 
         endsym  = "$end"                 # End symbol
-        # If no lexer was given, we will try to use the lex module
+        # If no setlan was given, we will try to use the lex module
         if not lexer:
             import lex
             lexer = lex.lexer
         
-        # Set up the lexer and parser objects on pslice
+        # Set up the setlan and parser objects on pslice
         pslice.lexer = lexer
         pslice.parser = self
 
-        # If input was supplied, pass to lexer
+        # If input was supplied, pass to setlan
         if input is not None:
             lexer.input(input)
 
@@ -263,7 +263,7 @@ class Parser:
         while 1:
             # Get the next symbol on the input.  If a lookahead symbol
             # is already set, we just use that. Otherwise, we'll pull
-            # the next token off of the lookaheadstack or from the lexer
+            # the next token off of the lookaheadstack or from the setlan
 
             # --! DEBUG
             if debug > 1:
@@ -529,16 +529,16 @@ class Parser:
         pslice  = YaccProduction(None)   # Production object passed to grammar rules
         errorcount = 0                   # Used during error recovery 
 
-        # If no lexer was given, we will try to use the lex module
+        # If no setlan was given, we will try to use the lex module
         if not lexer:
             import lex
             lexer = lex.lexer
         
-        # Set up the lexer and parser objects on pslice
+        # Set up the setlan and parser objects on pslice
         pslice.lexer = lexer
         pslice.parser = self
 
-        # If input was supplied, pass to lexer
+        # If input was supplied, pass to setlan
         if input is not None:
             lexer.input(input)
 
@@ -568,7 +568,7 @@ class Parser:
         while 1:
             # Get the next symbol on the input.  If a lookahead symbol
             # is already set, we just use that. Otherwise, we'll pull
-            # the next token off of the lookaheadstack or from the lexer
+            # the next token off of the lookaheadstack or from the setlan
 
             if not lookahead:
                 if not lookaheadstack:
@@ -803,16 +803,16 @@ class Parser:
         pslice  = YaccProduction(None)   # Production object passed to grammar rules
         errorcount = 0                   # Used during error recovery 
 
-        # If no lexer was given, we will try to use the lex module
+        # If no setlan was given, we will try to use the lex module
         if not lexer:
             import lex
             lexer = lex.lexer
         
-        # Set up the lexer and parser objects on pslice
+        # Set up the setlan and parser objects on pslice
         pslice.lexer = lexer
         pslice.parser = self
 
-        # If input was supplied, pass to lexer
+        # If input was supplied, pass to setlan
         if input is not None:
             lexer.input(input)
 
@@ -842,7 +842,7 @@ class Parser:
         while 1:
             # Get the next symbol on the input.  If a lookahead symbol
             # is already set, we just use that. Otherwise, we'll pull
-            # the next token off of the lookaheadstack or from the lexer
+            # the next token off of the lookaheadstack or from the setlan
 
             if not lookahead:
                 if not lookaheadstack:

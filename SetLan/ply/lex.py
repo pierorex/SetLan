@@ -69,14 +69,14 @@ class LexToken(object):
         return str(self)
     def skip(self,n):
         self.lexer.skip(n)
-        _SkipWarning("Calling t.skip() on a token is deprecated.  Please use t.lexer.skip()")
+        _SkipWarning("Calling t.skip() on a token is deprecated.  Please use t.setlan.skip()")
 
 # -----------------------------------------------------------------------------
 # Lexer class
 #
-# This class encapsulates all of the methods and data associated with a lexer.
+# This class encapsulates all of the methods and data associated with a setlan.
 #
-#    input()          -  Store a new string in the lexer
+#    input()          -  Store a new string in the setlan
 #    token()          -  Get the next token
 # -----------------------------------------------------------------------------
 
@@ -87,11 +87,11 @@ class Lexer:
                                       # regular expression and findex is a list
                                       # mapping regex group numbers to rules
         self.lexretext = None         # Current regular expression strings
-        self.lexstatere = {}          # Dictionary mapping lexer states to master regexs
-        self.lexstateretext = {}      # Dictionary mapping lexer states to regex strings
-        self.lexstaterenames = {}     # Dictionary mapping lexer states to symbol names
-        self.lexstate = "INITIAL"     # Current lexer state
-        self.lexstatestack = []       # Stack of lexer states
+        self.lexstatere = {}          # Dictionary mapping setlan states to master regexs
+        self.lexstateretext = {}      # Dictionary mapping setlan states to regex strings
+        self.lexstaterenames = {}     # Dictionary mapping setlan states to symbol names
+        self.lexstate = "INITIAL"     # Current setlan state
+        self.lexstatestack = []       # Stack of setlan states
         self.lexstateinfo = None      # State information
         self.lexstateignore = {}      # Dictionary of ignored characters for each state
         self.lexstateerrorf = {}      # Dictionary of error functions for each state
@@ -112,7 +112,7 @@ class Lexer:
         c = copy.copy(self)
 
         # If the object parameter has been supplied, it means we are attaching the
-        # lexer to a new object.  In this case, we have to rebind all methods in
+        # setlan to a new object.  In this case, we have to rebind all methods in
         # the lexstatere and lexstateerrorf tables.
 
         if object:
@@ -136,7 +136,7 @@ class Lexer:
         return c
 
     # ------------------------------------------------------------
-    # writetab() - Write lexer information to a table file
+    # writetab() - Write setlan information to a table file
     # ------------------------------------------------------------
     def writetab(self,tabfile,outputdir=""):
         if isinstance(tabfile,types.ModuleType):
@@ -178,7 +178,7 @@ class Lexer:
         tf.close()
 
     # ------------------------------------------------------------
-    # readtab() - Read lexer information from a tab file
+    # readtab() - Read setlan information from a tab file
     # ------------------------------------------------------------
     def readtab(self,tabfile,fdict):
         if isinstance(tabfile,types.ModuleType):
@@ -206,7 +206,7 @@ class Lexer:
         self.begin('INITIAL')
 
     # ------------------------------------------------------------
-    # input() - Push a new string into the lexer
+    # input() - Push a new string into the setlan
     # ------------------------------------------------------------
     def input(self,s):
         # Pull off the first character to see if s looks like a string
@@ -780,9 +780,9 @@ def lex(module=None,object=None,debug=0,optimize=0,lextab="lextab",reflags=0,now
                 error = 1
 
     if error:
-        raise SyntaxError,"lex: Unable to build lexer."
+        raise SyntaxError,"lex: Unable to build setlan."
 
-    # From this point forward, we're reasonably confident that we can build the lexer.
+    # From this point forward, we're reasonably confident that we can build the setlan.
     # No more errors will be generated, but there might be some warning messages.
 
     # Build the master regular expressions
@@ -845,7 +845,7 @@ def lex(module=None,object=None,debug=0,optimize=0,lextab="lextab",reflags=0,now
 # -----------------------------------------------------------------------------
 # runmain()
 #
-# This runs the lexer as a main program
+# This runs the setlan as a main program
 # -----------------------------------------------------------------------------
 
 def runmain(lexer=None,data=None):
