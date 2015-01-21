@@ -6,53 +6,40 @@ def find_column (inp, token):
     column = (token.lexpos - last_cr) + 1
     return column
 
+reserved = {
+    'program' : 'Program',
+    'using' : 'Using',
+    'int' : 'Int',
+    'scan' : 'Scan',
+    'print' : 'Print',
+    'println' : 'Println',
+    'in' : 'In',
+    'if' : 'If',
+    'else' : 'Else',
+    'true' : 'True',
+    'false' : 'False',
+    'bool' : 'Bool',
+    'max' : 'Max',
+    'min' : 'Min',
+    'for' : 'For',
+    'return' : 'Return',
+    'def' : 'Def',
+    'repeat' : 'Repeat',
+    'while' : 'While',
+    'set' : 'Set'
+    }
 
-tokens = ('ID','Program','OpenCurly','CloseCurly','Using','Int','Colon','Scan',
-          'OpenParen','CloseParen','Println','Print','In','Else','String',
-          'LessThan','GreaterThan','LessThanEq','GreaterThanEq','Equals',
-          'Comma','Assign','Plus','Comment','NotEquals','Contains','True',
-          'False','Bool','Max','Min','Len','Sum','Res','Mul','Div','Mod',
-          'Union','Difference','Intersect','Minus','Times','Divide','Modulus',
-          'Number','For','Return','Def','Arrow','SemiColon',
-          'Repeat','While','Set',)
+tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
+          'String','LessThan','GreaterThan','LessThanEq','GreaterThanEq',
+          'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
+          'Len','Sum','Res','Mul','Div','Mod','Union','Difference',
+          'Intersect','Minus','Times','Divide','Modulus','Number','Arrow',
+          'SemiColon'] + list(reserved.values())
 
-t_ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
-def t_Program(t):
-    r'program'
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value,'ID')    # Check for reserved words
     return t
-t_OpenCurly = r'\{'
-t_CloseCurly = r'\}'
-def t_Using(t):
-    r'using'
-    return t
-def t_Int(t):
-    r'int'
-    return t
-t_Colon = r';'
-def t_Scan(t):
-    r'scan'
-    return t
-t_OpenParen = r'\('
-t_CloseParen = r'\)'
-def t_Println(t):
-    r'println[; ]'
-    return t
-def t_Print(t):
-    r'print '
-    return t
-def t_In(t):
-    r'in '
-    return t
-def t_If(t):
-    r'if '
-    return t
-def t_Else(t):
-    r'else '
-    return t
-t_String = r'"[a-zA-Z_0-9]*"'
-
-t_LessThan = r'<'
-t_GreaterThan = r'>'
 def t_LessThanEq(t):
     r'<='
     return t
@@ -62,28 +49,6 @@ def t_GreaterThanEq(t):
 def t_Equals(t):
     r'=='
     return t
-t_Comma = r','
-t_Assign = r'='
-t_Plus = r'\+'
-t_Comment = r'\#'
-t_NotEquals = r'/='
-t_Contains = r'@'
-def t_True(t):
-    r'true[; ]'
-    return t
-def t_False(t):
-    r'false'
-    return t
-def t_Bool(t):
-    r'bool'
-    return t
-def t_Max(t):
-    r'max'
-    return t
-def t_Min(t):
-    r'min'
-    return t
-t_Len = r'\$\?'
 def t_Sum(t):
     r'<\+>'
     return t
@@ -102,43 +67,43 @@ def t_Mod(t):
 def t_Union(t):
     r'\+\+'
     return t
-t_Difference = r'\\'
 def t_Intersect(t):
     r'><'
     return t
-t_Minus = r'-'
-t_Times = r'\*'
-t_Divide = r'/'
-t_Modulus = r'%'
-def t_For(t):
-    r'for '
-    return t
-def t_Return(t):
-    r'return'
-    return t
-def t_Def(t):
-    r'def '
-    return t
 def t_Arrow(t):
     r'->'
-    return t
-t_SemiColon = r':'
-def t_Repeat(t):
-    r'repeat '
-    return t
-def t_While(t):
-    r'while '
-    return t
-def t_Set(t):
-    r'set '
     return t
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
+t_String = r'".*?"'
+t_Comment = r'\#.*'     # TakeNoComment
+t_SemiColon = r':'
+t_Difference = r'\\'
+t_OpenCurly = r'\{'
+t_CloseCurly = r'\}'
+t_Colon = r';'
+t_OpenParen = r'\('
+t_CloseParen = r'\)'
+t_LessThan = r'<'
+t_GreaterThan = r'>'
+t_Comma = r','
+t_Assign = r'='
+t_Plus = r'\+'
+t_NotEquals = r'/='
+t_Contains = r'@'
+t_Len = r'\$\?'
+t_Minus = r'-'
+t_Times = r'\*'
+t_Divide = r'/'
+t_Modulus = r'%'
+
+
 # Ignored characters 
 t_ignore = " \t"
+#t_ignore_comment = "#.*?"
 
 def t_newline(t): 
     r'\n+'
@@ -154,12 +119,14 @@ def t_error(t):
 
 
 
-def main():
+def main(arg):
     lexer = lex.lex()
-    text = open(sys.argv[1],'r').read()
+    text = open(arg,'r').read()
     lexer.input(text)
+    s = ''
     for token in iter(lexer.token, None):
-        print 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')'
+        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
+    return s
     
     
     
@@ -184,6 +151,5 @@ def main():
     
     
     
-    
-    
-main()    # Uncomment to make executable 
+if __name__ == '__main__':
+    main(sys.argv[1])
