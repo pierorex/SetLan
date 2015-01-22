@@ -22,6 +22,9 @@ class TestSuite(unittest.TestCase):
 
     def testSample2(self):
         self.assertEqual(main('Tests/test10.txt'), open('Tests/answer10.txt','r').read())
+    
+    def testIfElse(self):
+        self.assertEqual(main('Tests/test8.txt'), open('Tests/answer8.txt','r').read())
 
 if __name__ == '__main__':
     unittest.main()

@@ -130,6 +130,7 @@ def main(arg):
     lexer.input(text)
     string = ''
     for token in iter(lexer.token, None):
+        # Need to add lists for tokens of reserved words found, identifiers and operators 
         string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - current_column)+')\n'
     return string if len(errors) == 0 else errors
     
