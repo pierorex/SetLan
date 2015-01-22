@@ -50,7 +50,7 @@ def t_Res(t):
     r'<->'
     return t
 def t_Mul(t):
-    r'<*>'
+    r'<\*>'
     return t
 def t_Div(t):
     r'</>'
@@ -129,9 +129,19 @@ def main(arg):
     text = open(arg,'r').read()
     lexer.input(text)
     string = ''
+    found_tokens = {
+        'reserved': [],
+        'numbers': [],
+        'operators': [],
+        'identifiers': []
+    }
     for token in iter(lexer.token, None):
-        # Need to add lists for tokens of reserved words found, identifiers and operators 
+        if token.type == 'ID': found_tokens['identifiers'].append(token)
+        elif token.type == 'Number': found_tokens['numbers'].append(token)
+        elif token.type in reserved.values(): found_tokens['reserved'].append(token)
+        else: found_tokens['operators'].append(token)
         string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - current_column)+')\n'
+    print found_tokens
     return string if len(errors) == 0 else errors
     
     
