@@ -67,17 +67,17 @@ def t_Intersect(t):
 def t_Arrow(t):
     r'->'
     return t
-def t_NUMBER(t):
+def t_Number(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
 t_String = r'".*?"'
-t_SemiColon = r':'
+t_Colon = r':'
 t_Difference = r'\\'
 t_OpenCurly = r'\{'
 t_CloseCurly = r'\}'
-t_Colon = r';'
+t_SemiColon = r';'
 t_OpenParen = r'\('
 t_CloseParen = r'\)'
 t_LessThan = r'<'
