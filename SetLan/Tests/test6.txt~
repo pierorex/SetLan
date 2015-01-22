@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-program falsefalse {
-	def a(b):
-		return "a,b";
-
-	if (x < 0)
-		print "less";
-	else if (x > 0)
-		println "greater";
-	else if (x /= 0)
-		print "not in this world";
-# Colon no es : y semicolon los ;? Preguntar despues
-}
-=======
 program {
     using
         int x,y,z;
@@ -22,4 +8,3 @@ program {
     y = x+2;
     # Hola, soy un comentario y no un token. Seamos amigos, :).
 }
->>>>>>> 135951f92e4c919bd7e725469b17256be349b263
