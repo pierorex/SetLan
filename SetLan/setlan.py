@@ -134,7 +134,8 @@ def main(arg):
         elif token.type == 'Number': found_tokens['numbers'].append(token)
         elif token.type in reserved.values(): found_tokens['reserved'].append(token)
         else: found_tokens['operators'].append(token)
-        string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
+            
+        string += 'Token'+token.type+(': '+str(token.value) if token.type=='ID' or token.type=='String' or token.type=='Number' else '')+' (Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
     print found_tokens
     
     return string if len(errors) == 0 else errors
