@@ -122,21 +122,9 @@ def main(arg):
     text = open(arg,'r').read()
     lexer.input(text)
     string = ''
-    found_tokens = {
-        'reserved': [],
-        'numbers': [],
-        'operators': [],
-        'identifiers': []
-    }
     
     for token in iter(lexer.token, None):
-        if token.type == 'ID': found_tokens['identifiers'].append(token)
-        elif token.type == 'Number': found_tokens['numbers'].append(token)
-        elif token.type in reserved.values(): found_tokens['reserved'].append(token)
-        else: found_tokens['operators'].append(token)
-            
         string += 'Token'+token.type+(': '+str(token.value) if token.type=='ID' or token.type=='String' or token.type=='Number' else '')+' (Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
-    print found_tokens
     
     return string if len(errors) == 0 else errors
     
