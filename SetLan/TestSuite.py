@@ -13,6 +13,12 @@ class TestSuite(unittest.TestCase):
         
     def testSimpleError(self):
         self.assertEqual(main('Tests/test4.txt'), open('Tests/answer4.txt','r').read())
+        
+    def testCommentAndError(self):
+        self.assertEqual(main('Tests/test5.txt'), open('Tests/answer5.txt','r').read())
+        
+    def testSample1(self):
+        self.assertEqual(main('Tests/test6.txt'), open('Tests/answer6.txt','r').read())
     
 if __name__ == '__main__':
     unittest.main()

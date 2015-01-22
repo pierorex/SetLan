@@ -1,11 +1,5 @@
 import ply.lex as lex, sys
 
-def find_column (inp, token):
-    last_cr = inp.rfind('\n', 0, token.lexpos)
-    if last_cr < 0: last_cr = 0
-    column = (token.lexpos - last_cr) + 1
-    return column
-
 reserved = {
     'program' : 'Program',
     'using' : 'Using',
@@ -73,17 +67,17 @@ def t_Intersect(t):
 def t_Arrow(t):
     r'->'
     return t
-def t_NUMBER(t):
+def t_Number(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
 t_String = r'".*?"'
-t_SemiColon = r':'
+t_Colon = r':'
 t_Difference = r'\\'
 t_OpenCurly = r'\{'
 t_CloseCurly = r'\}'
-t_Colon = r';'
+t_SemiColon = r';'
 t_OpenParen = r'\('
 t_CloseParen = r'\)'
 t_LessThan = r'<'
@@ -104,10 +98,16 @@ t_Modulus = r'%'
 t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
 
+def find_column (inp, token):
+    last_cr = inp.rfind('\n', 0, token.lexpos)
+    if last_cr < 0: last_cr = 0
+    column = (token.lexpos - last_cr) + 1
+    return column
+
 def t_newline(t): 
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
-
+    
         
 s = ''
 errors = ''
@@ -127,17 +127,11 @@ def main(arg):
     lexer.input(text)
     s = ''
     for token in iter(lexer.token, None):
-        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'    
-    if len(errors) != 0: return errors
-    else: return s
-    
-    
-    
-    
-    
-    
+        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
+    return s if len(errors) == 0 else errors
     
     
     
 if __name__ == '__main__':
     main(sys.argv[1])
+    
