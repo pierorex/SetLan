@@ -27,8 +27,8 @@ tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
           'String','LessThan','GreaterThan','LessThanEq','GreaterThanEq',
           'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
           'Len','PlusSet','MinusSet','TimesSet','DivSet','ModSet','Union',
-          'Difference','Intersect','Minus','Times','Div','Mod','Number','Arrow',
-          'SemiColon'] + list(reserved.values())
+          'MaxSet','MinSet','Difference','Intersect','Minus','Times','Div',
+          'Mod','Number','Arrow','SemiColon'] + list(reserved.values())
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -57,6 +57,12 @@ def t_DivSet(t):
     return t
 def t_ModSet(t):
     r'<%>'
+    return t
+def t_MaxSet(t):
+    r'>\?'
+    return t
+def t_MinSet(t):
+    r'<\?'
     return t
 def t_Union(t):
     r'\+\+'

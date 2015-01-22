@@ -34,6 +34,10 @@ class TestSuite(unittest.TestCase):
 
     def testOperatorsWithoutSpaces(self):
         self.assertEqual(main('Tests/test12.txt'), open('Tests/answer12.txt','r').read())
+        
+    def testSetMinMaxContains(self):
+        self.assertEqual(main('Tests/test13.txt'), open('Tests/answer13.txt','r').read())
+
 
 if __name__ == '__main__':
     unittest.main()
