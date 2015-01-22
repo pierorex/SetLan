@@ -93,6 +93,13 @@ t_Times = r'\*'
 t_Divide = r'/'
 t_Modulus = r'%'
 
+current_column = -1
+
+def t_newline(t): 
+    r'\n+'
+    global current_column
+    t.lexer.lineno += t.value.count("\n")
+    current_column = t.lexer.lexpos - 1
 
 # Ignored characters 
 t_ignore = " \t"
@@ -104,31 +111,27 @@ def find_column (inp, token):
     column = (token.lexpos - last_cr) + 1
     return column
 
-def t_newline(t): 
-    r'\n+'
-    t.lexer.lineno += t.value.count("\n")
     
-        
-s = ''
+string = ''
 errors = ''
 text = ''
+
         
 def t_error(t):
-    global errors, text
-    errors += 'Error: Se encontro un caracter inesperado "'+t.value+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(find_column(text, t))+'.\n'
+    global errors, text, current_column
+    errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - current_column)+'.\n'
     t.lexer.skip(1)
 
 def main(arg):
-    global errors, text, s
-    errors, text, s = '', '', ''
-    text = ''
+    global errors, text, string, current_column
+    errors, text, string, current_column = '', '', '', -1
     lexer = lex.lex()
     text = open(arg,'r').read()
     lexer.input(text)
-    s = ''
+    string = ''
     for token in iter(lexer.token, None):
-        s += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(find_column(text,token))+')\n'
-    return s if len(errors) == 0 else errors
+        string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - current_column)+')\n'
+    return string if len(errors) == 0 else errors
     
     
     
