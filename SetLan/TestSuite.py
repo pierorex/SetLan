@@ -32,5 +32,8 @@ class TestSuite(unittest.TestCase):
     def testBadVariables(self):
         self.assertEqual(main('Tests/test11.txt'), open('Tests/answer11.txt','r').read())
 
+    def testOperatorsWithoutSpaces(self):
+        self.assertEqual(main('Tests/test12.txt'), open('Tests/answer12.txt','r').read())
+
 if __name__ == '__main__':
     unittest.main()
