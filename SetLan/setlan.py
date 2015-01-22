@@ -26,8 +26,8 @@ reserved = {
 tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
           'String','LessThan','GreaterThan','LessThanEq','GreaterThanEq',
           'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
-          'Len','Sum','Res','Mul','Div','Mod','Union','Difference',
-          'Intersect','Minus','Times','Divide','Modulus','Number','Arrow',
+          'Len','PlusSet','MinusSet','TimesSet','DivSet','ModSet','Union',
+          'Difference','Intersect','Minus','Times','Div','Mod','Number','Arrow',
           'SemiColon'] + list(reserved.values())
 
 def t_ID(t):
@@ -43,19 +43,19 @@ def t_GreaterThanEq(t):
 def t_Equals(t):
     r'=='
     return t
-def t_Sum(t):
+def t_PlusSet(t):
     r'<\+>'
     return t
-def t_Res(t):
+def t_MinusSet(t):
     r'<->'
     return t
-def t_Mul(t):
+def t_TimesSet(t):
     r'<\*>'
     return t
-def t_Div(t):
+def t_DivSet(t):
     r'</>'
     return t
-def t_Mod(t):
+def t_ModSet(t):
     r'<%>'
     return t
 def t_Union(t):
@@ -90,8 +90,8 @@ t_Contains = r'@'
 t_Len = r'\$\?'
 t_Minus = r'-'
 t_Times = r'\*'
-t_Divide = r'/'
-t_Modulus = r'%'
+t_Div = r'/'
+t_Mod = r'%'
 
 
 def t_newline(t): 
