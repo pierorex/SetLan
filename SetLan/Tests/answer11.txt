@@ -1,0 +1,3 @@
+Error: Se encontro un caracter inesperado "12a" en la Linea 1, Columna 7.
+Error: Se encontro un caracter inesperado "1a1" en la Linea 1, Columna 15.
+Error: Se encontro un caracter inesperado "bb1bb" en la Linea 1, Columna 19.

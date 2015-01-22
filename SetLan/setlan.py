@@ -93,39 +93,32 @@ t_Times = r'\*'
 t_Divide = r'/'
 t_Modulus = r'%'
 
-current_column = -1
 
 def t_newline(t): 
     r'\n+'
     global current_column
     t.lexer.lineno += t.value.count("\n")
-    current_column = t.lexer.lexpos - 1
+    t.lexer.current_column = t.lexer.lexpos - 1
 
 # Ignored characters 
 t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
-
-def find_column (inp, token):
-    last_cr = inp.rfind('\n', 0, token.lexpos)
-    if last_cr < 0: last_cr = 0
-    column = (token.lexpos - last_cr) + 1
-    return column
-
     
+
+# Global variables to return information
 string = ''
 errors = ''
-text = ''
-
         
 def t_error(t):
-    global errors, text, current_column
-    errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - current_column)+'.\n'
+    global errors
+    errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
     t.lexer.skip(1)
 
 def main(arg):
-    global errors, text, string, current_column
-    errors, text, string, current_column = '', '', '', -1
+    global errors, string
+    errors, string, = '', ''
     lexer = lex.lex()
+    lexer.current_column = -1
     text = open(arg,'r').read()
     lexer.input(text)
     string = ''
@@ -135,17 +128,18 @@ def main(arg):
         'operators': [],
         'identifiers': []
     }
+    
     for token in iter(lexer.token, None):
         if token.type == 'ID': found_tokens['identifiers'].append(token)
         elif token.type == 'Number': found_tokens['numbers'].append(token)
         elif token.type in reserved.values(): found_tokens['reserved'].append(token)
         else: found_tokens['operators'].append(token)
-        string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - current_column)+')\n'
+        string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
     print found_tokens
+    
     return string if len(errors) == 0 else errors
     
     
-    
 if __name__ == '__main__':
-    main(sys.argv[1])
+    print(main(sys.argv[1]))
     

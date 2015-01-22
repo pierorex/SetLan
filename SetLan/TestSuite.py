@@ -19,12 +19,18 @@ class TestSuite(unittest.TestCase):
 
     def testSample1(self):
         self.assertEqual(main('Tests/test6.txt'), open('Tests/answer6.txt','r').read())
-
-    def testSample2(self):
-        self.assertEqual(main('Tests/test10.txt'), open('Tests/answer10.txt','r').read())
     
     def testIfElse(self):
         self.assertEqual(main('Tests/test8.txt'), open('Tests/answer8.txt','r').read())
+        
+    def testOperators(self):
+        self.assertEqual(main('Tests/test9.txt'), open('Tests/answer9.txt','r').read())
+    
+    def testSample2(self):
+        self.assertEqual(main('Tests/test10.txt'), open('Tests/answer10.txt','r').read())
+        
+    def testBadVariables(self):
+        self.assertEqual(main('Tests/test11.txt'), open('Tests/answer11.txt','r').read())
 
 if __name__ == '__main__':
     unittest.main()
