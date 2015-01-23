@@ -87,7 +87,7 @@ def t_String(t):
     while aux > 0 :
         if t.value.count(r'\\') > 0:
             t.value = t.value[:t.value.find(r'\\')] + t.value[t.value.find(r'\\')+1:]
-            aux = aux - 1 
+            aux -= 1 
     return t
 
 t_Colon = r':'

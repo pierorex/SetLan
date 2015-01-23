@@ -47,5 +47,8 @@ class TestSuite(unittest.TestCase):
     def testSetMinMaxContains(self):
         self.assertEqual(main('Tests/test13.txt'), open('Tests/answer13.txt','r').read())
 
+    def testEscapeBackS(self):
+        self.assertEqual(main('Tests/testCarlitos.txt'), open('Tests/answerCarlitos.txt','r').read())
+
 if __name__ == '__main__':
     unittest.main()
