@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import ply.lex as lex, sys
 
 reserved = {
@@ -27,8 +28,8 @@ tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
           'String','LessThan','GreaterThan','LessThanEq','GreaterThanEq',
           'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
           'Len','PlusSet','MinusSet','TimesSet','DivSet','ModSet','Union',
-          'Difference','Intersect','Minus','Times','Div','Mod','Number','Arrow',
-          'SemiColon'] + list(reserved.values())
+          'MaxSet','MinSet','Difference','Intersect','Minus','Times','Div',
+          'Mod','Number','Arrow','SemiColon'] + list(reserved.values())
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -57,6 +58,12 @@ def t_DivSet(t):
     return t
 def t_ModSet(t):
     r'<%>'
+    return t
+def t_MaxSet(t):
+    r'>\?'
+    return t
+def t_MinSet(t):
+    r'<\?'
     return t
 def t_Union(t):
     r'\+\+'
@@ -106,7 +113,6 @@ t_ignore_COMMENT = r'\#.*'
     
 
 # Global variables to return information
-string = ''
 errors = ''
         
 def t_error(t):
@@ -114,30 +120,18 @@ def t_error(t):
     errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
     t.lexer.skip(1)
 
+
 def main(arg):
-    global errors, string
-    errors, string, = '', ''
+    global errors
     lexer = lex.lex()
     lexer.current_column = -1
-    text = open(arg,'r').read()
-    lexer.input(text)
-    string = ''
-    found_tokens = {
-        'reserved': [],
-        'numbers': [],
-        'operators': [],
-        'identifiers': []
-    }
+    lexer.input(open(arg,'r').read())
+    return_message, errors = '', ''
+
+    for t in iter(lexer.token, None):
+        return_message += 'Token'+t.type+(': '+str(t.value) if t.type=='ID' or t.type=='String' or t.type=='Number' else '')+' (Linea '+str(t.lineno)+', Columna '+str(t.lexpos - lexer.current_column)+')\n'
     
-    for token in iter(lexer.token, None):
-        if token.type == 'ID': found_tokens['identifiers'].append(token)
-        elif token.type == 'Number': found_tokens['numbers'].append(token)
-        elif token.type in reserved.values(): found_tokens['reserved'].append(token)
-        else: found_tokens['operators'].append(token)
-        string += 'Token'+token.type+(': "'+token.value+'"' if token.type=='ID' else '')+'(Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
-    print found_tokens
-    
-    return string if len(errors) == 0 else errors
+    return return_message if len(errors) == 0 else errors
     
     
 if __name__ == '__main__':
