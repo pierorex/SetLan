@@ -35,17 +35,20 @@ class TestSuite(unittest.TestCase):
     def testBadVariables(self):
         self.assertEqual(main('Tests/test11.txt'), open('Tests/answer11.txt','r').read())
 
+<<<<<<< HEAD
     def testJoins(self):
         self.assertEqual(main('Tests/test100.txt'), open('Tests/answer100.txt','r').read())
 
     def testAllContinue(self):
         self.assertEqual(main('Tests/test101.txt'), open('Tests/answer101.txt','r').read())    
-
+=======
     def testOperatorsWithoutSpaces(self):
         self.assertEqual(main('Tests/test12.txt'), open('Tests/answer12.txt','r').read())
         
     def testSetMinMaxContains(self):
         self.assertEqual(main('Tests/test13.txt'), open('Tests/answer13.txt','r').read())
+>>>>>>> ec5e77d9dba5fe2de637525fb3491ab4cfa289bd
+
 
 if __name__ == '__main__':
     unittest.main()

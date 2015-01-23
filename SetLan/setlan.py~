@@ -29,7 +29,7 @@ tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
           'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
           'Len','PlusSet','MinusSet','TimesSet','DivSet','ModSet','Union',
           'MaxSet','MinSet','Difference','Intersect','Minus','Times','Div',
-          'Mod','Number','Arrow','SemiColon'] + list(reserved.values())
+          'Mod','Number','Arrow','SemiColon','ScapedQuote'] + list(reserved.values())
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -78,8 +78,16 @@ def t_Number(t):
     r'\d+'
     t.value = int(t.value)
     return t
+def t_String(t):
+    r'"(?:[^"\\]|\\.)*"'
+    while t.value.count(r'\"') > 0 :
+        if t.value.count(r'\"') > 0:
+            t.value = t.value[:t.value.find(r'\"')] + t.value[t.value.find(r'\"')+1:]
+    while t.value.count(r'\\') > 0 :
+        if t.value.count(r'\\') > 0:
+            t.value = t.value[:t.value.find(r'\\')] + t.value[t.value.find(r'\\')+1:] 
+    return t
 
-t_String = r'".*?"'
 t_Colon = r':'
 t_Difference = r'\\'
 t_OpenCurly = r'\{'
@@ -110,7 +118,6 @@ def t_newline(t):
 # Ignored characters 
 t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
-    
 
 # Global variables to return information
 errors = ''
