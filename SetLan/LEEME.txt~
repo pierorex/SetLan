@@ -38,4 +38,4 @@ en los símbolos $, &, ~ y demas caracteres no definidos en el lenguaje.
 	Se diseño una suite de pruebas con 16 casos de prueba que toman en cuenta todos
 los posibles estilos de entradas y salidas en los que el equipo pudo pensar. Esta 
 suite se encuentra en el archivo TestSuite.py y hace uso de los archivos que se
-encuentran en la carpeta Tests.
+encuentran en la carpeta Tests
