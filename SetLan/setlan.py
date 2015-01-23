@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import ply.lex as lex, sys
 
 reserved = {
@@ -112,7 +113,6 @@ t_ignore_COMMENT = r'\#.*'
     
 
 # Global variables to return information
-string = ''
 errors = ''
         
 def t_error(t):
@@ -120,19 +120,18 @@ def t_error(t):
     errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
     t.lexer.skip(1)
 
+
 def main(arg):
-    global errors, string
-    errors, string, = '', ''
+    global errors
     lexer = lex.lex()
     lexer.current_column = -1
-    text = open(arg,'r').read()
-    lexer.input(text)
-    string = ''
+    lexer.input(open(arg,'r').read())
+    return_message, errors = '', ''
+
+    for t in iter(lexer.token, None):
+        return_message += 'Token'+t.type+(': '+str(t.value) if t.type=='ID' or t.type=='String' or t.type=='Number' else '')+' (Linea '+str(t.lineno)+', Columna '+str(t.lexpos - lexer.current_column)+')\n'
     
-    for token in iter(lexer.token, None):
-        string += 'Token'+token.type+(': '+str(token.value) if token.type=='ID' or token.type=='String' or token.type=='Number' else '')+' (Linea '+str(token.lineno)+', Columna '+str(token.lexpos - lexer.current_column)+')\n'
-    
-    return string if len(errors) == 0 else errors
+    return return_message if len(errors) == 0 else errors
     
     
 if __name__ == '__main__':
