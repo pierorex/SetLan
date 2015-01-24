@@ -132,8 +132,8 @@ def main(arg):
         return_message += 'Token'+t.type+(': '+str(t.value) if t.type=='ID' or t.type=='String' or t.type=='Number' else '')+' (Linea '+str(t.lineno)+', Columna '+str(t.lexpos - lexer.current_column)+')\n'
     
     return return_message if len(errors) == 0 else errors
-    
-    
+
+
 if __name__ == '__main__':
     print(main(sys.argv[1]))
     
