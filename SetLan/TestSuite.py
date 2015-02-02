@@ -1,6 +1,6 @@
 import unittest
 from lexer import mainLexer
-from parser import mainParser
+#from parser import mainParser
 
 class LexerTestSuite(unittest.TestCase):
     def testSimple(self):
