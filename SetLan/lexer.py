@@ -3,6 +3,9 @@ import ply.lex as lex, sys
     
 reserved = {
     'program' : 'Program',
+    'or' : 'Or',
+    'not' : 'Not',
+    'and' : 'And',
     'using' : 'Using',
     'int' : 'Int',
     'scan' : 'Scan',
@@ -29,7 +32,7 @@ tokens = ['ID','OpenCurly','CloseCurly','Colon','OpenParen','CloseParen',
           'Equals','Comma','Assign','Plus','Comment','NotEquals','Contains',
           'Len','PlusSet','MinusSet','TimesSet','DivSet','ModSet','Union',
           'MaxSet','MinSet','Difference','Intersect','Minus','Times','Div',
-          'Mod','Number','Arrow','SemiColon','ScapedQuote'] + list(reserved.values())
+          'Mod','Number','Arrow','SemiColon'] + list(reserved.values())
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -145,3 +148,4 @@ def mainLexer(arg):
     
 if __name__ == '__main__':
     print(mainLexer(sys.argv[1]))
+    

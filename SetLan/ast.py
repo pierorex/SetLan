@@ -45,8 +45,7 @@ class Block(Statement):
         return string
 
 
-class Read(Statement):
-    """Read statement, for user input"""
+class Scan(Statement):
     def __init__(self, variable):
         self.variable = variable
 
@@ -314,6 +313,13 @@ class Union(Expression):
         self.left = left
         self.right = right      
         self.operator = operator  
+   
+
+class Difference(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right      
+        self.operator = operator   
         
         
 class Intersect(Expression):

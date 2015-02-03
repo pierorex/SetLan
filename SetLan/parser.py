@@ -1,6 +1,6 @@
 from lexer import *
+import ply.yacc as yacc
 from ast import *
-from django.db.models.lookups import LessThanOrEqual
 
 def p_program(p):
     "program : Program statement"
@@ -8,13 +8,13 @@ def p_program(p):
 
 
 def p_statement_assing(p):
-    "statement : ID ASSIGN expression"
+    "statement : ID Assign expression"
     p[0] = Assign(Variable(p[1]), p[3])
 
 
 def p_statement_block(p):
-    """statement : LCurly statement_list RCurly
-                 | LCurly using variable_list in statement_list RCurly"""
+    """statement : OpenCurly statement_list CloseCurly
+                 | OpenCurly Using variable_list In statement_list CloseCurly"""
     if len(p) == 4:
         p[0] = Block(p[2])
     else:
@@ -23,7 +23,7 @@ def p_statement_block(p):
 
 def p_statement_variable_list(p):
     """variable_list : data_type variable_comma_list
-                     | variable_list Semicolon data_type variable_comma_list"""
+                     | variable_list SemiColon data_type variable_comma_list"""
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
     else:
@@ -39,10 +39,9 @@ def p_statement_variable_comma_list(p):
         p[0] = p[1] + [Variable(p[3])]
 
 
-# Multiple statements in a block statement have a separation token, the ';'
 def p_statement_statement_list(p):
     """statement_list : statement
-                      | statement_list Semicolon statement"""
+                      | statement_list SemiColon statement"""
     if len(p) == 2:
         p[0] = [p[1]]
     else:
@@ -55,7 +54,11 @@ def p_data_type(p):
                  | Set"""
     p[0] = p[1]
 
-###############################     IN/OUT      ###############################
+
+def p_statement_scan(p):
+    "statement : Scan ID"
+    p[0] = Scan(Variable(p[2]))
+
 
 def p_statement_print(p):
     """statement : Print comma_list
@@ -68,7 +71,6 @@ def p_statement_print(p):
         p[0] = Print([String('"\\n"')])
 
 
-# To generate the list of elements for a 'print' or a 'println'
 def p_statement_comma_list(p):
     """comma_list : expression
                   | comma_list Comma expression"""
@@ -77,7 +79,6 @@ def p_statement_comma_list(p):
     else:
         p[0] = p[1] + [p[3]]
 
-############################     CONDITIONAL      #############################
 
 def p_statement_if(p):
     """statement : If expression statement
@@ -88,11 +89,6 @@ def p_statement_if(p):
         p[0] = If(p[2], p[3], p[5])
 
 
-###############################     LOOP      #################################
-
-
-# The for statement, automatically declares an 'int' variable in the scope of
-# the for, this variable has a value of every value in the range specified
 def p_statement_for(p):
     """statement : For ID Min expression Do statement
                  | For ID Max expression Do statement"""
@@ -109,21 +105,15 @@ def p_statement_repeat(p):
         p[0] = Repeat(p[2], p[4])
     elif p[1] == 'While':
         p[0] = While(p[2], p[4])
+        
 
-
-###############################################################################
-#############################     EXPRESSIONS     #############################
-###############################################################################
-
-
-# Precedence defined for expressions
 precedence = (
     # set -> set    (unary set operators)
     ("right", 'MaxSet'),
     ("right", 'MinSet'),
     ("right", 'Len'),
     # int x set -> set
-    ("left", 'PlusSet' 'MinusSet'),
+    ("left", 'PlusSet', 'MinusSet'),
     ("left", 'TimesSet', 'DivSet', 'ModSet'),
     # int x set -> bool
     ("right", 'Contains'),
@@ -132,10 +122,10 @@ precedence = (
     ("left", 'Intersect'),
     # int
     ("left", 'Plus', 'Minus'),
-    ("left", 'Times', 'Divide', 'Modulo'),
+    ("left", 'Times', 'Div', 'Mod'),
     ("right", 'Uminus'),
     # int x int -> bool
-    ("nonassoc", 'Less', 'LessThanEq', 'Grater', 'GreaterThanEq'),
+    ("nonassoc", 'LessThan', 'LessThanEq', 'GreaterThan', 'GreaterThanEq'),
     # int|set x int|set -> bool
     ("nonassoc", 'Equals', 'NotEquals'),
     # bool x bool -> bool
@@ -144,51 +134,41 @@ precedence = (
     ("right", 'Not'),
 )
 
-##############################     LITERALS     ###############################
 
-
-# A number is a valid expression
 def p_exp_int_literal(p):
-    "expression : NUMBER"
+    "expression : Number"
     p[0] = Int(p[1])
 
 
-# A boolean is a valid expression
 def p_exp_bool_literal(p):
     """expression : True
                   | False"""
     p[0] = Bool(p[1].lower())
 
 
-# A string is a valid expression
 def p_exp_string_literal(p):
     "expression : String"
     p[0] = String(p[1])
 
 
-# An ID is a variable expression, since an ID is an int, bool or set
 def p_expression_id(p):
     "expression : ID"
     p[0] = Variable(p[1])
 
 
-def p_int_list(p):
-    """int_list : Int
-                | int_list Comma Int"""
+def p_number_list(p):
+    """number_list : Number
+                | number_list Comma Number"""
 
 def p_expression_set(p):
-    """expression : LCurly int_list RCurly"""
+    """expression : OpenCurly number_list CloseCurly"""
 
 
-# An expression between parenthesis is still an expression
-def p_expression_group(p):
-    """expression : LPAREN expression RPAREN"""
+def p_expression_parenthesis(p):
+    """expression : OpenParen expression CloseParen"""
     p[0] = p[2]
 
-#############################     OPERATORS     ###############################
 
-
-# Binary operators defined for int
 def p_binop(p):
     """expression : expression Plus expression
                   | expression Minus expression
@@ -207,6 +187,7 @@ def p_binop(p):
                   | expression Equals expression
                   | expression NotEquals expression
                   | expression Union expression
+                  | expression Difference expression
                   | expression Intersect expression
                   | expression And expression
                   | expression Or expression
@@ -229,6 +210,7 @@ def p_binop(p):
     elif p[2] == '==': p[0] = Equals(p[1], p[2])
     elif p[2] == '\=': p[0] = NotEquals(p[1], p[2])
     elif p[2] == '++': p[0] = Union(p[1], p[2])
+    elif p[2] == '\\': p[0] = Difference(p[1], p[2]) 
     elif p[2] == '><': p[0] = Intersect(p[1], p[2])
     elif p[2] == 'and': p[0] = And(p[1], p[2])
     elif p[2] == 'or': p[0] = Or(p[1], p[2])
@@ -248,9 +230,12 @@ def p_unary_op(p):
     elif p[1] == '<?': p[0] = MinSet(p[2])
     
     
+        
+def mainParser(arg):
+    parser = yacc.yacc(start='program')
     
-def mainParser():
-    pass
+    
     
 if __name__ == '__main__':
-    print(mainParser(sys.argv[1]))    
+    print(mainParser(sys.argv[1]))
+    

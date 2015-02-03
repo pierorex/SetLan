@@ -1,6 +1,6 @@
 import unittest
 from lexer import mainLexer
-#from parser import mainParser
+from parser import mainParser
 
 class LexerTestSuite(unittest.TestCase):
     def testSimple(self):
@@ -54,8 +54,8 @@ class LexerTestSuite(unittest.TestCase):
 
 
 class ParserTestSuite(unittest.TestCase):
-    def testEscapeBackS(self):
-        self.assertEqual(mainLexer('Tests/testCarlitos.txt'), open('Tests/answerCarlitos.txt','r').read())
+    def testSimplisticProgram(self):
+        self.assertEqual(mainParser('Tests/testSimplisticProgram.txt'), open('Tests/answerSimplisticProgram.txt','r').read())
 
 if __name__ == '__main__':
     unittest.main()
