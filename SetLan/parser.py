@@ -14,25 +14,25 @@ def p_statement_assing(p):
 
 def p_statement_block(p):
     """statement : OpenCurly statement_list CloseCurly
-                 | OpenCurly Using variable_list In statement_list CloseCurly"""
+                 | OpenCurly Using declarations_list In statement_list CloseCurly"""
     if len(p) == 4:
         p[0] = Block(p[2])
     else:
         p[0] = Block(p[4])
 
 
-def p_statement_variable_list(p):
-    """variable_list : data_type variable_comma_list
-                     | variable_list SemiColon data_type variable_comma_list"""
+def p_declarations_list(p):
+    """declarations_list : type variable_list
+                         | declarations_list SemiColon type variable_list"""
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
     else:
         p[0] = p[1] + [(p[2], p[3])]
 
 
-def p_statement_variable_comma_list(p):
-    """variable_comma_list : ID
-                           | variable_comma_list Comma ID"""
+def p_variable_list(p):
+    """variable_list : ID
+                     | variable_list Comma ID"""
     if len(p) == 2:
         p[0] = [Variable(p[1])]
     else:
@@ -48,10 +48,10 @@ def p_statement_statement_list(p):
         p[0] = p[1] + [p[3]]
 
 
-def p_data_type(p):
-    """data_type : Int
-                 | Bool
-                 | Set"""
+def p_type(p):
+    """type : Int
+            | Bool
+            | Set"""
     p[0] = p[1]
 
 
@@ -61,8 +61,8 @@ def p_statement_scan(p):
 
 
 def p_statement_print(p):
-    """statement : Print comma_list
-                 | Println comma_list"""
+    """statement : Print expression_list
+                 | Println expression_list"""
     if p[1] == 'Print':
         p[0] = Print(p[2])
     elif len(p) == 3:
@@ -71,9 +71,9 @@ def p_statement_print(p):
         p[0] = Print([String('"\\n"')])
 
 
-def p_statement_comma_list(p):
-    """comma_list : expression
-                  | comma_list Comma expression"""
+def p_expression_list(p):
+    """expression_list : expression
+                  | expression_list Comma expression"""
     if len(p) == 2:
         p[0] = [p[1]]
     else:
@@ -135,23 +135,23 @@ precedence = (
 )
 
 
-def p_exp_int_literal(p):
+def p_int(p):
     "expression : Number"
     p[0] = Int(p[1])
 
 
-def p_exp_bool_literal(p):
+def p_bool(p):
     """expression : True
                   | False"""
     p[0] = Bool(p[1].lower())
 
 
-def p_exp_string_literal(p):
+def p_string(p):
     "expression : String"
     p[0] = String(p[1])
 
 
-def p_expression_id(p):
+def p_id(p):
     "expression : ID"
     p[0] = Variable(p[1])
 
@@ -160,11 +160,11 @@ def p_number_list(p):
     """number_list : Number
                 | number_list Comma Number"""
 
-def p_expression_set(p):
+def p_set(p):
     """expression : OpenCurly number_list CloseCurly"""
 
 
-def p_expression_parenthesis(p):
+def p_parenthesis(p):
     """expression : OpenParen expression CloseParen"""
     p[0] = p[2]
 
