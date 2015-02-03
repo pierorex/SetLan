@@ -120,6 +120,21 @@ class Repeat(Statement):
         return string
 
 
+class While(Statement):
+    """While statement, takes a condition"""
+    def __init__(self, condition, statement):
+        self.condition = condition
+        self.statement = statement
+
+    def print_tree(self, level):
+        string = indent(level) + "Repeat\n"
+        string += indent(level + 1) + "condition:\n"
+        string += self.condition.print_tree(level + 2) + '\n'
+        string += indent(level + 1) + "DO statement:\n"
+        string += self.statement.print_tree(level + 2)
+        return string
+
+
 # For inheritance
 class Expression: pass
 
@@ -172,12 +187,12 @@ class String(Expression):
         return indent(level) + "STRING: " + str(self.value)
 
 
-class Binary(Expression):
+class Plus(Expression):
     """Binary expressions"""
     def __init__(self, operator, left, right):
-        self.operator = operator
         self.left = left
         self.right = right
+        self.operator = operator
 
     def print_tree(self, level):
         string = indent(level) + "BINARY:\n" + indent(level + 1)
@@ -189,15 +204,171 @@ class Binary(Expression):
         return string
 
 
-class Unary(Expression):
-    """Unary expressions"""
+class Minus(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class Times(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class Div(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class Mod(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class PlusSet(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class MinusSet(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class TimesSet(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+
+class DivSet(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class ModSet(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+   
+   
+class LessThan(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class LessThanEq(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right   
+        self.operator = operator
+   
+        
+class GreaterThan(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class GreaterThanEq(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class Equals(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class NotEquals(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class Union(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right      
+        self.operator = operator  
+        
+        
+class Intersect(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class And(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class Or(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+        
+        
+class Contains(Expression):
+    def __init__(self, operator, left, right):
+        self.left = left
+        self.right = right
+        self.operator = operator
+
+
+class Uminus(Expression):
     def __init__(self, operator, operand):
         self.operator = operator
         self.operand = operand
 
-    def print_tree(self, level):
-        string = indent(level) + "UNARY:\n" + indent(level + 1) + "operator: "
-        string += str(self.operator) + '\n'
-        string += indent(level + 1) + "operand:\n"
-        string += self.operand.print_tree(level + 2)
-        return string
+        
+class Not(Expression):
+    def __init__(self, operator, operand):
+        self.operator = operator
+        self.operand = operand
+        
+        
+class Len(Expression):
+    def __init__(self, operator, operand):
+        self.operator = operator
+        self.operand = operand
+        
+        
+class MaxSet(Expression):
+    def __init__(self, operator, operand):
+        self.operator = operator
+        self.operand = operand
+        
+        
+class MinSet(Expression):
+    def __init__(self, operator, operand):
+        self.operator = operator
+        self.operand = operand

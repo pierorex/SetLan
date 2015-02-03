@@ -1,5 +1,6 @@
 from lexer import *
 from ast import *
+from django.db.models.lookups import LessThanOrEqual
 
 def p_program(p):
     "program : Program statement"
@@ -13,26 +14,25 @@ def p_statement_assing(p):
 
 def p_statement_block(p):
     """statement : LCurly statement_list RCurly
-                 | LCurly declare_list statement_list RCurly"""
+                 | LCurly using variable_list in statement_list RCurly"""
     if len(p) == 4:
         p[0] = Block(p[2])
     else:
         p[0] = Block(p[4])
 
 
-def p_statement_declare_list(p):
-    """declare_list : using data_type declare_comma_list in
-                    | data_type declara_comma_list in
-                    | declare_list Semicolon declare_comma_list"""
-    if len(p) == 4:
-        p[0] = [(p[1], p[3])]
+def p_statement_variable_list(p):
+    """variable_list : data_type variable_comma_list
+                     | variable_list Semicolon data_type variable_comma_list"""
+    if len(p) == 3:
+        p[0] = [(p[1], p[2])]
     else:
-        p[0] = p[1] + [(p[3], p[5])]
+        p[0] = p[1] + [(p[2], p[3])]
 
 
-def p_statement_declare_comma_list(p):
-    """declare_comma_list : ID
-                          | declare_comma_list Comma ID"""
+def p_statement_variable_comma_list(p):
+    """variable_comma_list : ID
+                           | variable_comma_list Comma ID"""
     if len(p) == 2:
         p[0] = [Variable(p[1])]
     else:
@@ -62,11 +62,10 @@ def p_statement_print(p):
                  | Println comma_list"""
     if p[1] == 'Print':
         p[0] = Print(p[2])
+    elif len(p) == 3:
+        p[0] = Print(p[2] + [String('"\\n"')])
     else:
-        if len(p) == 3:
-            p[0] = Print(p[2] + [String('"\\n"')])
-        else:
-            p[0] = Print([String('"\\n"')])
+        p[0] = Print([String('"\\n"')])
 
 
 # To generate the list of elements for a 'print' or a 'println'
@@ -83,10 +82,10 @@ def p_statement_comma_list(p):
 def p_statement_if(p):
     """statement : If expression statement
                  | If expression statement Else statement"""
-    if len(p) == 5:
-        p[0] = If(p[2], p[4])
+    if len(p) == 4:
+        p[0] = If(p[2], p[3])
     else:
-        p[0] = If(p[2], p[4], p[6])
+        p[0] = If(p[2], p[3], p[5])
 
 
 ###############################     LOOP      #################################
@@ -95,14 +94,22 @@ def p_statement_if(p):
 # The for statement, automatically declares an 'int' variable in the scope of
 # the for, this variable has a value of every value in the range specified
 def p_statement_for(p):
-    "statement : For ID Min SetExpression Do statement"
-    p[0] = For(Variable(p[2]), p[4], p[6])
+    """statement : For ID Min expression Do statement
+                 | For ID Max expression Do statement"""
+    p[0] = For(Variable(p[2]), p[3], p[4], p[6])
 
 
-# The while statement, while some condition holds, keep doing a statement
 def p_statement_repeat(p):
-    "statement : Repeat expression while condition DO statement"
-    p[0] = Repeat(p[2], p[4])
+    """statement : Repeat statement While expression Do statement
+                 | Repeat statement While expression
+                 | While expression Do statement"""
+    if len(p) == 7:
+        p[0] = Repeat(p[2], p[4], p[6])
+    elif p[1] == 'Repeat':
+        p[0] = Repeat(p[2], p[4])
+    elif p[1] == 'While':
+        p[0] = While(p[2], p[4])
+
 
 ###############################################################################
 #############################     EXPRESSIONS     #############################
@@ -111,20 +118,30 @@ def p_statement_repeat(p):
 
 # Precedence defined for expressions
 precedence = (
-    # bools
-    ("left", 'OR'),
-    ("left", 'AND'),
-    ("right", 'NOT'),
-    # comparissons
-    ("nonassoc", 'Equals'),
+    # set -> set    (unary set operators)
+    ("right", 'MaxSet'),
+    ("right", 'MinSet'),
+    ("right", 'Len'),
+    # int x set -> set
+    ("left", 'PlusSet' 'MinusSet'),
+    ("left", 'TimesSet', 'DivSet', 'ModSet'),
+    # int x set -> bool
+    ("right", 'Contains'),
+    # set x set -> set
+    ("left", 'Union', 'Difference'),
+    ("left", 'Intersect'),
+    # int
+    ("left", 'Plus', 'Minus'),
+    ("left", 'Times', 'Divide', 'Modulo'),
+    ("right", 'Uminus'),
+    # int x int -> bool
     ("nonassoc", 'Less', 'LessThanEq', 'Grater', 'GreaterThanEq'),
-    # sets
-    ()
-    # ints
-    ("left", 'PLUS', 'MINUS'),
-    ("left", 'TIMES', 'DIVIDE', 'MODULO'),
-    ("right", 'UMINUS'),
-    # set
+    # int|set x int|set -> bool
+    ("nonassoc", 'Equals', 'NotEquals'),
+    # bool x bool -> bool
+    ("left", 'Or'),
+    ("left", 'And'),
+    ("right", 'Not'),
 )
 
 ##############################     LITERALS     ###############################
@@ -172,83 +189,64 @@ def p_expression_group(p):
 
 
 # Binary operators defined for int
-def p_exp_int_binary(p):
-    """expression : expression PLUS   expression
-                  | expression MINUS  expression
-                  | expression TIMES  expression
-                  | expression DIVIDE expression
-                  | expression MODULO expression"""
-    operator = {
-        '+': 'PLUS',
-        '-': 'MINUS',
-        '*': 'TIMES',
-        '/': 'DIVIDE',
-        '%': 'MODULO'
-    }[p[2]]
-    p[0] = Binary(operator, p[1], p[3])
+def p_binop(p):
+    """expression : expression Plus expression
+                  | expression Minus expression
+                  | expression Times expression
+                  | expression Div expression
+                  | expression Mod expression
+                  | expression PlusSet expression
+                  | expression MinusSet expression
+                  | expression TimesSet expression
+                  | expression DivSet expression
+                  | expression ModSet expression
+                  | expression LessThan expression
+                  | expression LessThanEq expression
+                  | expression GreaterThan expression
+                  | expression GreaterThanEq expression
+                  | expression Equals expression
+                  | expression NotEquals expression
+                  | expression Union expression
+                  | expression Intersect expression
+                  | expression And expression
+                  | expression Or expression
+                  | expression Contains expression"""
+    
+    if p[2] == '+': p[0] = Plus(p[1], p[2])
+    elif p[2] == '-': p[0] = Minus(p[1], p[2])
+    elif p[2] == '*': p[0] = Times(p[1], p[2])
+    elif p[2] == '/': p[0] = Div(p[1], p[2])
+    elif p[2] == '%': p[0] = Mod(p[1], p[2])
+    elif p[2] == '<+>': p[0] = PlusSet(p[1], p[2])
+    elif p[2] == '<->': p[0] = MinusSet(p[1], p[2])
+    elif p[2] == '<*>': p[0] = TimesSet(p[1], p[2])
+    elif p[2] == '</>': p[0] = DivSet(p[1], p[2])
+    elif p[2] == '<%>': p[0] = ModSet(p[1], p[2])
+    elif p[2] == '<': p[0] = LessThan(p[1], p[2])
+    elif p[2] == '<=': p[0] = LessThanEq(p[1], p[2])
+    elif p[2] == '>': p[0] = GreaterThan(p[1], p[2])
+    elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[2])
+    elif p[2] == '==': p[0] = Equals(p[1], p[2])
+    elif p[2] == '\=': p[0] = NotEquals(p[1], p[2])
+    elif p[2] == '++': p[0] = Union(p[1], p[2])
+    elif p[2] == '><': p[0] = Intersect(p[1], p[2])
+    elif p[2] == 'and': p[0] = And(p[1], p[2])
+    elif p[2] == 'or': p[0] = Or(p[1], p[2])
+    elif p[2] == '@': p[0] = Contains(p[1], p[2])
 
 
-# Unary minus, defined for int
-def p_exp_int_unary(p):
-    "expression : MINUS expression %prec UMINUS"
-    p[0] = Unary('MINUS', p[2])
-
-
-# Binary operators defined for range
-def p_exp_range_binary(p):
-    """expression : expression INTERSECTION expression"""
-    operator = 'INTERSECTION'
-    p[0] = Binary(operator, p[1], p[3])
-
-
-# Considered these functions as unary operators for range
-def p_exp_int_range_unary(p):
-    """expression : RTOI   LPAREN expression RPAREN
-                  | LENGTH LPAREN expression RPAREN
-                  | TOP    LPAREN expression RPAREN
-                  | BOTTOM LPAREN expression RPAREN"""
-    p[0] = Unary(p[1].upper(), p[3])
-
-
-# Binary operators defined for bool
-def p_exp_bool_binary(p):
-    """expression : expression OR      expression
-                  | expression AND     expression"""
-    operator = {
-        'or': 'OR',
-        'and': 'AND',
-    }[p[2]]
-    p[0] = Binary(operator, p[1], p[3])
-
-
-# Unary not, defined for bool
-def p_exp_bool_unary(p):
-    "expression : NOT expression"
-    if isinstance(p[2], Bool):
-        expr = eval(p[2].value.title())
-        expr = str(not expr).upper()
-        p[0] = Bool(expr)
-    else:
-        p[0] = Unary(p[1].upper(), p[2])
-
-
-# Binary operators to compare
-def p_exp_bool_compare(p):
-    """expression : expression LESS    expression
-                  | expression LESSEQ  expression
-                  | expression GREAT   expression
-                  | expression GREATEQ expression
-                  | expression EQUAL   expression
-                  | expression UNEQUAL expression"""
-    operator = {
-        '<': 'LESS',
-        '<=': 'LESSEQ',
-        '>': 'GREAT',
-        '>=': 'GREATEQ',
-        '==': 'EQUAL',
-        '/=': 'UNEQUAL'
-    }[p[2]]
-    p[0] = Binary(operator, p[1], p[3])
+def p_unary_op(p):
+    """expression : Minus expression %prec Uminus
+                  | Not expression
+                  | Len expression
+                  | MaxSet expression
+                  | MinSet expression"""
+    if p[1] == '-': p[0] = Uminus(p[2])
+    elif p[1] == 'not': p[0] = Not(p[2])
+    elif p[1] == '$?': p[0] = Len(p[2])
+    elif p[1] == '>?': p[0] = MaxSet(p[2])
+    elif p[1] == '<?': p[0] = MinSet(p[2])
+    
     
     
 def mainParser():
