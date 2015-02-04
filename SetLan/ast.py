@@ -1,11 +1,9 @@
-# To set indentation automatically
-def indent(level):
-    return "    " * level
-
-
 class Program:
     def __init__(self, statement):
         self.statement = statement
+        
+    def __repr__(self):
+        return 'Program\n' + 4*' ' + self.statement.__repr__(2)
 
 
 class Statement: pass
@@ -15,6 +13,9 @@ class Assign(Statement):
     def __init__(self, variable, expression):
         self.variable = variable
         self.expression = expression
+    
+    def __repr__(self, depth):
+        return 'Assign\n' + depth*4*' ' + self.variable.__repr__(depth+1) + '\n' + depth*4*' ' + 'value' + depth*4*' ' + self.expression.__repr__(depth+1)
 
 
 class Block(Statement):

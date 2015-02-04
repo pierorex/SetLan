@@ -7,12 +7,12 @@ def p_program(p):
     p[0] = Program(p[2])
 
 
-def p_statement_assing(p):
+def p_assing(p):
     "statement : ID Assign expression"
     p[0] = Assign(Variable(p[1]), p[3])
 
 
-def p_statement_block(p):
+def p_block(p):
     """statement : OpenCurly statement_list CloseCurly
                  | OpenCurly Using declarations_list In statement_list CloseCurly"""
     if len(p) == 4:
@@ -39,7 +39,7 @@ def p_variable_list(p):
         p[0] = p[1] + [Variable(p[3])]
 
 
-def p_statement_statement_list(p):
+def p_statement_list(p):
     """statement_list : statement
                       | statement_list SemiColon statement"""
     if len(p) == 2:
@@ -55,12 +55,12 @@ def p_type(p):
     p[0] = p[1]
 
 
-def p_statement_scan(p):
+def p_scan(p):
     "statement : Scan ID"
     p[0] = Scan(Variable(p[2]))
 
 
-def p_statement_print(p):
+def p_print(p):
     """statement : Print expression_list
                  | Println expression_list"""
     if p[1] == 'Print':
@@ -73,14 +73,14 @@ def p_statement_print(p):
 
 def p_expression_list(p):
     """expression_list : expression
-                  | expression_list Comma expression"""
+                       | expression_list Comma expression"""
     if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
 
 
-def p_statement_if(p):
+def p_if(p):
     """statement : If expression statement
                  | If expression statement Else statement"""
     if len(p) == 4:
@@ -89,13 +89,13 @@ def p_statement_if(p):
         p[0] = If(p[2], p[3], p[5])
 
 
-def p_statement_for(p):
+def p_for(p):
     """statement : For ID Min expression Do statement
                  | For ID Max expression Do statement"""
     p[0] = For(Variable(p[2]), p[3], p[4], p[6])
 
 
-def p_statement_repeat(p):
+def p_repeat(p):
     """statement : Repeat statement While expression Do statement
                  | Repeat statement While expression
                  | While expression Do statement"""
@@ -108,30 +108,30 @@ def p_statement_repeat(p):
         
 
 precedence = (
-    # set -> set    (unary set operators)
-    ("right", 'MaxSet'),
-    ("right", 'MinSet'),
-    ("right", 'Len'),
-    # int x set -> set
-    ("left", 'PlusSet', 'MinusSet'),
-    ("left", 'TimesSet', 'DivSet', 'ModSet'),
-    # int x set -> bool
-    ("right", 'Contains'),
-    # set x set -> set
-    ("left", 'Union', 'Difference'),
-    ("left", 'Intersect'),
-    # int
-    ("left", 'Plus', 'Minus'),
-    ("left", 'Times', 'Div', 'Mod'),
-    ("right", 'Uminus'),
-    # int x int -> bool
-    ("nonassoc", 'LessThan', 'LessThanEq', 'GreaterThan', 'GreaterThanEq'),
-    # int|set x int|set -> bool
-    ("nonassoc", 'Equals', 'NotEquals'),
     # bool x bool -> bool
     ("left", 'Or'),
     ("left", 'And'),
     ("right", 'Not'),
+    # int x int -> bool
+    ("nonassoc", 'LessThan', 'LessThanEq', 'GreaterThan', 'GreaterThanEq'),
+    # int|set x int|set -> bool
+    ("nonassoc", 'Equals', 'NotEquals'),          
+    # int
+    ("left", 'Plus', 'Minus'),
+    ("left", 'Times', 'Div', 'Mod'),
+    ("right", 'Uminus'),
+    # set x set -> set
+    ("left", 'Union', 'Difference'),
+    ("left", 'Intersect'),
+    # int x set -> set
+    ("left", 'PlusSet', 'MinusSet'),
+    ("left", 'TimesSet', 'DivSet', 'ModSet'),
+    # int x set -> bool
+    ("right", 'Contains'),          
+    # set -> set    (unary set operators)
+    ("right", 'MaxSet'),
+    ("right", 'MinSet'),
+    ("right", 'Len'),    
 )
 
 
@@ -158,7 +158,7 @@ def p_id(p):
 
 def p_number_list(p):
     """number_list : Number
-                | number_list Comma Number"""
+                   | number_list Comma Number"""
 
 def p_set(p):
     """expression : OpenCurly number_list CloseCurly"""
@@ -192,7 +192,7 @@ def p_binop(p):
                   | expression And expression
                   | expression Or expression
                   | expression Contains expression"""
-    
+
     if p[2] == '+': p[0] = Plus(p[1], p[2])
     elif p[2] == '-': p[0] = Minus(p[1], p[2])
     elif p[2] == '*': p[0] = Times(p[1], p[2])
@@ -228,14 +228,21 @@ def p_unary_op(p):
     elif p[1] == '$?': p[0] = Len(p[2])
     elif p[1] == '>?': p[0] = MaxSet(p[2])
     elif p[1] == '<?': p[0] = MinSet(p[2])
-    
-    
-        
+
+
+def p_error(p):
+    global parsing_errors
+    parsing_errors += 'Error found\n'
+
+
+parsing_errors = ''
+
 def mainParser(arg):
-    parser = yacc.yacc(start='program')
-    
-    
-    
+    parser = yacc.yacc()
+    parser.parse(open(arg,'r').read())
+    if parsing_errors != '': return parsing_errors
+    else: return tree.__repr__()
+
+
 if __name__ == '__main__':
     print(mainParser(sys.argv[1]))
-    

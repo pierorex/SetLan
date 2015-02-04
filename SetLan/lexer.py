@@ -20,6 +20,7 @@ reserved = {
     'max' : 'Max',
     'min' : 'Min',
     'for' : 'For',
+    'do' : 'Do',
     'return' : 'Return',
     'def' : 'Def',
     'repeat' : 'Repeat',
