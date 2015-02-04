@@ -245,10 +245,10 @@ def mainParser(arg):
     lexer.input(open(arg,'r').read())
     parsing_errors = ''
     parser = yacc.yacc()
-    parser.parse(open(arg,'r').read())
-    
+    ast = parser.parse(open(arg,'r').read())
+
     if parsing_errors != '': return parsing_errors
-    else: return tree.__repr__()
+    else: return ast.__repr__()
 
 
 if __name__ == '__main__':

@@ -37,7 +37,11 @@ class Print(Statement):
         self.print_list = print_list
 
     def __repr__(self, indent):
-        return 'Print\n' + indent*' ' + self.print_list.__repr__(indent+4)
+        s = 'Print\n' + indent*' '
+        for element in self.print_list:
+            s += element.__repr__(indent+4) + '\n'
+        return s
+
 
 class If(Statement):
     def __init__(self, condition, then_st, else_st=None):
@@ -76,6 +80,9 @@ class Variable(Expression):
 class Int(Expression):
     def __init__(self, value):
         self.value = value
+        
+    def __repr__(self, indent):
+        return 'Int\n' + indent*' ' + self.value + '\n'
 
 
 class Bool(Expression):
@@ -86,7 +93,7 @@ class Bool(Expression):
 class String(Expression):
     def __init__(self, value):
         self.value = value
-        
+
     def __repr__(self, indent):
         return 'String\n' + indent*' ' + self.value + '\n'
 
