@@ -1,6 +1,7 @@
 from lexer import *
 import ply.yacc as yacc
 from ast import *
+import sys
 
 def p_program(p):
     "program : Program statement"
@@ -232,14 +233,20 @@ def p_unary_op(p):
 
 def p_error(p):
     global parsing_errors
-    parsing_errors += 'Error found\n'
+    parsing_errors += 'Error: Unexpected \''+p.value+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
 
 
 parsing_errors = ''
 
 def mainParser(arg):
+    global parsing_errors, lexer
+    lexer = lex.lex()
+    lexer.current_column = -1
+    lexer.input(open(arg,'r').read())
+    parsing_errors = ''
     parser = yacc.yacc()
     parser.parse(open(arg,'r').read())
+    
     if parsing_errors != '': return parsing_errors
     else: return tree.__repr__()
 

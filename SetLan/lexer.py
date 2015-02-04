@@ -126,25 +126,25 @@ t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
 
 # Global variables to return information
-errors = ''
+lexing_errors = ''
 
 def t_error(t):
-    global errors
-    errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
+    global lexing_errors
+    lexing_errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
     t.lexer.skip(1)
     
 
 def mainLexer(arg):
-    global errors
+    global lexing_errors, lexer
     lexer = lex.lex()
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())
-    return_message, errors = '', ''
+    return_message, lexing_errors = '', ''
 
     for t in iter(lexer.token, None):
         return_message += 'Token'+t.type+(': '+str(t.value) if t.type=='ID' or t.type=='String' or t.type=='Number' else '')+' (Linea '+str(t.lineno)+', Columna '+str(t.lexpos - lexer.current_column)+')\n'
     
-    return return_message if len(errors) == 0 else errors
+    return return_message if len(lexing_errors) == 0 else lexing_errors
     
     
 if __name__ == '__main__':

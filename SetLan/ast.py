@@ -3,7 +3,8 @@ class Program:
         self.statement = statement
         
     def __repr__(self):
-        return 'Program\n' + 4*' ' + self.statement.__repr__(2)
+        indent = 4
+        return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
 
 
 class Statement: pass
@@ -14,13 +15,16 @@ class Assign(Statement):
         self.variable = variable
         self.expression = expression
     
-    def __repr__(self, depth):
-        return 'Assign\n' + depth*4*' ' + self.variable.__repr__(depth+1) + '\n' + depth*4*' ' + 'value' + depth*4*' ' + self.expression.__repr__(depth+1)
+    def __repr__(self, indent):
+        return 'Assign\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n' + indent*' ' + 'value' + indent*' ' + self.expression.__repr__(indent+4)
 
 
 class Block(Statement):
     def __init__(self, statements):
         self.statements = statements
+        
+    def __repr__(self, indent):
+        return 'Block Start\n' + indent*' ' + self.statements.__repr__(indent+4) + '\n' + indent*' ' + 'Block End'
 
 
 class Scan(Statement):
@@ -29,9 +33,11 @@ class Scan(Statement):
 
 
 class Print(Statement):
-    def __init__(self, elements):
-        self.elements = elements
+    def __init__(self, print_list):
+        self.print_list = print_list
 
+    def __repr__(self, indent):
+        return 'Print\n' + indent*' ' + self.print_list.__repr__(indent+4)
 
 class If(Statement):
     def __init__(self, condition, then_st, else_st=None):
@@ -80,6 +86,9 @@ class Bool(Expression):
 class String(Expression):
     def __init__(self, value):
         self.value = value
+        
+    def __repr__(self, indent):
+        return 'String\n' + indent*' ' + self.value + '\n'
 
 
 class Plus(Expression):
