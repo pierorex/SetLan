@@ -1,4 +1,4 @@
-class Program:
+class Program(object):
     def __init__(self, statement):
         self.statement = statement
         
@@ -7,7 +7,7 @@ class Program:
         return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
 
 
-class Statement: pass
+class Statement(object): pass
 
 
 class Assign(Statement):
@@ -77,18 +77,12 @@ class Repeat(Statement):
             if self.statement2:
                 return 'Repeat\n' + indent*' ' + self.statement1.__repr__(indent+4) + '\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n' + self.statement2.__repr__(indent+4) + indent*' ' + '\n'
             else:
-                return 'Repeat\n' + indent*' ' + self.statement1.__repr__(indent+4)
-
-"""class While(Statement):
-    def __init__(self, condition, statement):
-        self.condition = condition
-        self.statement = statement
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'"""
+                return 'Repeat\n' + indent*' ' + self.statement1.__repr__(indent+4) + '\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n'
+        else:
+            return 'Repeat\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n' + indent*' ' + self.statement2.__repr__(indent+4) + '\n'
+        
     
-    
-class Expression: pass
+class Expression(object): pass
 
 
 class Variable(Expression):
@@ -96,7 +90,7 @@ class Variable(Expression):
         self.name = name
 
     def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+        return 'Variable\n' + indent*' ' + self.name.__repr__(indent+4) + '\n'
     
 
 class Int(Expression):
@@ -112,7 +106,7 @@ class Bool(Expression):
         self.value = value
 
     def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+        return 'Bool\n' + indent*' ' + self.value.__repr__(indent+4) + '\n'
     
 
 class String(Expression):
@@ -123,267 +117,73 @@ class String(Expression):
         return 'String\n' + indent*' ' + self.value + '\n'
 
 
-class Plus(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class BinOp(Expression): 
+    def __init__(self, operator, operand1, operand2):
+        self.operand1 = operand1
+        self.operand2 = operand2
 
     def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-
-class Minus(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+        return  self.class_name + '\n' + indent*' ' + self.operand1.__repr__(indent+4) + '\n' + self.operand2.__repr__(indent+4) + '\n'
 
 
-class Times(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class Plus(BinOp): pass
 
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+class Minus(BinOp): pass
+
+class Times(BinOp): pass
+
+class Div(BinOp): pass
     
-
-class Div(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+class Mod(BinOp): pass
     
-
-class Mod(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+class PlusSet(BinOp): pass
     
+class MinusSet(BinOp): pass
+
+class TimesSet(BinOp): pass
     
-class PlusSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class DivSet(BinOp): pass
 
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+class ModSet(BinOp): pass
     
+class LessThan(BinOp): pass
+        
+class LessThanEq(BinOp): pass
+        
+class GreaterThan(BinOp): pass
+    
+class GreaterThanEq(BinOp): pass
+        
+class Equals(BinOp): pass
+        
+class NotEquals(BinOp): pass
 
-class MinusSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+class Union(BinOp): pass
+    
+class Difference(BinOp): pass
+        
+class Intersect(BinOp): pass
+        
+class And(BinOp): pass
+        
+class Or(BinOp): pass
+        
+class Contains(BinOp): pass
     
 
-class TimesSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-    
-class DivSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-
-class ModSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-   
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-    
-class LessThan(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class LessThanEq(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right   
-        self.operator = operator
-   
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-        
-        
-class GreaterThan(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-    
-class GreaterThanEq(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Equals(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class NotEquals(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Union(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right      
-        self.operator = operator  
-   
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-    
-class Difference(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right      
-        self.operator = operator   
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Intersect(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class And(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Or(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Contains(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-    
-class Uminus(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
+class UnaryOp(Expression):
+    def __init__(self, operand):
         self.operand = operand
 
     def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
+        return self.class_name + '\n' + indent*' ' + self.operand.__repr__(indent+4) + '\n'
     
-        
-class Not(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class Len(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class MaxSet(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
-        
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
-        
-class MinSet(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
+class Uminus(Expression): pass
 
-    def __repr__(self, indent):
-        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
-    
+class Not(Expression): pass
+        
+class Len(Expression): pass    
+        
+class MaxSet(Expression): pass
+        
+class MinSet(Expression): pass    
