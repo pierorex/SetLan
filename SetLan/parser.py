@@ -103,9 +103,9 @@ def p_repeat(p):
     if len(p) == 7:
         p[0] = Repeat(p[2], p[4], p[6])
     elif p[1] == 'Repeat':
-        p[0] = Repeat(p[2], p[4])
+        p[0] = Repeat(p[2], p[4], None)
     elif p[1] == 'While':
-        p[0] = While(p[2], p[4])
+        p[0] = Repeat(p[4], None, p[6])
         
 
 precedence = (
