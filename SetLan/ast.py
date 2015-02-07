@@ -26,15 +26,15 @@ class Assign(Statement):
 
 
 class Block(Statement):
-    def __init__(self, statement):
-        self.statement = statement
+    def __init__(self, statement_list):
+        self.statement_list = statement_list
 
     def repr(self, indent):
-        if self.statement:
-            sta = self.statement.__repr__() if not getattr(self.statement,'repr',None) else self.statement.repr(indent+4)
-            return 'Block Start\n' + indent*' ' + sta + '\n' + indent*' ' + 'Block End\n'
-        else:
-            return None
+        s = 'Block Start\n'
+        for statement in self.statement_list:
+            sta = statement.__repr__() if not getattr(statement,'repr',None) else statement.repr(indent+4)
+            s += indent*' ' + sta + '\n'
+        return s + indent*' ' + 'Block End\n'
 
 
 class Scan(Statement):
@@ -65,7 +65,7 @@ class Println(Statement):
     def repr(self, indent):
         return_string = 'Println\n'
         for element in self.print_list:
-            e = self.element.__repr__() if not getattr(element,'repr',None) else self.element.repr(indent+4)
+            e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
             return_string +=  + indent*' ' + e + '\n'
         return return_string
 
@@ -157,9 +157,9 @@ class BinOp(Expression):
         self.operand2 = operand2
 
     def repr(self, indent):
-        op1 = self.op1.__repr__() if not getattr(self.op1,'repr',None) else self.op1.repr(indent+4)
-        op2 = self.op1.__repr__() if not getattr(self.op1,'repr',None) else self.op1.repr(indent+4)
-        return  self.class_name + '\n' + indent*' ' + op1 + '\n' + op2 + '\n'
+        op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
+        op2 = self.operand2.__repr__() if not getattr(self.operand2,'repr',None) else self.operand2.repr(indent+4)
+        return  self.__class__.__name__ + '\n' + indent*' ' + op1 + '\n' + op2 + '\n'
 
 
 class Plus(BinOp): pass
