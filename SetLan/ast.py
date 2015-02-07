@@ -4,7 +4,10 @@ class Program(object):
         
     def __repr__(self):
         indent = 4
-        return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
+        if self.statement:
+            return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
+        else:
+            return 'Program\n'
 
 
 class Statement(object): pass
@@ -24,7 +27,10 @@ class Block(Statement):
         self.statements = statements
         
     def __repr__(self, indent):
-        return 'Block Start\n' + indent*' ' + self.statements.__repr__(indent+4) + '\n' + indent*' ' + 'Block End\n'
+        if self.statement: 
+            return 'Block Start\n' + indent*' ' + self.statements.__repr__(indent+4) + '\n' + indent*' ' + 'Block End\n'
+        else:
+            return None
 
 
 class Scan(Statement):
@@ -41,6 +47,17 @@ class Print(Statement):
 
     def __repr__(self, indent):
         return_string = 'Print\n'
+        for element in self.print_list:
+            return_string +=  + indent*' ' + element.__repr__(indent+4) + '\n'
+        return return_string
+
+
+class Println(Statement):
+    def __init__(self, print_list):
+        self.print_list = print_list
+
+    def __repr__(self, indent):
+        return_string = 'Println\n'
         for element in self.print_list:
             return_string +=  + indent*' ' + element.__repr__(indent+4) + '\n'
         return return_string
