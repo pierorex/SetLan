@@ -1,0 +1,2 @@
+a = "Soy
+ \n string \n ;D \n perritooooos " &%$
