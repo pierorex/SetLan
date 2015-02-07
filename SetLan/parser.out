@@ -1,11 +1,11 @@
 shift/reduce conflict in state 6 resolved as shift.
-shift/reduce conflict in state 36 resolved as shift.
-shift/reduce conflict in state 78 resolved as shift.
-shift/reduce conflict in state 80 resolved as shift.
 shift/reduce conflict in state 116 resolved as shift.
 shift/reduce conflict in state 120 resolved as shift.
 shift/reduce conflict in state 121 resolved as shift.
-shift/reduce conflict in state 123 resolved as shift.
+shift/reduce conflict in state 124 resolved as shift.
+shift/reduce conflict in state 125 resolved as shift.
+shift/reduce conflict in state 133 resolved as shift.
+shift/reduce conflict in state 134 resolved as shift.
 
 
 Unused terminals:
@@ -37,13 +37,13 @@ Rule 16    statement -> Print expression_list
 Rule 17    statement -> Println expression_list
 Rule 18    expression_list -> expression
 Rule 19    expression_list -> expression_list Comma expression
-Rule 20    statement -> If expression statement
-Rule 21    statement -> If expression statement Else statement
+Rule 20    statement -> If OpenParen expression CloseParen statement
+Rule 21    statement -> If OpenParen expression CloseParen statement Else statement
 Rule 22    statement -> For ID Min expression Do statement
 Rule 23    statement -> For ID Max expression Do statement
-Rule 24    statement -> Repeat statement While expression Do statement
-Rule 25    statement -> Repeat statement While expression
-Rule 26    statement -> While expression Do statement
+Rule 24    statement -> Repeat statement While OpenParen expression CloseParen Do statement
+Rule 25    statement -> Repeat statement While OpenParen expression CloseParen
+Rule 26    statement -> While OpenParen expression CloseParen Do statement
 Rule 27    expression -> Number
 Rule 28    expression -> True
 Rule 29    expression -> False
@@ -88,7 +88,7 @@ Arrow                :
 Assign               : 2
 Bool                 : 13
 CloseCurly           : 3 4 34
-CloseParen           : 35
+CloseParen           : 20 21 24 25 26 35
 Colon                : 
 Comma                : 9 19 33
 Comment              : 
@@ -124,7 +124,7 @@ Not                  : 59
 NotEquals            : 51
 Number               : 27 32 33
 OpenCurly            : 3 4 34
-OpenParen            : 35
+OpenParen            : 20 21 24 25 26 35
 Or                   : 56
 Plus                 : 36
 PlusSet              : 41
@@ -181,13 +181,13 @@ state 1
     (15) statement -> . Scan ID
     (16) statement -> . Print expression_list
     (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
     (22) statement -> . For ID Min expression Do statement
     (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
     ID              shift and go to state 10
     OpenCurly       shift and go to state 3
@@ -223,13 +223,13 @@ state 3
     (15) statement -> . Scan ID
     (16) statement -> . Print expression_list
     (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
     (22) statement -> . For ID Min expression Do statement
     (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
     Using           shift and go to state 14
     ID              shift and go to state 10
@@ -316,8 +316,8 @@ state 5
 
 state 6
 
-    (24) statement -> Repeat . statement While expression Do statement
-    (25) statement -> Repeat . statement While expression
+    (24) statement -> Repeat . statement While OpenParen expression CloseParen Do statement
+    (25) statement -> Repeat . statement While OpenParen expression CloseParen
     (2) statement -> . ID Assign expression
     (3) statement -> . OpenCurly statement_list CloseCurly
     (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
@@ -325,13 +325,13 @@ state 6
     (15) statement -> . Scan ID
     (16) statement -> . Print expression_list
     (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
     (22) statement -> . For ID Min expression Do statement
     (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
   ! shift/reduce conflict for While resolved as shift.
     ID              shift and go to state 10
@@ -358,57 +358,11 @@ state 7
 
 state 8
 
-    (26) statement -> While . expression Do statement
-    (27) expression -> . Number
-    (28) expression -> . True
-    (29) expression -> . False
-    (30) expression -> . String
-    (31) expression -> . ID
-    (34) expression -> . OpenCurly number_list CloseCurly
-    (35) expression -> . OpenParen expression CloseParen
-    (36) expression -> . expression Plus expression
-    (37) expression -> . expression Minus expression
-    (38) expression -> . expression Times expression
-    (39) expression -> . expression Div expression
-    (40) expression -> . expression Mod expression
-    (41) expression -> . expression PlusSet expression
-    (42) expression -> . expression MinusSet expression
-    (43) expression -> . expression TimesSet expression
-    (44) expression -> . expression DivSet expression
-    (45) expression -> . expression ModSet expression
-    (46) expression -> . expression LessThan expression
-    (47) expression -> . expression LessThanEq expression
-    (48) expression -> . expression GreaterThan expression
-    (49) expression -> . expression GreaterThanEq expression
-    (50) expression -> . expression Equals expression
-    (51) expression -> . expression NotEquals expression
-    (52) expression -> . expression Union expression
-    (53) expression -> . expression Difference expression
-    (54) expression -> . expression Intersect expression
-    (55) expression -> . expression And expression
-    (56) expression -> . expression Or expression
-    (57) expression -> . expression Contains expression
-    (58) expression -> . Minus expression
-    (59) expression -> . Not expression
-    (60) expression -> . Len expression
-    (61) expression -> . MaxSet expression
-    (62) expression -> . MinSet expression
+    (26) statement -> While . OpenParen expression CloseParen Do statement
 
-    Number          shift and go to state 28
-    True            shift and go to state 23
-    False           shift and go to state 26
-    String          shift and go to state 19
-    ID              shift and go to state 25
-    OpenCurly       shift and go to state 17
-    OpenParen       shift and go to state 24
-    Minus           shift and go to state 21
-    Not             shift and go to state 22
-    Len             shift and go to state 20
-    MaxSet          shift and go to state 29
-    MinSet          shift and go to state 18
+    OpenParen       shift and go to state 32
 
 
-    expression                     shift and go to state 32
 
 state 9
 
@@ -485,58 +439,12 @@ state 11
 
 state 12
 
-    (20) statement -> If . expression statement
-    (21) statement -> If . expression statement Else statement
-    (27) expression -> . Number
-    (28) expression -> . True
-    (29) expression -> . False
-    (30) expression -> . String
-    (31) expression -> . ID
-    (34) expression -> . OpenCurly number_list CloseCurly
-    (35) expression -> . OpenParen expression CloseParen
-    (36) expression -> . expression Plus expression
-    (37) expression -> . expression Minus expression
-    (38) expression -> . expression Times expression
-    (39) expression -> . expression Div expression
-    (40) expression -> . expression Mod expression
-    (41) expression -> . expression PlusSet expression
-    (42) expression -> . expression MinusSet expression
-    (43) expression -> . expression TimesSet expression
-    (44) expression -> . expression DivSet expression
-    (45) expression -> . expression ModSet expression
-    (46) expression -> . expression LessThan expression
-    (47) expression -> . expression LessThanEq expression
-    (48) expression -> . expression GreaterThan expression
-    (49) expression -> . expression GreaterThanEq expression
-    (50) expression -> . expression Equals expression
-    (51) expression -> . expression NotEquals expression
-    (52) expression -> . expression Union expression
-    (53) expression -> . expression Difference expression
-    (54) expression -> . expression Intersect expression
-    (55) expression -> . expression And expression
-    (56) expression -> . expression Or expression
-    (57) expression -> . expression Contains expression
-    (58) expression -> . Minus expression
-    (59) expression -> . Not expression
-    (60) expression -> . Len expression
-    (61) expression -> . MaxSet expression
-    (62) expression -> . MinSet expression
+    (20) statement -> If . OpenParen expression CloseParen statement
+    (21) statement -> If . OpenParen expression CloseParen statement Else statement
 
-    Number          shift and go to state 28
-    True            shift and go to state 23
-    False           shift and go to state 26
-    String          shift and go to state 19
-    ID              shift and go to state 25
-    OpenCurly       shift and go to state 17
-    OpenParen       shift and go to state 24
-    Minus           shift and go to state 21
-    Not             shift and go to state 22
-    Len             shift and go to state 20
-    MaxSet          shift and go to state 29
-    MinSet          shift and go to state 18
+    OpenParen       shift and go to state 36
 
 
-    expression                     shift and go to state 36
 
 state 13
 
@@ -681,16 +589,8 @@ state 19
     SemiColon       reduce using rule 30 (expression -> String .)
     While           reduce using rule 30 (expression -> String .)
     Else            reduce using rule 30 (expression -> String .)
-    Do              reduce using rule 30 (expression -> String .)
-    ID              reduce using rule 30 (expression -> String .)
-    OpenCurly       reduce using rule 30 (expression -> String .)
-    Scan            reduce using rule 30 (expression -> String .)
-    Print           reduce using rule 30 (expression -> String .)
-    Println         reduce using rule 30 (expression -> String .)
-    If              reduce using rule 30 (expression -> String .)
-    For             reduce using rule 30 (expression -> String .)
-    Repeat          reduce using rule 30 (expression -> String .)
     CloseParen      reduce using rule 30 (expression -> String .)
+    Do              reduce using rule 30 (expression -> String .)
 
 
 
@@ -888,16 +788,8 @@ state 23
     SemiColon       reduce using rule 28 (expression -> True .)
     While           reduce using rule 28 (expression -> True .)
     Else            reduce using rule 28 (expression -> True .)
-    Do              reduce using rule 28 (expression -> True .)
-    ID              reduce using rule 28 (expression -> True .)
-    OpenCurly       reduce using rule 28 (expression -> True .)
-    Scan            reduce using rule 28 (expression -> True .)
-    Print           reduce using rule 28 (expression -> True .)
-    Println         reduce using rule 28 (expression -> True .)
-    If              reduce using rule 28 (expression -> True .)
-    For             reduce using rule 28 (expression -> True .)
-    Repeat          reduce using rule 28 (expression -> True .)
     CloseParen      reduce using rule 28 (expression -> True .)
+    Do              reduce using rule 28 (expression -> True .)
 
 
 
@@ -987,16 +879,8 @@ state 25
     SemiColon       reduce using rule 31 (expression -> ID .)
     While           reduce using rule 31 (expression -> ID .)
     Else            reduce using rule 31 (expression -> ID .)
-    Do              reduce using rule 31 (expression -> ID .)
-    ID              reduce using rule 31 (expression -> ID .)
-    OpenCurly       reduce using rule 31 (expression -> ID .)
-    Scan            reduce using rule 31 (expression -> ID .)
-    Print           reduce using rule 31 (expression -> ID .)
-    Println         reduce using rule 31 (expression -> ID .)
-    If              reduce using rule 31 (expression -> ID .)
-    For             reduce using rule 31 (expression -> ID .)
-    Repeat          reduce using rule 31 (expression -> ID .)
     CloseParen      reduce using rule 31 (expression -> ID .)
+    Do              reduce using rule 31 (expression -> ID .)
 
 
 
@@ -1032,16 +916,8 @@ state 26
     SemiColon       reduce using rule 29 (expression -> False .)
     While           reduce using rule 29 (expression -> False .)
     Else            reduce using rule 29 (expression -> False .)
-    Do              reduce using rule 29 (expression -> False .)
-    ID              reduce using rule 29 (expression -> False .)
-    OpenCurly       reduce using rule 29 (expression -> False .)
-    Scan            reduce using rule 29 (expression -> False .)
-    Print           reduce using rule 29 (expression -> False .)
-    Println         reduce using rule 29 (expression -> False .)
-    If              reduce using rule 29 (expression -> False .)
-    For             reduce using rule 29 (expression -> False .)
-    Repeat          reduce using rule 29 (expression -> False .)
     CloseParen      reduce using rule 29 (expression -> False .)
+    Do              reduce using rule 29 (expression -> False .)
 
 
 
@@ -1091,16 +967,8 @@ state 28
     SemiColon       reduce using rule 27 (expression -> Number .)
     While           reduce using rule 27 (expression -> Number .)
     Else            reduce using rule 27 (expression -> Number .)
-    Do              reduce using rule 27 (expression -> Number .)
-    ID              reduce using rule 27 (expression -> Number .)
-    OpenCurly       reduce using rule 27 (expression -> Number .)
-    Scan            reduce using rule 27 (expression -> Number .)
-    Print           reduce using rule 27 (expression -> Number .)
-    Println         reduce using rule 27 (expression -> Number .)
-    If              reduce using rule 27 (expression -> Number .)
-    For             reduce using rule 27 (expression -> Number .)
-    Repeat          reduce using rule 27 (expression -> Number .)
     CloseParen      reduce using rule 27 (expression -> Number .)
+    Do              reduce using rule 27 (expression -> Number .)
 
 
 
@@ -1217,8 +1085,8 @@ state 30
 
 state 31
 
-    (24) statement -> Repeat statement . While expression Do statement
-    (25) statement -> Repeat statement . While expression
+    (24) statement -> Repeat statement . While OpenParen expression CloseParen Do statement
+    (25) statement -> Repeat statement . While OpenParen expression CloseParen
 
     While           shift and go to state 77
 
@@ -1226,55 +1094,57 @@ state 31
 
 state 32
 
-    (26) statement -> While expression . Do statement
-    (36) expression -> expression . Plus expression
-    (37) expression -> expression . Minus expression
-    (38) expression -> expression . Times expression
-    (39) expression -> expression . Div expression
-    (40) expression -> expression . Mod expression
-    (41) expression -> expression . PlusSet expression
-    (42) expression -> expression . MinusSet expression
-    (43) expression -> expression . TimesSet expression
-    (44) expression -> expression . DivSet expression
-    (45) expression -> expression . ModSet expression
-    (46) expression -> expression . LessThan expression
-    (47) expression -> expression . LessThanEq expression
-    (48) expression -> expression . GreaterThan expression
-    (49) expression -> expression . GreaterThanEq expression
-    (50) expression -> expression . Equals expression
-    (51) expression -> expression . NotEquals expression
-    (52) expression -> expression . Union expression
-    (53) expression -> expression . Difference expression
-    (54) expression -> expression . Intersect expression
-    (55) expression -> expression . And expression
-    (56) expression -> expression . Or expression
-    (57) expression -> expression . Contains expression
+    (26) statement -> While OpenParen . expression CloseParen Do statement
+    (27) expression -> . Number
+    (28) expression -> . True
+    (29) expression -> . False
+    (30) expression -> . String
+    (31) expression -> . ID
+    (34) expression -> . OpenCurly number_list CloseCurly
+    (35) expression -> . OpenParen expression CloseParen
+    (36) expression -> . expression Plus expression
+    (37) expression -> . expression Minus expression
+    (38) expression -> . expression Times expression
+    (39) expression -> . expression Div expression
+    (40) expression -> . expression Mod expression
+    (41) expression -> . expression PlusSet expression
+    (42) expression -> . expression MinusSet expression
+    (43) expression -> . expression TimesSet expression
+    (44) expression -> . expression DivSet expression
+    (45) expression -> . expression ModSet expression
+    (46) expression -> . expression LessThan expression
+    (47) expression -> . expression LessThanEq expression
+    (48) expression -> . expression GreaterThan expression
+    (49) expression -> . expression GreaterThanEq expression
+    (50) expression -> . expression Equals expression
+    (51) expression -> . expression NotEquals expression
+    (52) expression -> . expression Union expression
+    (53) expression -> . expression Difference expression
+    (54) expression -> . expression Intersect expression
+    (55) expression -> . expression And expression
+    (56) expression -> . expression Or expression
+    (57) expression -> . expression Contains expression
+    (58) expression -> . Minus expression
+    (59) expression -> . Not expression
+    (60) expression -> . Len expression
+    (61) expression -> . MaxSet expression
+    (62) expression -> . MinSet expression
 
-    Do              shift and go to state 78
-    Plus            shift and go to state 71
-    Minus           shift and go to state 73
-    Times           shift and go to state 70
-    Div             shift and go to state 72
-    Mod             shift and go to state 67
-    PlusSet         shift and go to state 60
-    MinusSet        shift and go to state 74
-    TimesSet        shift and go to state 76
-    DivSet          shift and go to state 65
-    ModSet          shift and go to state 69
-    LessThan        shift and go to state 57
-    LessThanEq      shift and go to state 61
-    GreaterThan     shift and go to state 75
-    GreaterThanEq   shift and go to state 58
-    Equals          shift and go to state 63
-    NotEquals       shift and go to state 62
-    Union           shift and go to state 55
-    Difference      shift and go to state 66
-    Intersect       shift and go to state 59
-    And             shift and go to state 68
-    Or              shift and go to state 64
-    Contains        shift and go to state 56
+    Number          shift and go to state 28
+    True            shift and go to state 23
+    False           shift and go to state 26
+    String          shift and go to state 19
+    ID              shift and go to state 25
+    OpenCurly       shift and go to state 17
+    OpenParen       shift and go to state 24
+    Minus           shift and go to state 21
+    Not             shift and go to state 22
+    Len             shift and go to state 20
+    MaxSet          shift and go to state 29
+    MinSet          shift and go to state 18
 
 
+    expression                     shift and go to state 78
 
 state 33
 
@@ -1358,85 +1228,58 @@ state 35
 
 state 36
 
-    (20) statement -> If expression . statement
-    (21) statement -> If expression . statement Else statement
-    (36) expression -> expression . Plus expression
-    (37) expression -> expression . Minus expression
-    (38) expression -> expression . Times expression
-    (39) expression -> expression . Div expression
-    (40) expression -> expression . Mod expression
-    (41) expression -> expression . PlusSet expression
-    (42) expression -> expression . MinusSet expression
-    (43) expression -> expression . TimesSet expression
-    (44) expression -> expression . DivSet expression
-    (45) expression -> expression . ModSet expression
-    (46) expression -> expression . LessThan expression
-    (47) expression -> expression . LessThanEq expression
-    (48) expression -> expression . GreaterThan expression
-    (49) expression -> expression . GreaterThanEq expression
-    (50) expression -> expression . Equals expression
-    (51) expression -> expression . NotEquals expression
-    (52) expression -> expression . Union expression
-    (53) expression -> expression . Difference expression
-    (54) expression -> expression . Intersect expression
-    (55) expression -> expression . And expression
-    (56) expression -> expression . Or expression
-    (57) expression -> expression . Contains expression
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (20) statement -> If OpenParen . expression CloseParen statement
+    (21) statement -> If OpenParen . expression CloseParen statement Else statement
+    (27) expression -> . Number
+    (28) expression -> . True
+    (29) expression -> . False
+    (30) expression -> . String
+    (31) expression -> . ID
+    (34) expression -> . OpenCurly number_list CloseCurly
+    (35) expression -> . OpenParen expression CloseParen
+    (36) expression -> . expression Plus expression
+    (37) expression -> . expression Minus expression
+    (38) expression -> . expression Times expression
+    (39) expression -> . expression Div expression
+    (40) expression -> . expression Mod expression
+    (41) expression -> . expression PlusSet expression
+    (42) expression -> . expression MinusSet expression
+    (43) expression -> . expression TimesSet expression
+    (44) expression -> . expression DivSet expression
+    (45) expression -> . expression ModSet expression
+    (46) expression -> . expression LessThan expression
+    (47) expression -> . expression LessThanEq expression
+    (48) expression -> . expression GreaterThan expression
+    (49) expression -> . expression GreaterThanEq expression
+    (50) expression -> . expression Equals expression
+    (51) expression -> . expression NotEquals expression
+    (52) expression -> . expression Union expression
+    (53) expression -> . expression Difference expression
+    (54) expression -> . expression Intersect expression
+    (55) expression -> . expression And expression
+    (56) expression -> . expression Or expression
+    (57) expression -> . expression Contains expression
+    (58) expression -> . Minus expression
+    (59) expression -> . Not expression
+    (60) expression -> . Len expression
+    (61) expression -> . MaxSet expression
+    (62) expression -> . MinSet expression
 
-  ! shift/reduce conflict for While resolved as shift.
-    Plus            shift and go to state 71
-    Minus           shift and go to state 73
-    Times           shift and go to state 70
-    Div             shift and go to state 72
-    Mod             shift and go to state 67
-    PlusSet         shift and go to state 60
-    MinusSet        shift and go to state 74
-    TimesSet        shift and go to state 76
-    DivSet          shift and go to state 65
-    ModSet          shift and go to state 69
-    LessThan        shift and go to state 57
-    LessThanEq      shift and go to state 61
-    GreaterThan     shift and go to state 75
-    GreaterThanEq   shift and go to state 58
-    Equals          shift and go to state 63
-    NotEquals       shift and go to state 62
-    Union           shift and go to state 55
-    Difference      shift and go to state 66
-    Intersect       shift and go to state 59
-    And             shift and go to state 68
-    Or              shift and go to state 64
-    Contains        shift and go to state 56
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
+    Number          shift and go to state 28
+    True            shift and go to state 23
+    False           shift and go to state 26
+    String          shift and go to state 19
+    ID              shift and go to state 25
+    OpenCurly       shift and go to state 17
+    OpenParen       shift and go to state 24
+    Minus           shift and go to state 21
+    Not             shift and go to state 22
+    Len             shift and go to state 20
+    MaxSet          shift and go to state 29
+    MinSet          shift and go to state 18
 
-  ! While           [ reduce using rule 5 (statement -> .) ]
 
-    statement                      shift and go to state 80
+    expression                     shift and go to state 80
 
 state 37
 
@@ -1505,13 +1348,13 @@ state 43
     (15) statement -> . Scan ID
     (16) statement -> . Print expression_list
     (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
     (22) statement -> . For ID Min expression Do statement
     (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
     ID              shift and go to state 10
     OpenCurly       shift and go to state 3
@@ -1709,16 +1552,8 @@ state 48
     SemiColon       reduce using rule 62 (expression -> MinSet expression .)
     While           reduce using rule 62 (expression -> MinSet expression .)
     Else            reduce using rule 62 (expression -> MinSet expression .)
-    Do              reduce using rule 62 (expression -> MinSet expression .)
-    ID              reduce using rule 62 (expression -> MinSet expression .)
-    OpenCurly       reduce using rule 62 (expression -> MinSet expression .)
-    Scan            reduce using rule 62 (expression -> MinSet expression .)
-    Print           reduce using rule 62 (expression -> MinSet expression .)
-    Println         reduce using rule 62 (expression -> MinSet expression .)
-    If              reduce using rule 62 (expression -> MinSet expression .)
-    For             reduce using rule 62 (expression -> MinSet expression .)
-    Repeat          reduce using rule 62 (expression -> MinSet expression .)
     CloseParen      reduce using rule 62 (expression -> MinSet expression .)
+    Do              reduce using rule 62 (expression -> MinSet expression .)
 
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
@@ -1798,16 +1633,8 @@ state 49
     SemiColon       reduce using rule 60 (expression -> Len expression .)
     While           reduce using rule 60 (expression -> Len expression .)
     Else            reduce using rule 60 (expression -> Len expression .)
-    Do              reduce using rule 60 (expression -> Len expression .)
-    ID              reduce using rule 60 (expression -> Len expression .)
-    OpenCurly       reduce using rule 60 (expression -> Len expression .)
-    Scan            reduce using rule 60 (expression -> Len expression .)
-    Print           reduce using rule 60 (expression -> Len expression .)
-    Println         reduce using rule 60 (expression -> Len expression .)
-    If              reduce using rule 60 (expression -> Len expression .)
-    For             reduce using rule 60 (expression -> Len expression .)
-    Repeat          reduce using rule 60 (expression -> Len expression .)
     CloseParen      reduce using rule 60 (expression -> Len expression .)
+    Do              reduce using rule 60 (expression -> Len expression .)
 
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
@@ -1878,16 +1705,8 @@ state 50
     SemiColon       reduce using rule 58 (expression -> Minus expression .)
     While           reduce using rule 58 (expression -> Minus expression .)
     Else            reduce using rule 58 (expression -> Minus expression .)
-    Do              reduce using rule 58 (expression -> Minus expression .)
-    ID              reduce using rule 58 (expression -> Minus expression .)
-    OpenCurly       reduce using rule 58 (expression -> Minus expression .)
-    Scan            reduce using rule 58 (expression -> Minus expression .)
-    Print           reduce using rule 58 (expression -> Minus expression .)
-    Println         reduce using rule 58 (expression -> Minus expression .)
-    If              reduce using rule 58 (expression -> Minus expression .)
-    For             reduce using rule 58 (expression -> Minus expression .)
-    Repeat          reduce using rule 58 (expression -> Minus expression .)
     CloseParen      reduce using rule 58 (expression -> Minus expression .)
+    Do              reduce using rule 58 (expression -> Minus expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -1956,16 +1775,8 @@ state 51
     SemiColon       reduce using rule 59 (expression -> Not expression .)
     While           reduce using rule 59 (expression -> Not expression .)
     Else            reduce using rule 59 (expression -> Not expression .)
-    Do              reduce using rule 59 (expression -> Not expression .)
-    ID              reduce using rule 59 (expression -> Not expression .)
-    OpenCurly       reduce using rule 59 (expression -> Not expression .)
-    Scan            reduce using rule 59 (expression -> Not expression .)
-    Print           reduce using rule 59 (expression -> Not expression .)
-    Println         reduce using rule 59 (expression -> Not expression .)
-    If              reduce using rule 59 (expression -> Not expression .)
-    For             reduce using rule 59 (expression -> Not expression .)
-    Repeat          reduce using rule 59 (expression -> Not expression .)
     CloseParen      reduce using rule 59 (expression -> Not expression .)
+    Do              reduce using rule 59 (expression -> Not expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -2171,16 +1982,8 @@ state 54
     SemiColon       reduce using rule 61 (expression -> MaxSet expression .)
     While           reduce using rule 61 (expression -> MaxSet expression .)
     Else            reduce using rule 61 (expression -> MaxSet expression .)
-    Do              reduce using rule 61 (expression -> MaxSet expression .)
-    ID              reduce using rule 61 (expression -> MaxSet expression .)
-    OpenCurly       reduce using rule 61 (expression -> MaxSet expression .)
-    Scan            reduce using rule 61 (expression -> MaxSet expression .)
-    Print           reduce using rule 61 (expression -> MaxSet expression .)
-    Println         reduce using rule 61 (expression -> MaxSet expression .)
-    If              reduce using rule 61 (expression -> MaxSet expression .)
-    For             reduce using rule 61 (expression -> MaxSet expression .)
-    Repeat          reduce using rule 61 (expression -> MaxSet expression .)
     CloseParen      reduce using rule 61 (expression -> MaxSet expression .)
+    Do              reduce using rule 61 (expression -> MaxSet expression .)
 
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
@@ -3396,95 +3199,64 @@ state 76
 
 state 77
 
-    (24) statement -> Repeat statement While . expression Do statement
-    (25) statement -> Repeat statement While . expression
-    (27) expression -> . Number
-    (28) expression -> . True
-    (29) expression -> . False
-    (30) expression -> . String
-    (31) expression -> . ID
-    (34) expression -> . OpenCurly number_list CloseCurly
-    (35) expression -> . OpenParen expression CloseParen
-    (36) expression -> . expression Plus expression
-    (37) expression -> . expression Minus expression
-    (38) expression -> . expression Times expression
-    (39) expression -> . expression Div expression
-    (40) expression -> . expression Mod expression
-    (41) expression -> . expression PlusSet expression
-    (42) expression -> . expression MinusSet expression
-    (43) expression -> . expression TimesSet expression
-    (44) expression -> . expression DivSet expression
-    (45) expression -> . expression ModSet expression
-    (46) expression -> . expression LessThan expression
-    (47) expression -> . expression LessThanEq expression
-    (48) expression -> . expression GreaterThan expression
-    (49) expression -> . expression GreaterThanEq expression
-    (50) expression -> . expression Equals expression
-    (51) expression -> . expression NotEquals expression
-    (52) expression -> . expression Union expression
-    (53) expression -> . expression Difference expression
-    (54) expression -> . expression Intersect expression
-    (55) expression -> . expression And expression
-    (56) expression -> . expression Or expression
-    (57) expression -> . expression Contains expression
-    (58) expression -> . Minus expression
-    (59) expression -> . Not expression
-    (60) expression -> . Len expression
-    (61) expression -> . MaxSet expression
-    (62) expression -> . MinSet expression
+    (24) statement -> Repeat statement While . OpenParen expression CloseParen Do statement
+    (25) statement -> Repeat statement While . OpenParen expression CloseParen
 
-    Number          shift and go to state 28
-    True            shift and go to state 23
-    False           shift and go to state 26
-    String          shift and go to state 19
-    ID              shift and go to state 25
-    OpenCurly       shift and go to state 17
-    OpenParen       shift and go to state 24
-    Minus           shift and go to state 21
-    Not             shift and go to state 22
-    Len             shift and go to state 20
-    MaxSet          shift and go to state 29
-    MinSet          shift and go to state 18
+    OpenParen       shift and go to state 114
 
 
-    expression                     shift and go to state 114
 
 state 78
 
-    (26) statement -> While expression Do . statement
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (26) statement -> While OpenParen expression . CloseParen Do statement
+    (36) expression -> expression . Plus expression
+    (37) expression -> expression . Minus expression
+    (38) expression -> expression . Times expression
+    (39) expression -> expression . Div expression
+    (40) expression -> expression . Mod expression
+    (41) expression -> expression . PlusSet expression
+    (42) expression -> expression . MinusSet expression
+    (43) expression -> expression . TimesSet expression
+    (44) expression -> expression . DivSet expression
+    (45) expression -> expression . ModSet expression
+    (46) expression -> expression . LessThan expression
+    (47) expression -> expression . LessThanEq expression
+    (48) expression -> expression . GreaterThan expression
+    (49) expression -> expression . GreaterThanEq expression
+    (50) expression -> expression . Equals expression
+    (51) expression -> expression . NotEquals expression
+    (52) expression -> expression . Union expression
+    (53) expression -> expression . Difference expression
+    (54) expression -> expression . Intersect expression
+    (55) expression -> expression . And expression
+    (56) expression -> expression . Or expression
+    (57) expression -> expression . Contains expression
 
-  ! shift/reduce conflict for While resolved as shift.
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
+    CloseParen      shift and go to state 115
+    Plus            shift and go to state 71
+    Minus           shift and go to state 73
+    Times           shift and go to state 70
+    Div             shift and go to state 72
+    Mod             shift and go to state 67
+    PlusSet         shift and go to state 60
+    MinusSet        shift and go to state 74
+    TimesSet        shift and go to state 76
+    DivSet          shift and go to state 65
+    ModSet          shift and go to state 69
+    LessThan        shift and go to state 57
+    LessThanEq      shift and go to state 61
+    GreaterThan     shift and go to state 75
+    GreaterThanEq   shift and go to state 58
+    Equals          shift and go to state 63
+    NotEquals       shift and go to state 62
+    Union           shift and go to state 55
+    Difference      shift and go to state 66
+    Intersect       shift and go to state 59
+    And             shift and go to state 68
+    Or              shift and go to state 64
+    Contains        shift and go to state 56
 
-  ! While           [ reduce using rule 5 (statement -> .) ]
 
-    statement                      shift and go to state 115
 
 state 79
 
@@ -3544,17 +3316,55 @@ state 79
 
 state 80
 
-    (20) statement -> If expression statement .
-    (21) statement -> If expression statement . Else statement
+    (20) statement -> If OpenParen expression . CloseParen statement
+    (21) statement -> If OpenParen expression . CloseParen statement Else statement
+    (36) expression -> expression . Plus expression
+    (37) expression -> expression . Minus expression
+    (38) expression -> expression . Times expression
+    (39) expression -> expression . Div expression
+    (40) expression -> expression . Mod expression
+    (41) expression -> expression . PlusSet expression
+    (42) expression -> expression . MinusSet expression
+    (43) expression -> expression . TimesSet expression
+    (44) expression -> expression . DivSet expression
+    (45) expression -> expression . ModSet expression
+    (46) expression -> expression . LessThan expression
+    (47) expression -> expression . LessThanEq expression
+    (48) expression -> expression . GreaterThan expression
+    (49) expression -> expression . GreaterThanEq expression
+    (50) expression -> expression . Equals expression
+    (51) expression -> expression . NotEquals expression
+    (52) expression -> expression . Union expression
+    (53) expression -> expression . Difference expression
+    (54) expression -> expression . Intersect expression
+    (55) expression -> expression . And expression
+    (56) expression -> expression . Or expression
+    (57) expression -> expression . Contains expression
 
-  ! shift/reduce conflict for Else resolved as shift.
-    $end            reduce using rule 20 (statement -> If expression statement .)
-    CloseCurly      reduce using rule 20 (statement -> If expression statement .)
-    SemiColon       reduce using rule 20 (statement -> If expression statement .)
-    While           reduce using rule 20 (statement -> If expression statement .)
-    Else            shift and go to state 116
+    CloseParen      shift and go to state 116
+    Plus            shift and go to state 71
+    Minus           shift and go to state 73
+    Times           shift and go to state 70
+    Div             shift and go to state 72
+    Mod             shift and go to state 67
+    PlusSet         shift and go to state 60
+    MinusSet        shift and go to state 74
+    TimesSet        shift and go to state 76
+    DivSet          shift and go to state 65
+    ModSet          shift and go to state 69
+    LessThan        shift and go to state 57
+    LessThanEq      shift and go to state 61
+    GreaterThan     shift and go to state 75
+    GreaterThanEq   shift and go to state 58
+    Equals          shift and go to state 63
+    NotEquals       shift and go to state 62
+    Union           shift and go to state 55
+    Difference      shift and go to state 66
+    Intersect       shift and go to state 59
+    And             shift and go to state 68
+    Or              shift and go to state 64
+    Contains        shift and go to state 56
 
-  ! Else            [ reduce using rule 20 (statement -> If expression statement .) ]
 
 
 state 81
@@ -3583,13 +3393,13 @@ state 82
     (15) statement -> . Scan ID
     (16) statement -> . Print expression_list
     (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
     (22) statement -> . For ID Min expression Do statement
     (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
     ID              shift and go to state 10
     OpenCurly       shift and go to state 3
@@ -3781,16 +3591,8 @@ state 89
     SemiColon       reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
     While           reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
     Else            reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    Do              reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    ID              reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    OpenCurly       reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    Scan            reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    Print           reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    Println         reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    If              reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    For             reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
-    Repeat          reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
     CloseParen      reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
+    Do              reduce using rule 34 (expression -> OpenCurly number_list CloseCurly .)
 
 
 
@@ -3826,16 +3628,8 @@ state 90
     SemiColon       reduce using rule 35 (expression -> OpenParen expression CloseParen .)
     While           reduce using rule 35 (expression -> OpenParen expression CloseParen .)
     Else            reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    Do              reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    ID              reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    OpenCurly       reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    Scan            reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    Print           reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    Println         reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    If              reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    For             reduce using rule 35 (expression -> OpenParen expression CloseParen .)
-    Repeat          reduce using rule 35 (expression -> OpenParen expression CloseParen .)
     CloseParen      reduce using rule 35 (expression -> OpenParen expression CloseParen .)
+    Do              reduce using rule 35 (expression -> OpenParen expression CloseParen .)
 
 
 
@@ -3943,16 +3737,8 @@ state 92
     SemiColon       reduce using rule 52 (expression -> expression Union expression .)
     While           reduce using rule 52 (expression -> expression Union expression .)
     Else            reduce using rule 52 (expression -> expression Union expression .)
-    Do              reduce using rule 52 (expression -> expression Union expression .)
-    ID              reduce using rule 52 (expression -> expression Union expression .)
-    OpenCurly       reduce using rule 52 (expression -> expression Union expression .)
-    Scan            reduce using rule 52 (expression -> expression Union expression .)
-    Print           reduce using rule 52 (expression -> expression Union expression .)
-    Println         reduce using rule 52 (expression -> expression Union expression .)
-    If              reduce using rule 52 (expression -> expression Union expression .)
-    For             reduce using rule 52 (expression -> expression Union expression .)
-    Repeat          reduce using rule 52 (expression -> expression Union expression .)
     CloseParen      reduce using rule 52 (expression -> expression Union expression .)
+    Do              reduce using rule 52 (expression -> expression Union expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -4038,16 +3824,8 @@ state 93
     SemiColon       reduce using rule 57 (expression -> expression Contains expression .)
     While           reduce using rule 57 (expression -> expression Contains expression .)
     Else            reduce using rule 57 (expression -> expression Contains expression .)
-    Do              reduce using rule 57 (expression -> expression Contains expression .)
-    ID              reduce using rule 57 (expression -> expression Contains expression .)
-    OpenCurly       reduce using rule 57 (expression -> expression Contains expression .)
-    Scan            reduce using rule 57 (expression -> expression Contains expression .)
-    Print           reduce using rule 57 (expression -> expression Contains expression .)
-    Println         reduce using rule 57 (expression -> expression Contains expression .)
-    If              reduce using rule 57 (expression -> expression Contains expression .)
-    For             reduce using rule 57 (expression -> expression Contains expression .)
-    Repeat          reduce using rule 57 (expression -> expression Contains expression .)
     CloseParen      reduce using rule 57 (expression -> expression Contains expression .)
+    Do              reduce using rule 57 (expression -> expression Contains expression .)
     Contains        shift and go to state 56
 
   ! Contains        [ reduce using rule 57 (expression -> expression Contains expression .) ]
@@ -4112,16 +3890,8 @@ state 94
     SemiColon       reduce using rule 46 (expression -> expression LessThan expression .)
     While           reduce using rule 46 (expression -> expression LessThan expression .)
     Else            reduce using rule 46 (expression -> expression LessThan expression .)
-    Do              reduce using rule 46 (expression -> expression LessThan expression .)
-    ID              reduce using rule 46 (expression -> expression LessThan expression .)
-    OpenCurly       reduce using rule 46 (expression -> expression LessThan expression .)
-    Scan            reduce using rule 46 (expression -> expression LessThan expression .)
-    Print           reduce using rule 46 (expression -> expression LessThan expression .)
-    Println         reduce using rule 46 (expression -> expression LessThan expression .)
-    If              reduce using rule 46 (expression -> expression LessThan expression .)
-    For             reduce using rule 46 (expression -> expression LessThan expression .)
-    Repeat          reduce using rule 46 (expression -> expression LessThan expression .)
     CloseParen      reduce using rule 46 (expression -> expression LessThan expression .)
+    Do              reduce using rule 46 (expression -> expression LessThan expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4201,16 +3971,8 @@ state 95
     SemiColon       reduce using rule 49 (expression -> expression GreaterThanEq expression .)
     While           reduce using rule 49 (expression -> expression GreaterThanEq expression .)
     Else            reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    Do              reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    ID              reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    OpenCurly       reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    Scan            reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    Print           reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    Println         reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    If              reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    For             reduce using rule 49 (expression -> expression GreaterThanEq expression .)
-    Repeat          reduce using rule 49 (expression -> expression GreaterThanEq expression .)
     CloseParen      reduce using rule 49 (expression -> expression GreaterThanEq expression .)
+    Do              reduce using rule 49 (expression -> expression GreaterThanEq expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4300,16 +4062,8 @@ state 96
     SemiColon       reduce using rule 54 (expression -> expression Intersect expression .)
     While           reduce using rule 54 (expression -> expression Intersect expression .)
     Else            reduce using rule 54 (expression -> expression Intersect expression .)
-    Do              reduce using rule 54 (expression -> expression Intersect expression .)
-    ID              reduce using rule 54 (expression -> expression Intersect expression .)
-    OpenCurly       reduce using rule 54 (expression -> expression Intersect expression .)
-    Scan            reduce using rule 54 (expression -> expression Intersect expression .)
-    Print           reduce using rule 54 (expression -> expression Intersect expression .)
-    Println         reduce using rule 54 (expression -> expression Intersect expression .)
-    If              reduce using rule 54 (expression -> expression Intersect expression .)
-    For             reduce using rule 54 (expression -> expression Intersect expression .)
-    Repeat          reduce using rule 54 (expression -> expression Intersect expression .)
     CloseParen      reduce using rule 54 (expression -> expression Intersect expression .)
+    Do              reduce using rule 54 (expression -> expression Intersect expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -4391,16 +4145,8 @@ state 97
     SemiColon       reduce using rule 41 (expression -> expression PlusSet expression .)
     While           reduce using rule 41 (expression -> expression PlusSet expression .)
     Else            reduce using rule 41 (expression -> expression PlusSet expression .)
-    Do              reduce using rule 41 (expression -> expression PlusSet expression .)
-    ID              reduce using rule 41 (expression -> expression PlusSet expression .)
-    OpenCurly       reduce using rule 41 (expression -> expression PlusSet expression .)
-    Scan            reduce using rule 41 (expression -> expression PlusSet expression .)
-    Print           reduce using rule 41 (expression -> expression PlusSet expression .)
-    Println         reduce using rule 41 (expression -> expression PlusSet expression .)
-    If              reduce using rule 41 (expression -> expression PlusSet expression .)
-    For             reduce using rule 41 (expression -> expression PlusSet expression .)
-    Repeat          reduce using rule 41 (expression -> expression PlusSet expression .)
     CloseParen      reduce using rule 41 (expression -> expression PlusSet expression .)
+    Do              reduce using rule 41 (expression -> expression PlusSet expression .)
     TimesSet        shift and go to state 76
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
@@ -4468,16 +4214,8 @@ state 98
     SemiColon       reduce using rule 47 (expression -> expression LessThanEq expression .)
     While           reduce using rule 47 (expression -> expression LessThanEq expression .)
     Else            reduce using rule 47 (expression -> expression LessThanEq expression .)
-    Do              reduce using rule 47 (expression -> expression LessThanEq expression .)
-    ID              reduce using rule 47 (expression -> expression LessThanEq expression .)
-    OpenCurly       reduce using rule 47 (expression -> expression LessThanEq expression .)
-    Scan            reduce using rule 47 (expression -> expression LessThanEq expression .)
-    Print           reduce using rule 47 (expression -> expression LessThanEq expression .)
-    Println         reduce using rule 47 (expression -> expression LessThanEq expression .)
-    If              reduce using rule 47 (expression -> expression LessThanEq expression .)
-    For             reduce using rule 47 (expression -> expression LessThanEq expression .)
-    Repeat          reduce using rule 47 (expression -> expression LessThanEq expression .)
     CloseParen      reduce using rule 47 (expression -> expression LessThanEq expression .)
+    Do              reduce using rule 47 (expression -> expression LessThanEq expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4559,16 +4297,8 @@ state 99
     SemiColon       reduce using rule 51 (expression -> expression NotEquals expression .)
     While           reduce using rule 51 (expression -> expression NotEquals expression .)
     Else            reduce using rule 51 (expression -> expression NotEquals expression .)
-    Do              reduce using rule 51 (expression -> expression NotEquals expression .)
-    ID              reduce using rule 51 (expression -> expression NotEquals expression .)
-    OpenCurly       reduce using rule 51 (expression -> expression NotEquals expression .)
-    Scan            reduce using rule 51 (expression -> expression NotEquals expression .)
-    Print           reduce using rule 51 (expression -> expression NotEquals expression .)
-    Println         reduce using rule 51 (expression -> expression NotEquals expression .)
-    If              reduce using rule 51 (expression -> expression NotEquals expression .)
-    For             reduce using rule 51 (expression -> expression NotEquals expression .)
-    Repeat          reduce using rule 51 (expression -> expression NotEquals expression .)
     CloseParen      reduce using rule 51 (expression -> expression NotEquals expression .)
+    Do              reduce using rule 51 (expression -> expression NotEquals expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4648,16 +4378,8 @@ state 100
     SemiColon       reduce using rule 50 (expression -> expression Equals expression .)
     While           reduce using rule 50 (expression -> expression Equals expression .)
     Else            reduce using rule 50 (expression -> expression Equals expression .)
-    Do              reduce using rule 50 (expression -> expression Equals expression .)
-    ID              reduce using rule 50 (expression -> expression Equals expression .)
-    OpenCurly       reduce using rule 50 (expression -> expression Equals expression .)
-    Scan            reduce using rule 50 (expression -> expression Equals expression .)
-    Print           reduce using rule 50 (expression -> expression Equals expression .)
-    Println         reduce using rule 50 (expression -> expression Equals expression .)
-    If              reduce using rule 50 (expression -> expression Equals expression .)
-    For             reduce using rule 50 (expression -> expression Equals expression .)
-    Repeat          reduce using rule 50 (expression -> expression Equals expression .)
     CloseParen      reduce using rule 50 (expression -> expression Equals expression .)
+    Do              reduce using rule 50 (expression -> expression Equals expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4730,16 +4452,8 @@ state 101
     SemiColon       reduce using rule 56 (expression -> expression Or expression .)
     While           reduce using rule 56 (expression -> expression Or expression .)
     Else            reduce using rule 56 (expression -> expression Or expression .)
-    Do              reduce using rule 56 (expression -> expression Or expression .)
-    ID              reduce using rule 56 (expression -> expression Or expression .)
-    OpenCurly       reduce using rule 56 (expression -> expression Or expression .)
-    Scan            reduce using rule 56 (expression -> expression Or expression .)
-    Print           reduce using rule 56 (expression -> expression Or expression .)
-    Println         reduce using rule 56 (expression -> expression Or expression .)
-    If              reduce using rule 56 (expression -> expression Or expression .)
-    For             reduce using rule 56 (expression -> expression Or expression .)
-    Repeat          reduce using rule 56 (expression -> expression Or expression .)
     CloseParen      reduce using rule 56 (expression -> expression Or expression .)
+    Do              reduce using rule 56 (expression -> expression Or expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -4839,16 +4553,8 @@ state 102
     SemiColon       reduce using rule 44 (expression -> expression DivSet expression .)
     While           reduce using rule 44 (expression -> expression DivSet expression .)
     Else            reduce using rule 44 (expression -> expression DivSet expression .)
-    Do              reduce using rule 44 (expression -> expression DivSet expression .)
-    ID              reduce using rule 44 (expression -> expression DivSet expression .)
-    OpenCurly       reduce using rule 44 (expression -> expression DivSet expression .)
-    Scan            reduce using rule 44 (expression -> expression DivSet expression .)
-    Print           reduce using rule 44 (expression -> expression DivSet expression .)
-    Println         reduce using rule 44 (expression -> expression DivSet expression .)
-    If              reduce using rule 44 (expression -> expression DivSet expression .)
-    For             reduce using rule 44 (expression -> expression DivSet expression .)
-    Repeat          reduce using rule 44 (expression -> expression DivSet expression .)
     CloseParen      reduce using rule 44 (expression -> expression DivSet expression .)
+    Do              reduce using rule 44 (expression -> expression DivSet expression .)
     Contains        shift and go to state 56
 
   ! Contains        [ reduce using rule 44 (expression -> expression DivSet expression .) ]
@@ -4922,16 +4628,8 @@ state 103
     SemiColon       reduce using rule 53 (expression -> expression Difference expression .)
     While           reduce using rule 53 (expression -> expression Difference expression .)
     Else            reduce using rule 53 (expression -> expression Difference expression .)
-    Do              reduce using rule 53 (expression -> expression Difference expression .)
-    ID              reduce using rule 53 (expression -> expression Difference expression .)
-    OpenCurly       reduce using rule 53 (expression -> expression Difference expression .)
-    Scan            reduce using rule 53 (expression -> expression Difference expression .)
-    Print           reduce using rule 53 (expression -> expression Difference expression .)
-    Println         reduce using rule 53 (expression -> expression Difference expression .)
-    If              reduce using rule 53 (expression -> expression Difference expression .)
-    For             reduce using rule 53 (expression -> expression Difference expression .)
-    Repeat          reduce using rule 53 (expression -> expression Difference expression .)
     CloseParen      reduce using rule 53 (expression -> expression Difference expression .)
+    Do              reduce using rule 53 (expression -> expression Difference expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -5009,16 +4707,8 @@ state 104
     SemiColon       reduce using rule 40 (expression -> expression Mod expression .)
     While           reduce using rule 40 (expression -> expression Mod expression .)
     Else            reduce using rule 40 (expression -> expression Mod expression .)
-    Do              reduce using rule 40 (expression -> expression Mod expression .)
-    ID              reduce using rule 40 (expression -> expression Mod expression .)
-    OpenCurly       reduce using rule 40 (expression -> expression Mod expression .)
-    Scan            reduce using rule 40 (expression -> expression Mod expression .)
-    Print           reduce using rule 40 (expression -> expression Mod expression .)
-    Println         reduce using rule 40 (expression -> expression Mod expression .)
-    If              reduce using rule 40 (expression -> expression Mod expression .)
-    For             reduce using rule 40 (expression -> expression Mod expression .)
-    Repeat          reduce using rule 40 (expression -> expression Mod expression .)
     CloseParen      reduce using rule 40 (expression -> expression Mod expression .)
+    Do              reduce using rule 40 (expression -> expression Mod expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -5087,16 +4777,8 @@ state 105
     SemiColon       reduce using rule 55 (expression -> expression And expression .)
     While           reduce using rule 55 (expression -> expression And expression .)
     Else            reduce using rule 55 (expression -> expression And expression .)
-    Do              reduce using rule 55 (expression -> expression And expression .)
-    ID              reduce using rule 55 (expression -> expression And expression .)
-    OpenCurly       reduce using rule 55 (expression -> expression And expression .)
-    Scan            reduce using rule 55 (expression -> expression And expression .)
-    Print           reduce using rule 55 (expression -> expression And expression .)
-    Println         reduce using rule 55 (expression -> expression And expression .)
-    If              reduce using rule 55 (expression -> expression And expression .)
-    For             reduce using rule 55 (expression -> expression And expression .)
-    Repeat          reduce using rule 55 (expression -> expression And expression .)
     CloseParen      reduce using rule 55 (expression -> expression And expression .)
+    Do              reduce using rule 55 (expression -> expression And expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -5195,16 +4877,8 @@ state 106
     SemiColon       reduce using rule 45 (expression -> expression ModSet expression .)
     While           reduce using rule 45 (expression -> expression ModSet expression .)
     Else            reduce using rule 45 (expression -> expression ModSet expression .)
-    Do              reduce using rule 45 (expression -> expression ModSet expression .)
-    ID              reduce using rule 45 (expression -> expression ModSet expression .)
-    OpenCurly       reduce using rule 45 (expression -> expression ModSet expression .)
-    Scan            reduce using rule 45 (expression -> expression ModSet expression .)
-    Print           reduce using rule 45 (expression -> expression ModSet expression .)
-    Println         reduce using rule 45 (expression -> expression ModSet expression .)
-    If              reduce using rule 45 (expression -> expression ModSet expression .)
-    For             reduce using rule 45 (expression -> expression ModSet expression .)
-    Repeat          reduce using rule 45 (expression -> expression ModSet expression .)
     CloseParen      reduce using rule 45 (expression -> expression ModSet expression .)
+    Do              reduce using rule 45 (expression -> expression ModSet expression .)
     Contains        shift and go to state 56
 
   ! Contains        [ reduce using rule 45 (expression -> expression ModSet expression .) ]
@@ -5276,16 +4950,8 @@ state 107
     SemiColon       reduce using rule 38 (expression -> expression Times expression .)
     While           reduce using rule 38 (expression -> expression Times expression .)
     Else            reduce using rule 38 (expression -> expression Times expression .)
-    Do              reduce using rule 38 (expression -> expression Times expression .)
-    ID              reduce using rule 38 (expression -> expression Times expression .)
-    OpenCurly       reduce using rule 38 (expression -> expression Times expression .)
-    Scan            reduce using rule 38 (expression -> expression Times expression .)
-    Print           reduce using rule 38 (expression -> expression Times expression .)
-    Println         reduce using rule 38 (expression -> expression Times expression .)
-    If              reduce using rule 38 (expression -> expression Times expression .)
-    For             reduce using rule 38 (expression -> expression Times expression .)
-    Repeat          reduce using rule 38 (expression -> expression Times expression .)
     CloseParen      reduce using rule 38 (expression -> expression Times expression .)
+    Do              reduce using rule 38 (expression -> expression Times expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -5362,16 +5028,8 @@ state 108
     SemiColon       reduce using rule 36 (expression -> expression Plus expression .)
     While           reduce using rule 36 (expression -> expression Plus expression .)
     Else            reduce using rule 36 (expression -> expression Plus expression .)
-    Do              reduce using rule 36 (expression -> expression Plus expression .)
-    ID              reduce using rule 36 (expression -> expression Plus expression .)
-    OpenCurly       reduce using rule 36 (expression -> expression Plus expression .)
-    Scan            reduce using rule 36 (expression -> expression Plus expression .)
-    Print           reduce using rule 36 (expression -> expression Plus expression .)
-    Println         reduce using rule 36 (expression -> expression Plus expression .)
-    If              reduce using rule 36 (expression -> expression Plus expression .)
-    For             reduce using rule 36 (expression -> expression Plus expression .)
-    Repeat          reduce using rule 36 (expression -> expression Plus expression .)
     CloseParen      reduce using rule 36 (expression -> expression Plus expression .)
+    Do              reduce using rule 36 (expression -> expression Plus expression .)
     Times           shift and go to state 70
     Div             shift and go to state 72
     Mod             shift and go to state 67
@@ -5454,16 +5112,8 @@ state 109
     SemiColon       reduce using rule 39 (expression -> expression Div expression .)
     While           reduce using rule 39 (expression -> expression Div expression .)
     Else            reduce using rule 39 (expression -> expression Div expression .)
-    Do              reduce using rule 39 (expression -> expression Div expression .)
-    ID              reduce using rule 39 (expression -> expression Div expression .)
-    OpenCurly       reduce using rule 39 (expression -> expression Div expression .)
-    Scan            reduce using rule 39 (expression -> expression Div expression .)
-    Print           reduce using rule 39 (expression -> expression Div expression .)
-    Println         reduce using rule 39 (expression -> expression Div expression .)
-    If              reduce using rule 39 (expression -> expression Div expression .)
-    For             reduce using rule 39 (expression -> expression Div expression .)
-    Repeat          reduce using rule 39 (expression -> expression Div expression .)
     CloseParen      reduce using rule 39 (expression -> expression Div expression .)
+    Do              reduce using rule 39 (expression -> expression Div expression .)
     PlusSet         shift and go to state 60
     MinusSet        shift and go to state 74
     TimesSet        shift and go to state 76
@@ -5540,16 +5190,8 @@ state 110
     SemiColon       reduce using rule 37 (expression -> expression Minus expression .)
     While           reduce using rule 37 (expression -> expression Minus expression .)
     Else            reduce using rule 37 (expression -> expression Minus expression .)
-    Do              reduce using rule 37 (expression -> expression Minus expression .)
-    ID              reduce using rule 37 (expression -> expression Minus expression .)
-    OpenCurly       reduce using rule 37 (expression -> expression Minus expression .)
-    Scan            reduce using rule 37 (expression -> expression Minus expression .)
-    Print           reduce using rule 37 (expression -> expression Minus expression .)
-    Println         reduce using rule 37 (expression -> expression Minus expression .)
-    If              reduce using rule 37 (expression -> expression Minus expression .)
-    For             reduce using rule 37 (expression -> expression Minus expression .)
-    Repeat          reduce using rule 37 (expression -> expression Minus expression .)
     CloseParen      reduce using rule 37 (expression -> expression Minus expression .)
+    Do              reduce using rule 37 (expression -> expression Minus expression .)
     Times           shift and go to state 70
     Div             shift and go to state 72
     Mod             shift and go to state 67
@@ -5637,16 +5279,8 @@ state 111
     SemiColon       reduce using rule 42 (expression -> expression MinusSet expression .)
     While           reduce using rule 42 (expression -> expression MinusSet expression .)
     Else            reduce using rule 42 (expression -> expression MinusSet expression .)
-    Do              reduce using rule 42 (expression -> expression MinusSet expression .)
-    ID              reduce using rule 42 (expression -> expression MinusSet expression .)
-    OpenCurly       reduce using rule 42 (expression -> expression MinusSet expression .)
-    Scan            reduce using rule 42 (expression -> expression MinusSet expression .)
-    Print           reduce using rule 42 (expression -> expression MinusSet expression .)
-    Println         reduce using rule 42 (expression -> expression MinusSet expression .)
-    If              reduce using rule 42 (expression -> expression MinusSet expression .)
-    For             reduce using rule 42 (expression -> expression MinusSet expression .)
-    Repeat          reduce using rule 42 (expression -> expression MinusSet expression .)
     CloseParen      reduce using rule 42 (expression -> expression MinusSet expression .)
+    Do              reduce using rule 42 (expression -> expression MinusSet expression .)
     TimesSet        shift and go to state 76
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
@@ -5714,16 +5348,8 @@ state 112
     SemiColon       reduce using rule 48 (expression -> expression GreaterThan expression .)
     While           reduce using rule 48 (expression -> expression GreaterThan expression .)
     Else            reduce using rule 48 (expression -> expression GreaterThan expression .)
-    Do              reduce using rule 48 (expression -> expression GreaterThan expression .)
-    ID              reduce using rule 48 (expression -> expression GreaterThan expression .)
-    OpenCurly       reduce using rule 48 (expression -> expression GreaterThan expression .)
-    Scan            reduce using rule 48 (expression -> expression GreaterThan expression .)
-    Print           reduce using rule 48 (expression -> expression GreaterThan expression .)
-    Println         reduce using rule 48 (expression -> expression GreaterThan expression .)
-    If              reduce using rule 48 (expression -> expression GreaterThan expression .)
-    For             reduce using rule 48 (expression -> expression GreaterThan expression .)
-    Repeat          reduce using rule 48 (expression -> expression GreaterThan expression .)
     CloseParen      reduce using rule 48 (expression -> expression GreaterThan expression .)
+    Do              reduce using rule 48 (expression -> expression GreaterThan expression .)
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -5818,16 +5444,8 @@ state 113
     SemiColon       reduce using rule 43 (expression -> expression TimesSet expression .)
     While           reduce using rule 43 (expression -> expression TimesSet expression .)
     Else            reduce using rule 43 (expression -> expression TimesSet expression .)
-    Do              reduce using rule 43 (expression -> expression TimesSet expression .)
-    ID              reduce using rule 43 (expression -> expression TimesSet expression .)
-    OpenCurly       reduce using rule 43 (expression -> expression TimesSet expression .)
-    Scan            reduce using rule 43 (expression -> expression TimesSet expression .)
-    Print           reduce using rule 43 (expression -> expression TimesSet expression .)
-    Println         reduce using rule 43 (expression -> expression TimesSet expression .)
-    If              reduce using rule 43 (expression -> expression TimesSet expression .)
-    For             reduce using rule 43 (expression -> expression TimesSet expression .)
-    Repeat          reduce using rule 43 (expression -> expression TimesSet expression .)
     CloseParen      reduce using rule 43 (expression -> expression TimesSet expression .)
+    Do              reduce using rule 43 (expression -> expression TimesSet expression .)
     Contains        shift and go to state 56
 
   ! Contains        [ reduce using rule 43 (expression -> expression TimesSet expression .) ]
@@ -5856,8 +5474,221 @@ state 113
 
 state 114
 
-    (24) statement -> Repeat statement While expression . Do statement
-    (25) statement -> Repeat statement While expression .
+    (24) statement -> Repeat statement While OpenParen . expression CloseParen Do statement
+    (25) statement -> Repeat statement While OpenParen . expression CloseParen
+    (27) expression -> . Number
+    (28) expression -> . True
+    (29) expression -> . False
+    (30) expression -> . String
+    (31) expression -> . ID
+    (34) expression -> . OpenCurly number_list CloseCurly
+    (35) expression -> . OpenParen expression CloseParen
+    (36) expression -> . expression Plus expression
+    (37) expression -> . expression Minus expression
+    (38) expression -> . expression Times expression
+    (39) expression -> . expression Div expression
+    (40) expression -> . expression Mod expression
+    (41) expression -> . expression PlusSet expression
+    (42) expression -> . expression MinusSet expression
+    (43) expression -> . expression TimesSet expression
+    (44) expression -> . expression DivSet expression
+    (45) expression -> . expression ModSet expression
+    (46) expression -> . expression LessThan expression
+    (47) expression -> . expression LessThanEq expression
+    (48) expression -> . expression GreaterThan expression
+    (49) expression -> . expression GreaterThanEq expression
+    (50) expression -> . expression Equals expression
+    (51) expression -> . expression NotEquals expression
+    (52) expression -> . expression Union expression
+    (53) expression -> . expression Difference expression
+    (54) expression -> . expression Intersect expression
+    (55) expression -> . expression And expression
+    (56) expression -> . expression Or expression
+    (57) expression -> . expression Contains expression
+    (58) expression -> . Minus expression
+    (59) expression -> . Not expression
+    (60) expression -> . Len expression
+    (61) expression -> . MaxSet expression
+    (62) expression -> . MinSet expression
+
+    Number          shift and go to state 28
+    True            shift and go to state 23
+    False           shift and go to state 26
+    String          shift and go to state 19
+    ID              shift and go to state 25
+    OpenCurly       shift and go to state 17
+    OpenParen       shift and go to state 24
+    Minus           shift and go to state 21
+    Not             shift and go to state 22
+    Len             shift and go to state 20
+    MaxSet          shift and go to state 29
+    MinSet          shift and go to state 18
+
+
+    expression                     shift and go to state 123
+
+state 115
+
+    (26) statement -> While OpenParen expression CloseParen . Do statement
+
+    Do              shift and go to state 124
+
+
+
+state 116
+
+    (20) statement -> If OpenParen expression CloseParen . statement
+    (21) statement -> If OpenParen expression CloseParen . statement Else statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
+
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
+
+  ! While           [ reduce using rule 5 (statement -> .) ]
+
+    statement                      shift and go to state 125
+
+state 117
+
+    (7) declarations_list -> declarations_list SemiColon type . variable_list
+    (8) variable_list -> . ID
+    (9) variable_list -> . variable_list Comma ID
+
+    ID              shift and go to state 83
+
+
+    variable_list                  shift and go to state 126
+
+state 118
+
+    (4) statement -> OpenCurly Using declarations_list In statement_list . CloseCurly
+    (11) statement_list -> statement_list . SemiColon statement
+
+    CloseCurly      shift and go to state 127
+    SemiColon       shift and go to state 43
+
+
+
+state 119
+
+    (9) variable_list -> variable_list Comma . ID
+
+    ID              shift and go to state 128
+
+
+
+state 120
+
+    (22) statement -> For ID Min expression Do . statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
+
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
+
+  ! While           [ reduce using rule 5 (statement -> .) ]
+
+    statement                      shift and go to state 129
+
+state 121
+
+    (23) statement -> For ID Max expression Do . statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
+
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
+
+  ! While           [ reduce using rule 5 (statement -> .) ]
+
+    statement                      shift and go to state 130
+
+state 122
+
+    (33) number_list -> number_list Comma Number .
+
+    CloseCurly      reduce using rule 33 (number_list -> number_list Comma Number .)
+    Comma           reduce using rule 33 (number_list -> number_list Comma Number .)
+
+
+
+state 123
+
+    (24) statement -> Repeat statement While OpenParen expression . CloseParen Do statement
+    (25) statement -> Repeat statement While OpenParen expression . CloseParen
     (36) expression -> expression . Plus expression
     (37) expression -> expression . Minus expression
     (38) expression -> expression . Times expression
@@ -5881,12 +5712,7 @@ state 114
     (56) expression -> expression . Or expression
     (57) expression -> expression . Contains expression
 
-    Do              shift and go to state 123
-    Else            reduce using rule 25 (statement -> Repeat statement While expression .)
-    $end            reduce using rule 25 (statement -> Repeat statement While expression .)
-    CloseCurly      reduce using rule 25 (statement -> Repeat statement While expression .)
-    SemiColon       reduce using rule 25 (statement -> Repeat statement While expression .)
-    While           reduce using rule 25 (statement -> Repeat statement While expression .)
+    CloseParen      shift and go to state 131
     Plus            shift and go to state 71
     Minus           shift and go to state 73
     Times           shift and go to state 70
@@ -5912,217 +5738,59 @@ state 114
 
 
 
-state 115
-
-    (26) statement -> While expression Do statement .
-
-    Else            reduce using rule 26 (statement -> While expression Do statement .)
-    $end            reduce using rule 26 (statement -> While expression Do statement .)
-    CloseCurly      reduce using rule 26 (statement -> While expression Do statement .)
-    SemiColon       reduce using rule 26 (statement -> While expression Do statement .)
-    While           reduce using rule 26 (statement -> While expression Do statement .)
-
-
-
-state 116
-
-    (21) statement -> If expression statement Else . statement
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
-
-  ! shift/reduce conflict for While resolved as shift.
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
-
-  ! While           [ reduce using rule 5 (statement -> .) ]
-
-    statement                      shift and go to state 124
-
-state 117
-
-    (7) declarations_list -> declarations_list SemiColon type . variable_list
-    (8) variable_list -> . ID
-    (9) variable_list -> . variable_list Comma ID
-
-    ID              shift and go to state 83
-
-
-    variable_list                  shift and go to state 125
-
-state 118
-
-    (4) statement -> OpenCurly Using declarations_list In statement_list . CloseCurly
-    (11) statement_list -> statement_list . SemiColon statement
-
-    CloseCurly      shift and go to state 126
-    SemiColon       shift and go to state 43
-
-
-
-state 119
-
-    (9) variable_list -> variable_list Comma . ID
-
-    ID              shift and go to state 127
-
-
-
-state 120
-
-    (22) statement -> For ID Min expression Do . statement
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
-
-  ! shift/reduce conflict for While resolved as shift.
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
-
-  ! While           [ reduce using rule 5 (statement -> .) ]
-
-    statement                      shift and go to state 128
-
-state 121
-
-    (23) statement -> For ID Max expression Do . statement
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
-
-  ! shift/reduce conflict for While resolved as shift.
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
-
-  ! While           [ reduce using rule 5 (statement -> .) ]
-
-    statement                      shift and go to state 129
-
-state 122
-
-    (33) number_list -> number_list Comma Number .
-
-    CloseCurly      reduce using rule 33 (number_list -> number_list Comma Number .)
-    Comma           reduce using rule 33 (number_list -> number_list Comma Number .)
-
-
-
-state 123
-
-    (24) statement -> Repeat statement While expression Do . statement
-    (2) statement -> . ID Assign expression
-    (3) statement -> . OpenCurly statement_list CloseCurly
-    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
-    (5) statement -> .
-    (15) statement -> . Scan ID
-    (16) statement -> . Print expression_list
-    (17) statement -> . Println expression_list
-    (20) statement -> . If expression statement
-    (21) statement -> . If expression statement Else statement
-    (22) statement -> . For ID Min expression Do statement
-    (23) statement -> . For ID Max expression Do statement
-    (24) statement -> . Repeat statement While expression Do statement
-    (25) statement -> . Repeat statement While expression
-    (26) statement -> . While expression Do statement
-
-  ! shift/reduce conflict for While resolved as shift.
-    ID              shift and go to state 10
-    OpenCurly       shift and go to state 3
-    Else            reduce using rule 5 (statement -> .)
-    $end            reduce using rule 5 (statement -> .)
-    CloseCurly      reduce using rule 5 (statement -> .)
-    SemiColon       reduce using rule 5 (statement -> .)
-    Scan            shift and go to state 11
-    Print           shift and go to state 5
-    Println         shift and go to state 9
-    If              shift and go to state 12
-    For             shift and go to state 4
-    Repeat          shift and go to state 6
-    While           shift and go to state 8
-
-  ! While           [ reduce using rule 5 (statement -> .) ]
-
-    statement                      shift and go to state 130
-
 state 124
 
-    (21) statement -> If expression statement Else statement .
+    (26) statement -> While OpenParen expression CloseParen Do . statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
 
-    Else            reduce using rule 21 (statement -> If expression statement Else statement .)
-    $end            reduce using rule 21 (statement -> If expression statement Else statement .)
-    CloseCurly      reduce using rule 21 (statement -> If expression statement Else statement .)
-    SemiColon       reduce using rule 21 (statement -> If expression statement Else statement .)
-    While           reduce using rule 21 (statement -> If expression statement Else statement .)
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
 
+  ! While           [ reduce using rule 5 (statement -> .) ]
 
+    statement                      shift and go to state 132
 
 state 125
+
+    (20) statement -> If OpenParen expression CloseParen statement .
+    (21) statement -> If OpenParen expression CloseParen statement . Else statement
+
+  ! shift/reduce conflict for Else resolved as shift.
+    $end            reduce using rule 20 (statement -> If OpenParen expression CloseParen statement .)
+    CloseCurly      reduce using rule 20 (statement -> If OpenParen expression CloseParen statement .)
+    SemiColon       reduce using rule 20 (statement -> If OpenParen expression CloseParen statement .)
+    While           reduce using rule 20 (statement -> If OpenParen expression CloseParen statement .)
+    Else            shift and go to state 133
+
+  ! Else            [ reduce using rule 20 (statement -> If OpenParen expression CloseParen statement .) ]
+
+
+state 126
 
     (7) declarations_list -> declarations_list SemiColon type variable_list .
     (9) variable_list -> variable_list . Comma ID
@@ -6133,7 +5801,7 @@ state 125
 
 
 
-state 126
+state 127
 
     (4) statement -> OpenCurly Using declarations_list In statement_list CloseCurly .
 
@@ -6145,7 +5813,7 @@ state 126
 
 
 
-state 127
+state 128
 
     (9) variable_list -> variable_list Comma ID .
 
@@ -6155,7 +5823,7 @@ state 127
 
 
 
-state 128
+state 129
 
     (22) statement -> For ID Min expression Do statement .
 
@@ -6167,7 +5835,7 @@ state 128
 
 
 
-state 129
+state 130
 
     (23) statement -> For ID Max expression Do statement .
 
@@ -6179,14 +5847,126 @@ state 129
 
 
 
-state 130
+state 131
 
-    (24) statement -> Repeat statement While expression Do statement .
+    (24) statement -> Repeat statement While OpenParen expression CloseParen . Do statement
+    (25) statement -> Repeat statement While OpenParen expression CloseParen .
 
-    Else            reduce using rule 24 (statement -> Repeat statement While expression Do statement .)
-    $end            reduce using rule 24 (statement -> Repeat statement While expression Do statement .)
-    CloseCurly      reduce using rule 24 (statement -> Repeat statement While expression Do statement .)
-    SemiColon       reduce using rule 24 (statement -> Repeat statement While expression Do statement .)
-    While           reduce using rule 24 (statement -> Repeat statement While expression Do statement .)
+    Do              shift and go to state 134
+    Else            reduce using rule 25 (statement -> Repeat statement While OpenParen expression CloseParen .)
+    $end            reduce using rule 25 (statement -> Repeat statement While OpenParen expression CloseParen .)
+    CloseCurly      reduce using rule 25 (statement -> Repeat statement While OpenParen expression CloseParen .)
+    SemiColon       reduce using rule 25 (statement -> Repeat statement While OpenParen expression CloseParen .)
+    While           reduce using rule 25 (statement -> Repeat statement While OpenParen expression CloseParen .)
+
+
+
+state 132
+
+    (26) statement -> While OpenParen expression CloseParen Do statement .
+
+    Else            reduce using rule 26 (statement -> While OpenParen expression CloseParen Do statement .)
+    $end            reduce using rule 26 (statement -> While OpenParen expression CloseParen Do statement .)
+    CloseCurly      reduce using rule 26 (statement -> While OpenParen expression CloseParen Do statement .)
+    SemiColon       reduce using rule 26 (statement -> While OpenParen expression CloseParen Do statement .)
+    While           reduce using rule 26 (statement -> While OpenParen expression CloseParen Do statement .)
+
+
+
+state 133
+
+    (21) statement -> If OpenParen expression CloseParen statement Else . statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
+
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
+
+  ! While           [ reduce using rule 5 (statement -> .) ]
+
+    statement                      shift and go to state 135
+
+state 134
+
+    (24) statement -> Repeat statement While OpenParen expression CloseParen Do . statement
+    (2) statement -> . ID Assign expression
+    (3) statement -> . OpenCurly statement_list CloseCurly
+    (4) statement -> . OpenCurly Using declarations_list In statement_list CloseCurly
+    (5) statement -> .
+    (15) statement -> . Scan ID
+    (16) statement -> . Print expression_list
+    (17) statement -> . Println expression_list
+    (20) statement -> . If OpenParen expression CloseParen statement
+    (21) statement -> . If OpenParen expression CloseParen statement Else statement
+    (22) statement -> . For ID Min expression Do statement
+    (23) statement -> . For ID Max expression Do statement
+    (24) statement -> . Repeat statement While OpenParen expression CloseParen Do statement
+    (25) statement -> . Repeat statement While OpenParen expression CloseParen
+    (26) statement -> . While OpenParen expression CloseParen Do statement
+
+  ! shift/reduce conflict for While resolved as shift.
+    ID              shift and go to state 10
+    OpenCurly       shift and go to state 3
+    Else            reduce using rule 5 (statement -> .)
+    $end            reduce using rule 5 (statement -> .)
+    CloseCurly      reduce using rule 5 (statement -> .)
+    SemiColon       reduce using rule 5 (statement -> .)
+    Scan            shift and go to state 11
+    Print           shift and go to state 5
+    Println         shift and go to state 9
+    If              shift and go to state 12
+    For             shift and go to state 4
+    Repeat          shift and go to state 6
+    While           shift and go to state 8
+
+  ! While           [ reduce using rule 5 (statement -> .) ]
+
+    statement                      shift and go to state 136
+
+state 135
+
+    (21) statement -> If OpenParen expression CloseParen statement Else statement .
+
+    Else            reduce using rule 21 (statement -> If OpenParen expression CloseParen statement Else statement .)
+    $end            reduce using rule 21 (statement -> If OpenParen expression CloseParen statement Else statement .)
+    CloseCurly      reduce using rule 21 (statement -> If OpenParen expression CloseParen statement Else statement .)
+    SemiColon       reduce using rule 21 (statement -> If OpenParen expression CloseParen statement Else statement .)
+    While           reduce using rule 21 (statement -> If OpenParen expression CloseParen statement Else statement .)
+
+
+
+state 136
+
+    (24) statement -> Repeat statement While OpenParen expression CloseParen Do statement .
+
+    Else            reduce using rule 24 (statement -> Repeat statement While OpenParen expression CloseParen Do statement .)
+    $end            reduce using rule 24 (statement -> Repeat statement While OpenParen expression CloseParen Do statement .)
+    CloseCurly      reduce using rule 24 (statement -> Repeat statement While OpenParen expression CloseParen Do statement .)
+    SemiColon       reduce using rule 24 (statement -> Repeat statement While OpenParen expression CloseParen Do statement .)
+    While           reduce using rule 24 (statement -> Repeat statement While OpenParen expression CloseParen Do statement .)
 
 

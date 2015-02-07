@@ -83,8 +83,8 @@ def p_expression_list(p):
 
 
 def p_if(p):
-    """statement : If expression statement
-                 | If expression statement Else statement"""
+    """statement : If OpenParen expression CloseParen statement
+                 | If OpenParen expression CloseParen  statement Else statement"""
     if len(p) == 4:
         p[0] = If(p[2], p[3])
     else:
@@ -98,9 +98,9 @@ def p_for(p):
 
 
 def p_repeat(p):
-    """statement : Repeat statement While expression Do statement
-                 | Repeat statement While expression
-                 | While expression Do statement"""
+    """statement : Repeat statement While OpenParen expression CloseParen Do statement
+                 | Repeat statement While OpenParen expression CloseParen
+                 | While OpenParen expression CloseParen Do statement"""
     if len(p) == 7:
         p[0] = Repeat(p[2], p[4], p[6])
     elif p[1] == 'Repeat':
@@ -249,7 +249,7 @@ def mainParser(arg):
     ast = parser.parse(open(arg,'r').read())
 
     if parsing_errors != '': return parsing_errors
-    else: return ast.__repr__()
+    else: return ast.repr()
 
 
 if __name__ == '__main__':
