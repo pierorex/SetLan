@@ -20,19 +20,19 @@ class LexerTestSuite(unittest.TestCase):
 
     def testSample1(self):
         self.assertEqual(mainLexer('Tests/test6.txt'), open('Tests/answer6.txt','r').read())
-    
+
     def testCommentAndError2(self):
         self.assertEqual(mainLexer('Tests/test7.txt'), open('Tests/answer7.txt','r').read())
 
     def testIfElse(self):
         self.assertEqual(mainLexer('Tests/test8.txt'), open('Tests/answer8.txt','r').read())
-        
+
     def testOperators(self):
         self.assertEqual(mainLexer('Tests/test9.txt'), open('Tests/answer9.txt','r').read())
-    
+
     def testSample2(self):
         self.assertEqual(mainLexer('Tests/test10.txt'), open('Tests/answer10.txt','r').read())
-        
+
     def testBadVariables(self):
         self.assertEqual(mainLexer('Tests/test11.txt'), open('Tests/answer11.txt','r').read())
 
@@ -44,7 +44,7 @@ class LexerTestSuite(unittest.TestCase):
 
     def testOperatorsWithoutSpaces(self):
         self.assertEqual(mainLexer('Tests/test12.txt'), open('Tests/answer12.txt','r').read())
-        
+
     def testSetMinMaxContains(self):
         self.assertEqual(mainLexer('Tests/test13.txt'), open('Tests/answer13.txt','r').read())
 
@@ -55,9 +55,9 @@ class LexerTestSuite(unittest.TestCase):
 
 class ParserTestSuite(unittest.TestCase):
     def testSimplisticProgram(self):
-        self.assertEqual(mainParser('Tests/testSimplisticProgram.txt'), open('Tests/answerSimplisticProgram.txt','r').read())
+        self.assertEqual(mainParser('Tests/testSimple1.txt'), open('Tests/answerSimple1.txt','r').read())
     def testSimpleProblematicProgram(self):
-        self.assertEqual(mainParser('Tests/testSimpleProblematicProgram.txt'), open('Tests/answerSimpleProblematicProgram.txt','r').read())
+        self.assertEqual(mainParser('Tests/testSimpleError.txt'), open('Tests/answerSimpleError.txt','r').read())
 
 if __name__ == '__main__':
     unittest.main()

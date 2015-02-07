@@ -1,13 +1,16 @@
-class Program:
+class Program(object):
     def __init__(self, statement):
         self.statement = statement
         
     def __repr__(self):
         indent = 4
-        return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
+        if self.statement:
+            return 'Program\n' + indent*' ' + self.statement.__repr__(indent+4)
+        else:
+            return 'Program\n'
 
 
-class Statement: pass
+class Statement(object): pass
 
 
 class Assign(Statement):
@@ -16,7 +19,7 @@ class Assign(Statement):
         self.expression = expression
     
     def __repr__(self, indent):
-        return 'Assign\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n' + indent*' ' + 'value' + indent*' ' + self.expression.__repr__(indent+4)
+        return 'Assign\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n' + indent*' ' + 'value\n' + indent*' ' + self.expression.__repr__(indent+4)
 
 
 class Block(Statement):
@@ -24,12 +27,18 @@ class Block(Statement):
         self.statements = statements
         
     def __repr__(self, indent):
-        return 'Block Start\n' + indent*' ' + self.statements.__repr__(indent+4) + '\n' + indent*' ' + 'Block End'
+        if self.statement: 
+            return 'Block Start\n' + indent*' ' + self.statements.__repr__(indent+4) + '\n' + indent*' ' + 'Block End\n'
+        else:
+            return None
 
 
 class Scan(Statement):
     def __init__(self, variable):
         self.variable = variable
+        
+    def __repr__(self, indent):
+        return 'Scan\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n'
 
 
 class Print(Statement):
@@ -37,239 +46,161 @@ class Print(Statement):
         self.print_list = print_list
 
     def __repr__(self, indent):
-        return 'Print\n' + indent*' ' + self.print_list.__repr__(indent+4)
+        return_string = 'Print\n'
+        for element in self.print_list:
+            return_string +=  + indent*' ' + element.__repr__(indent+4) + '\n'
+        return return_string
+
+
+class Println(Statement):
+    def __init__(self, print_list):
+        self.print_list = print_list
+
+    def __repr__(self, indent):
+        return_string = 'Println\n'
+        for element in self.print_list:
+            return_string +=  + indent*' ' + element.__repr__(indent+4) + '\n'
+        return return_string
+
 
 class If(Statement):
-    def __init__(self, condition, then_st, else_st=None):
-        self.condition = condition
-        self.then_st = then_st
-        self.else_st = else_st
+    def __init__(self, expression, statement_true, statement_false=None):
+        self.expression = expression
+        self.statement_true = statement_true
+        self.statement2_false = statement_false
+    
+    def __repr__(self, indent):
+        return 'If\n' + indent*' ' + self.statement_true.__repr__(indent+4) + '\n' + indent*' ' + self.statement2_false.__repr__(indent+4) + '\n'
 
 
 class For(Statement):
-    def __init__(self, variable, in_range, statement):
+    def __init__(self, variable, order, statement):
         self.variable = variable
-        self.in_range = in_range
+        self.order = order
         self.statement = statement
+
+    def __repr__(self, indent):
+        return 'For\n' + indent*' ' + self.variable.__repr__(indent+4) + '\n' + indent*' ' + self.order + '\n' + indent*' ' + self.statement.__repr__(indent+4) + '\n'
 
 
 class Repeat(Statement):
-    def __init__(self, condition, statement):
-        self.condition = condition
-        self.statement = statement
+    def __init__(self, statement1, expression, statement2):
+        self.statement1 = statement1
+        self.expression = expression
+        self.statement2 = statement2
+    
+    def __repr__(self, indent):
+        if self.statement1:
+            if self.statement2:
+                return 'Repeat\n' + indent*' ' + self.statement1.__repr__(indent+4) + '\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n' + self.statement2.__repr__(indent+4) + indent*' ' + '\n'
+            else:
+                return 'Repeat\n' + indent*' ' + self.statement1.__repr__(indent+4) + '\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n'
+        else:
+            return 'Repeat\n' + indent*' ' + self.expression.__repr__(indent+4) + '\n' + indent*' ' + self.statement2.__repr__(indent+4) + '\n'
         
-
-class While(Statement):
-    def __init__(self, condition, statement):
-        self.condition = condition
-        self.statement = statement
-
-
-class Expression: pass
+    
+class Expression(object): pass
 
 
 class Variable(Expression):
     def __init__(self, name):
         self.name = name
 
+    def __repr__(self, indent):
+        return 'Variable\n' + indent*' ' + self.name.__repr__(indent+4) + '\n'
+    
 
 class Int(Expression):
     def __init__(self, value):
-        self.value = value
-
-
+        self.value = value    
+        
+    def __repr__(self, indent):
+        return 'Int\n' + indent*' ' + self.value + '\n'
+    
+    
 class Bool(Expression):
     def __init__(self, value):
         self.value = value
 
+    def __repr__(self, indent):
+        return 'Bool\n' + indent*' ' + self.value.__repr__(indent+4) + '\n'
+    
 
 class String(Expression):
     def __init__(self, value):
         self.value = value
-        
+
     def __repr__(self, indent):
         return 'String\n' + indent*' ' + self.value + '\n'
 
 
-class Plus(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class BinOp(Expression): 
+    def __init__(self, operator, operand1, operand2):
+        self.operand1 = operand1
+        self.operand2 = operand2
+
+    def __repr__(self, indent):
+        return  self.class_name + '\n' + indent*' ' + self.operand1.__repr__(indent+4) + '\n' + self.operand2.__repr__(indent+4) + '\n'
 
 
-class Minus(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class Plus(BinOp): pass
 
+class Minus(BinOp): pass
 
-class Times(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class Times(BinOp): pass
 
+class Div(BinOp): pass
+    
+class Mod(BinOp): pass
+    
+class PlusSet(BinOp): pass
+    
+class MinusSet(BinOp): pass
 
-class Div(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class TimesSet(BinOp): pass
+    
+class DivSet(BinOp): pass
 
+class ModSet(BinOp): pass
+    
+class LessThan(BinOp): pass
+        
+class LessThanEq(BinOp): pass
+        
+class GreaterThan(BinOp): pass
+    
+class GreaterThanEq(BinOp): pass
+        
+class Equals(BinOp): pass
+        
+class NotEquals(BinOp): pass
 
-class Mod(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
+class Union(BinOp): pass
+    
+class Difference(BinOp): pass
+        
+class Intersect(BinOp): pass
+        
+class And(BinOp): pass
+        
+class Or(BinOp): pass
+        
+class Contains(BinOp): pass
+    
 
-
-class PlusSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-
-class MinusSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-
-class TimesSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-
-class DivSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-
-class ModSet(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-   
-   
-class LessThan(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class LessThanEq(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right   
-        self.operator = operator
-   
-        
-class GreaterThan(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class GreaterThanEq(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class Equals(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class NotEquals(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class Union(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right      
-        self.operator = operator  
-   
-
-class Difference(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right      
-        self.operator = operator   
-        
-        
-class Intersect(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class And(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class Or(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-        
-        
-class Contains(Expression):
-    def __init__(self, operator, left, right):
-        self.left = left
-        self.right = right
-        self.operator = operator
-
-
-class Uminus(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
+class UnaryOp(Expression):
+    def __init__(self, operand):
         self.operand = operand
 
+    def __repr__(self, indent):
+        return self.class_name + '\n' + indent*' ' + self.operand.__repr__(indent+4) + '\n'
+    
+class Uminus(Expression): pass
+
+class Not(Expression): pass
         
-class Not(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
+class Len(Expression): pass    
         
+class MaxSet(Expression): pass
         
-class Len(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
-        
-        
-class MaxSet(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
-        
-        
-class MinSet(Expression):
-    def __init__(self, operator, operand):
-        self.operator = operator
-        self.operand = operand
+class MinSet(Expression): pass    

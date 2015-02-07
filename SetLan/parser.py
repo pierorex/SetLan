@@ -15,11 +15,14 @@ def p_assing(p):
 
 def p_block(p):
     """statement : OpenCurly statement_list CloseCurly
-                 | OpenCurly Using declarations_list In statement_list CloseCurly"""
+                 | OpenCurly Using declarations_list In statement_list CloseCurly
+                 | """
     if len(p) == 4:
         p[0] = Block(p[2])
-    else:
+    elif len(p) == 7:
         p[0] = Block(p[4])
+    else:
+        p[0] = None
 
 
 def p_declarations_list(p):
@@ -64,12 +67,10 @@ def p_scan(p):
 def p_print(p):
     """statement : Print expression_list
                  | Println expression_list"""
-    if p[1] == 'Print':
+    if p[1] == 'print':
         p[0] = Print(p[2])
-    elif len(p) == 3:
-        p[0] = Print(p[2] + [String('"\\n"')])
     else:
-        p[0] = Print([String('"\\n"')])
+        p[0] = Println(p[2])
 
 
 def p_expression_list(p):
@@ -103,9 +104,9 @@ def p_repeat(p):
     if len(p) == 7:
         p[0] = Repeat(p[2], p[4], p[6])
     elif p[1] == 'Repeat':
-        p[0] = Repeat(p[2], p[4])
+        p[0] = Repeat(p[2], p[4], None)
     elif p[1] == 'While':
-        p[0] = While(p[2], p[4])
+        p[0] = Repeat(p[4], None, p[6])
         
 
 precedence = (
@@ -245,10 +246,10 @@ def mainParser(arg):
     lexer.input(open(arg,'r').read())
     parsing_errors = ''
     parser = yacc.yacc()
-    parser.parse(open(arg,'r').read())
-    
+    ast = parser.parse(open(arg,'r').read())
+
     if parsing_errors != '': return parsing_errors
-    else: return tree.__repr__()
+    else: return ast.__repr__()
 
 
 if __name__ == '__main__':
