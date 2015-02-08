@@ -16,7 +16,12 @@ Program
                     "Else working!"
         End If
         If Condition
-            None        Statement True
+            NotEquals
+                Variable
+                    a
+                Variable
+                    b
+        Statement True
             Println
                 String
                     "If 2 working!"
@@ -26,7 +31,12 @@ Program
                     "Else 2 working!"
         End If
         If Condition
-            None        Statement True
+            NotEquals
+                Variable
+                    a
+                Variable
+                    b
+        Statement True
             Block Start
                 If Condition
                     LessThan

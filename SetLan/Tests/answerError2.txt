@@ -12,4 +12,3 @@ Error: Se encontro un caracter inesperado "$" en la Linea 4, Columna 43.
 Error: Se encontro un caracter inesperado "&" en la Linea 4, Columna 44.
 Error: Se encontro un caracter inesperado "$" en la Linea 4, Columna 45.
 Error: Se encontro un caracter inesperado "&" en la Linea 4, Columna 46.
-

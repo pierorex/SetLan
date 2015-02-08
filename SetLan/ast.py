@@ -53,7 +53,7 @@ class Scan(Statement):
         
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
-        return 'Scan\n' + indent*' ' + var + '\n'
+        return 'Scan\n' + indent*' ' + var
 
 
 class Print(Statement):
@@ -96,15 +96,17 @@ class If(Statement):
 
 
 class For(Statement):
-    def __init__(self, variable, order, statement):
+    def __init__(self, variable, order, expression, statement):
         self.variable = variable
         self.order = order
+        self.expression = expression
         self.statement = statement
 
     def repr(self, indent):
-        var = self.variable.__repr__() if not getattr(self.expression,'repr',None) else self.variable.repr(indent+4)
-        sta = self.statement.__repr__() if not getattr(self.statement,'repr',None) else self.sta.repr(indent+4)
-        return 'For\n' + indent*' ' + var + '\n' + indent*' ' + self.order + '\n' + indent*' ' + sta + '\n'
+        var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
+        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
+        sta = self.statement.__repr__() if not getattr(self.statement,'repr',None) else self.statement.repr(indent+8)
+        return 'For\n' + indent*' ' + var + indent*' ' + 'Direction\n' + (indent+4)*' ' + self.order + '\n' + indent*' ' + 'In\n' + (indent+4)*' '  + exp + indent*' ' + 'Do\n' + (indent+4)*' ' + sta + (indent-4)*' ' + 'End For\n'
 
 
 class Repeat(Statement):
@@ -143,6 +145,17 @@ class Int(Expression):
         
     def repr(self, indent):
         return 'Int\n' + indent*' ' + str(self.value) + '\n'
+    
+    
+class Set(Expression):
+    def __init__(self, elements):
+        self.elements = elements   
+        
+    def repr(self, indent):
+        s = 'Set\n' + indent*' '
+        for e in self.elements:
+            s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
+        return s[:len(s)-indent]
     
     
 class Bool(Expression):

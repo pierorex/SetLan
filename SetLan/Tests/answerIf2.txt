@@ -34,10 +34,14 @@ Program
                     "If working 3! "
         End If
         If Condition
-            None        Statement True
+            NotEquals
+                Variable
+                    a
+                Variable
+                    b
+        Statement True
             Println
                 String
                     "If working 4!"
         End If
     Block End
-
