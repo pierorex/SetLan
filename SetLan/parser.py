@@ -162,8 +162,27 @@ def p_number_list(p):
     """number_list : Number
                    | number_list Comma Number"""
 
+
+def p_set_elements_list(p):
+    """set_elements_list : Number
+                         | ID
+                         | set_elements_list Comma Number
+                         | set_elements_list Comma ID"""
+    if len(p) == 2:
+        try:
+            if int(p[1]): p[0] = [Int(p[1])]
+        except ValueError:
+            p[0] = [Variable(p[1])]
+    else:
+        try:
+            if int(p[3]):
+                p[0] = p[1] + [Int(p[3])]
+        except:
+            p[0] = p[1] + [Variable(p[3])]
+
 def p_set(p):
-    """expression : OpenCurly number_list CloseCurly"""
+    "expression : OpenCurly set_elements_list CloseCurly"
+    p[0] = Set(p[2])
 
 
 def p_parenthesis(p):
@@ -234,7 +253,7 @@ def p_unary_op(p):
 
 def p_error(p):
     global parsing_errors
-    parsing_errors += 'Error: Unexpected \''+p.value+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
+    parsing_errors += 'Error: Unexpected \''+str(p.value)+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
 
 
 parsing_errors = ''

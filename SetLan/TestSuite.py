@@ -74,6 +74,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testUsingThreeDataTypes.txt'), open('Tests/answerUsingThreeDataTypes.txt','r').read())
     def testScan(self):
         self.assertEqual(mainParser('Tests/testScan.txt'), open('Tests/answerScan.txt','r').read())
+    def testCurlySet(self):
+        self.assertEqual(mainParser('Tests/testCurlySet.txt'), open('Tests/answerCurlySet.txt','r').read())
   
 
 if __name__ == '__main__':

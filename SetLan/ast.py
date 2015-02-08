@@ -145,6 +145,17 @@ class Int(Expression):
         return 'Int\n' + indent*' ' + str(self.value) + '\n'
     
     
+class Set(Expression):
+    def __init__(self, elements):
+        self.elements = elements   
+        
+    def repr(self, indent):
+        s = 'Set\n' + indent*' '
+        for e in self.elements:
+            s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
+        return s[:len(s)-indent]
+    
+    
 class Bool(Expression):
     def __init__(self, value):
         self.value = value

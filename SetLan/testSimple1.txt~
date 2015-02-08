@@ -1,0 +1,5 @@
+program print "Hello World!"
+    using
+        int  a, b; # inicializan en 0
+        set  c, d; # inicializan en false
+        bool e, f; # inicializan en {}
