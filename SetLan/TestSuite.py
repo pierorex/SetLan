@@ -94,6 +94,10 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testSimpleForInvertedDirection.txt'), open('Tests/answerSimpleForInvertedDirection.txt','r').read())
     def testSimpleWhile(self):
         self.assertEqual(mainParser('Tests/testSimpleWhile.txt'), open('Tests/answerSimpleWhile.txt','r').read())
+    def testNestedOperation(self):
+        self.assertEqual(mainParser('Tests/testNestedOperation.txt'), open('Tests/answerNestedOperation.txt','r').read())
+    def testRepeatWhileDo(self):
+        self.assertEqual(mainParser('Tests/testRepeatWhileDo.txt'), open('Tests/answerRepeatWhileDo.txt','r').read())
 
 
 if __name__ == '__main__':
