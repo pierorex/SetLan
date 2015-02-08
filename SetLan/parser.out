@@ -1695,12 +1695,20 @@ state 50
     Times           reduce using rule 62 (expression -> Minus expression .)
     Div             reduce using rule 62 (expression -> Minus expression .)
     Mod             reduce using rule 62 (expression -> Minus expression .)
+    PlusSet         reduce using rule 62 (expression -> Minus expression .)
+    MinusSet        reduce using rule 62 (expression -> Minus expression .)
+    TimesSet        reduce using rule 62 (expression -> Minus expression .)
+    DivSet          reduce using rule 62 (expression -> Minus expression .)
+    ModSet          reduce using rule 62 (expression -> Minus expression .)
     LessThan        reduce using rule 62 (expression -> Minus expression .)
     LessThanEq      reduce using rule 62 (expression -> Minus expression .)
     GreaterThan     reduce using rule 62 (expression -> Minus expression .)
     GreaterThanEq   reduce using rule 62 (expression -> Minus expression .)
     Equals          reduce using rule 62 (expression -> Minus expression .)
     NotEquals       reduce using rule 62 (expression -> Minus expression .)
+    Union           reduce using rule 62 (expression -> Minus expression .)
+    Difference      reduce using rule 62 (expression -> Minus expression .)
+    Intersect       reduce using rule 62 (expression -> Minus expression .)
     And             reduce using rule 62 (expression -> Minus expression .)
     Or              reduce using rule 62 (expression -> Minus expression .)
     Contains        reduce using rule 62 (expression -> Minus expression .)
@@ -1712,34 +1720,26 @@ state 50
     CloseCurly      reduce using rule 62 (expression -> Minus expression .)
     CloseParen      reduce using rule 62 (expression -> Minus expression .)
     Do              reduce using rule 62 (expression -> Minus expression .)
-    PlusSet         shift and go to state 60
-    MinusSet        shift and go to state 74
-    TimesSet        shift and go to state 76
-    DivSet          shift and go to state 65
-    ModSet          shift and go to state 69
-    Union           shift and go to state 55
-    Difference      shift and go to state 66
-    Intersect       shift and go to state 59
 
-  ! PlusSet         [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! MinusSet        [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! TimesSet        [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! DivSet          [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! ModSet          [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Union           [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Difference      [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Intersect       [ reduce using rule 62 (expression -> Minus expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
   ! Div             [ shift and go to state 72 ]
   ! Mod             [ shift and go to state 67 ]
+  ! PlusSet         [ shift and go to state 60 ]
+  ! MinusSet        [ shift and go to state 74 ]
+  ! TimesSet        [ shift and go to state 76 ]
+  ! DivSet          [ shift and go to state 65 ]
+  ! ModSet          [ shift and go to state 69 ]
   ! LessThan        [ shift and go to state 57 ]
   ! LessThanEq      [ shift and go to state 61 ]
   ! GreaterThan     [ shift and go to state 75 ]
   ! GreaterThanEq   [ shift and go to state 58 ]
   ! Equals          [ shift and go to state 63 ]
   ! NotEquals       [ shift and go to state 62 ]
+  ! Union           [ shift and go to state 55 ]
+  ! Difference      [ shift and go to state 66 ]
+  ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
   ! Contains        [ shift and go to state 56 ]
@@ -3787,6 +3787,7 @@ state 93
     NotEquals       reduce using rule 61 (expression -> expression Contains expression .)
     And             reduce using rule 61 (expression -> expression Contains expression .)
     Or              reduce using rule 61 (expression -> expression Contains expression .)
+    Contains        reduce using rule 61 (expression -> expression Contains expression .)
     Comma           reduce using rule 61 (expression -> expression Contains expression .)
     $end            reduce using rule 61 (expression -> expression Contains expression .)
     SemiColon       reduce using rule 61 (expression -> expression Contains expression .)
@@ -3808,7 +3809,6 @@ state 93
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! Plus            [ reduce using rule 61 (expression -> expression Contains expression .) ]
   ! Minus           [ reduce using rule 61 (expression -> expression Contains expression .) ]
@@ -3823,7 +3823,6 @@ state 93
   ! Union           [ reduce using rule 61 (expression -> expression Contains expression .) ]
   ! Difference      [ reduce using rule 61 (expression -> expression Contains expression .) ]
   ! Intersect       [ reduce using rule 61 (expression -> expression Contains expression .) ]
-  ! Contains        [ reduce using rule 61 (expression -> expression Contains expression .) ]
   ! LessThan        [ shift and go to state 57 ]
   ! LessThanEq      [ shift and go to state 61 ]
   ! GreaterThan     [ shift and go to state 75 ]
@@ -3832,6 +3831,7 @@ state 93
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 94
