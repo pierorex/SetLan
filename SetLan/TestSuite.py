@@ -108,6 +108,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testNestedOperationSets2.txt'), open('Tests/answerNestedOperationSets2.txt','r').read())
     def testFor(self):
         self.assertEqual(mainParser('Tests/testFor.txt'), open('Tests/answerFor.txt','r').read())
+    def testSetsOperators(self):
+        self.assertEqual(mainParser('Tests/testSetsOperators.txt'), open('Tests/answerSetsOperators.txt','r').read())
 
 
 if __name__ == '__main__':
