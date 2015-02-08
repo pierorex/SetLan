@@ -116,7 +116,11 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testIfError1.txt'), open('Tests/answerIfError1.txt','r').read())
     def testIfError2(self):
         self.assertEqual(mainParser('Tests/testIfError2.txt'), open('Tests/answerIfError2.txt','r').read())
-
+    def testForInsideFor(self):
+        self.assertEqual(mainParser('Tests/testForInsideFor.txt'), open('Tests/answerForInsideFor.txt','r').read())
+    def testAll(self):
+        self.assertEqual(mainParser('Tests/testAll.txt'), open('Tests/answerAll.txt','r').read())
+    
 
 if __name__ == '__main__':
     unittest.main()

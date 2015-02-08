@@ -13,15 +13,15 @@ Program
                     Or
                         Variable
                             e
-                        Plus
-                            Variable
-                                a
+                        Contains
+                            Plus
+                                Variable
+                                    a
+                                Variable
+                                    b
                             Union
-                                Contains
-                                    Variable
-                                        b
-                                    Variable
-                                        c
+                                Variable
+                                    c
                                 Variable
                                     d
         While
@@ -29,7 +29,6 @@ Program
                 Not
                     Variable
                         f
-
         Do
             Assign
                 Variable

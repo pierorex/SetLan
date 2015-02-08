@@ -48,7 +48,6 @@ Program
                         1
                     Int
                         2
-
         Println
             MinSet
                 Set
@@ -58,7 +57,6 @@ Program
                         1
                     Int
                         2
-
         Println
             Len
                 Set
@@ -68,14 +66,12 @@ Program
                         1
                     Int
                         2
-
         If
             Condition
                 Equals
                     MaxSet
                         Variable
                             a
-
                     Int
                         4
             Statement True
@@ -87,15 +83,12 @@ Program
             MaxSet
                 Variable
                     a
-
         Println
             MinSet
                 Variable
                     a
-
         Println
             Len
                 Variable
                     a
-
     Block End

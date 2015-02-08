@@ -239,7 +239,7 @@ class UnaryOp(Expression):
 
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
-        return self.__class__.__name__ + '\n' + indent*' ' + op + '\n'
+        return self.__class__.__name__ + '\n' + indent*' ' + op
     
 class Uminus(UnaryOp): pass
 

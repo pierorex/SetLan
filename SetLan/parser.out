@@ -1695,14 +1695,23 @@ state 50
     Times           reduce using rule 62 (expression -> Minus expression .)
     Div             reduce using rule 62 (expression -> Minus expression .)
     Mod             reduce using rule 62 (expression -> Minus expression .)
+    PlusSet         reduce using rule 62 (expression -> Minus expression .)
+    MinusSet        reduce using rule 62 (expression -> Minus expression .)
+    TimesSet        reduce using rule 62 (expression -> Minus expression .)
+    DivSet          reduce using rule 62 (expression -> Minus expression .)
+    ModSet          reduce using rule 62 (expression -> Minus expression .)
     LessThan        reduce using rule 62 (expression -> Minus expression .)
     LessThanEq      reduce using rule 62 (expression -> Minus expression .)
     GreaterThan     reduce using rule 62 (expression -> Minus expression .)
     GreaterThanEq   reduce using rule 62 (expression -> Minus expression .)
     Equals          reduce using rule 62 (expression -> Minus expression .)
     NotEquals       reduce using rule 62 (expression -> Minus expression .)
+    Union           reduce using rule 62 (expression -> Minus expression .)
+    Difference      reduce using rule 62 (expression -> Minus expression .)
+    Intersect       reduce using rule 62 (expression -> Minus expression .)
     And             reduce using rule 62 (expression -> Minus expression .)
     Or              reduce using rule 62 (expression -> Minus expression .)
+    Contains        reduce using rule 62 (expression -> Minus expression .)
     Comma           reduce using rule 62 (expression -> Minus expression .)
     $end            reduce using rule 62 (expression -> Minus expression .)
     SemiColon       reduce using rule 62 (expression -> Minus expression .)
@@ -1711,38 +1720,29 @@ state 50
     CloseCurly      reduce using rule 62 (expression -> Minus expression .)
     CloseParen      reduce using rule 62 (expression -> Minus expression .)
     Do              reduce using rule 62 (expression -> Minus expression .)
-    PlusSet         shift and go to state 60
-    MinusSet        shift and go to state 74
-    TimesSet        shift and go to state 76
-    DivSet          shift and go to state 65
-    ModSet          shift and go to state 69
-    Union           shift and go to state 55
-    Difference      shift and go to state 66
-    Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
-  ! PlusSet         [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! MinusSet        [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! TimesSet        [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! DivSet          [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! ModSet          [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Union           [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Difference      [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Intersect       [ reduce using rule 62 (expression -> Minus expression .) ]
-  ! Contains        [ reduce using rule 62 (expression -> Minus expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
   ! Div             [ shift and go to state 72 ]
   ! Mod             [ shift and go to state 67 ]
+  ! PlusSet         [ shift and go to state 60 ]
+  ! MinusSet        [ shift and go to state 74 ]
+  ! TimesSet        [ shift and go to state 76 ]
+  ! DivSet          [ shift and go to state 65 ]
+  ! ModSet          [ shift and go to state 69 ]
   ! LessThan        [ shift and go to state 57 ]
   ! LessThanEq      [ shift and go to state 61 ]
   ! GreaterThan     [ shift and go to state 75 ]
   ! GreaterThanEq   [ shift and go to state 58 ]
   ! Equals          [ shift and go to state 63 ]
   ! NotEquals       [ shift and go to state 62 ]
+  ! Union           [ shift and go to state 55 ]
+  ! Difference      [ shift and go to state 66 ]
+  ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 51
@@ -3713,6 +3713,7 @@ state 92
     Difference      reduce using rule 56 (expression -> expression Union expression .)
     And             reduce using rule 56 (expression -> expression Union expression .)
     Or              reduce using rule 56 (expression -> expression Union expression .)
+    Contains        reduce using rule 56 (expression -> expression Union expression .)
     Comma           reduce using rule 56 (expression -> expression Union expression .)
     $end            reduce using rule 56 (expression -> expression Union expression .)
     SemiColon       reduce using rule 56 (expression -> expression Union expression .)
@@ -3727,7 +3728,6 @@ state 92
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 56 (expression -> expression Union expression .) ]
   ! MinusSet        [ reduce using rule 56 (expression -> expression Union expression .) ]
@@ -3735,7 +3735,6 @@ state 92
   ! DivSet          [ reduce using rule 56 (expression -> expression Union expression .) ]
   ! ModSet          [ reduce using rule 56 (expression -> expression Union expression .) ]
   ! Intersect       [ reduce using rule 56 (expression -> expression Union expression .) ]
-  ! Contains        [ reduce using rule 56 (expression -> expression Union expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -3751,6 +3750,7 @@ state 92
   ! Difference      [ shift and go to state 66 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 93
@@ -3779,27 +3779,15 @@ state 93
     (60) expression -> expression . Or expression
     (61) expression -> expression . Contains expression
 
-    Plus            reduce using rule 61 (expression -> expression Contains expression .)
-    Minus           reduce using rule 61 (expression -> expression Contains expression .)
-    Times           reduce using rule 61 (expression -> expression Contains expression .)
-    Div             reduce using rule 61 (expression -> expression Contains expression .)
-    Mod             reduce using rule 61 (expression -> expression Contains expression .)
-    PlusSet         reduce using rule 61 (expression -> expression Contains expression .)
-    MinusSet        reduce using rule 61 (expression -> expression Contains expression .)
-    TimesSet        reduce using rule 61 (expression -> expression Contains expression .)
-    DivSet          reduce using rule 61 (expression -> expression Contains expression .)
-    ModSet          reduce using rule 61 (expression -> expression Contains expression .)
     LessThan        reduce using rule 61 (expression -> expression Contains expression .)
     LessThanEq      reduce using rule 61 (expression -> expression Contains expression .)
     GreaterThan     reduce using rule 61 (expression -> expression Contains expression .)
     GreaterThanEq   reduce using rule 61 (expression -> expression Contains expression .)
     Equals          reduce using rule 61 (expression -> expression Contains expression .)
     NotEquals       reduce using rule 61 (expression -> expression Contains expression .)
-    Union           reduce using rule 61 (expression -> expression Contains expression .)
-    Difference      reduce using rule 61 (expression -> expression Contains expression .)
-    Intersect       reduce using rule 61 (expression -> expression Contains expression .)
     And             reduce using rule 61 (expression -> expression Contains expression .)
     Or              reduce using rule 61 (expression -> expression Contains expression .)
+    Contains        reduce using rule 61 (expression -> expression Contains expression .)
     Comma           reduce using rule 61 (expression -> expression Contains expression .)
     $end            reduce using rule 61 (expression -> expression Contains expression .)
     SemiColon       reduce using rule 61 (expression -> expression Contains expression .)
@@ -3808,30 +3796,42 @@ state 93
     CloseCurly      reduce using rule 61 (expression -> expression Contains expression .)
     CloseParen      reduce using rule 61 (expression -> expression Contains expression .)
     Do              reduce using rule 61 (expression -> expression Contains expression .)
-    Contains        shift and go to state 56
+    Plus            shift and go to state 71
+    Minus           shift and go to state 73
+    Times           shift and go to state 70
+    Div             shift and go to state 72
+    Mod             shift and go to state 67
+    PlusSet         shift and go to state 60
+    MinusSet        shift and go to state 74
+    TimesSet        shift and go to state 76
+    DivSet          shift and go to state 65
+    ModSet          shift and go to state 69
+    Union           shift and go to state 55
+    Difference      shift and go to state 66
+    Intersect       shift and go to state 59
 
-  ! Contains        [ reduce using rule 61 (expression -> expression Contains expression .) ]
-  ! Plus            [ shift and go to state 71 ]
-  ! Minus           [ shift and go to state 73 ]
-  ! Times           [ shift and go to state 70 ]
-  ! Div             [ shift and go to state 72 ]
-  ! Mod             [ shift and go to state 67 ]
-  ! PlusSet         [ shift and go to state 60 ]
-  ! MinusSet        [ shift and go to state 74 ]
-  ! TimesSet        [ shift and go to state 76 ]
-  ! DivSet          [ shift and go to state 65 ]
-  ! ModSet          [ shift and go to state 69 ]
+  ! Plus            [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Minus           [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Times           [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Div             [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Mod             [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! PlusSet         [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! MinusSet        [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! TimesSet        [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! DivSet          [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! ModSet          [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Union           [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Difference      [ reduce using rule 61 (expression -> expression Contains expression .) ]
+  ! Intersect       [ reduce using rule 61 (expression -> expression Contains expression .) ]
   ! LessThan        [ shift and go to state 57 ]
   ! LessThanEq      [ shift and go to state 61 ]
   ! GreaterThan     [ shift and go to state 75 ]
   ! GreaterThanEq   [ shift and go to state 58 ]
   ! Equals          [ shift and go to state 63 ]
   ! NotEquals       [ shift and go to state 62 ]
-  ! Union           [ shift and go to state 55 ]
-  ! Difference      [ shift and go to state 66 ]
-  ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 94
@@ -4038,6 +4038,7 @@ state 96
     Intersect       reduce using rule 58 (expression -> expression Intersect expression .)
     And             reduce using rule 58 (expression -> expression Intersect expression .)
     Or              reduce using rule 58 (expression -> expression Intersect expression .)
+    Contains        reduce using rule 58 (expression -> expression Intersect expression .)
     Comma           reduce using rule 58 (expression -> expression Intersect expression .)
     $end            reduce using rule 58 (expression -> expression Intersect expression .)
     SemiColon       reduce using rule 58 (expression -> expression Intersect expression .)
@@ -4051,14 +4052,12 @@ state 96
     TimesSet        shift and go to state 76
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 58 (expression -> expression Intersect expression .) ]
   ! MinusSet        [ reduce using rule 58 (expression -> expression Intersect expression .) ]
   ! TimesSet        [ reduce using rule 58 (expression -> expression Intersect expression .) ]
   ! DivSet          [ reduce using rule 58 (expression -> expression Intersect expression .) ]
   ! ModSet          [ reduce using rule 58 (expression -> expression Intersect expression .) ]
-  ! Contains        [ reduce using rule 58 (expression -> expression Intersect expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4075,6 +4074,7 @@ state 96
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 97
@@ -4121,6 +4121,7 @@ state 97
     Intersect       reduce using rule 45 (expression -> expression PlusSet expression .)
     And             reduce using rule 45 (expression -> expression PlusSet expression .)
     Or              reduce using rule 45 (expression -> expression PlusSet expression .)
+    Contains        reduce using rule 45 (expression -> expression PlusSet expression .)
     Comma           reduce using rule 45 (expression -> expression PlusSet expression .)
     $end            reduce using rule 45 (expression -> expression PlusSet expression .)
     SemiColon       reduce using rule 45 (expression -> expression PlusSet expression .)
@@ -4132,12 +4133,10 @@ state 97
     TimesSet        shift and go to state 76
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
-    Contains        shift and go to state 56
 
   ! TimesSet        [ reduce using rule 45 (expression -> expression PlusSet expression .) ]
   ! DivSet          [ reduce using rule 45 (expression -> expression PlusSet expression .) ]
   ! ModSet          [ reduce using rule 45 (expression -> expression PlusSet expression .) ]
-  ! Contains        [ reduce using rule 45 (expression -> expression PlusSet expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4156,6 +4155,7 @@ state 97
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 98
@@ -4529,6 +4529,7 @@ state 102
     Intersect       reduce using rule 48 (expression -> expression DivSet expression .)
     And             reduce using rule 48 (expression -> expression DivSet expression .)
     Or              reduce using rule 48 (expression -> expression DivSet expression .)
+    Contains        reduce using rule 48 (expression -> expression DivSet expression .)
     Comma           reduce using rule 48 (expression -> expression DivSet expression .)
     $end            reduce using rule 48 (expression -> expression DivSet expression .)
     SemiColon       reduce using rule 48 (expression -> expression DivSet expression .)
@@ -4537,9 +4538,7 @@ state 102
     CloseCurly      reduce using rule 48 (expression -> expression DivSet expression .)
     CloseParen      reduce using rule 48 (expression -> expression DivSet expression .)
     Do              reduce using rule 48 (expression -> expression DivSet expression .)
-    Contains        shift and go to state 56
 
-  ! Contains        [ reduce using rule 48 (expression -> expression DivSet expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4561,6 +4560,7 @@ state 102
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 103
@@ -4604,6 +4604,7 @@ state 103
     Difference      reduce using rule 57 (expression -> expression Difference expression .)
     And             reduce using rule 57 (expression -> expression Difference expression .)
     Or              reduce using rule 57 (expression -> expression Difference expression .)
+    Contains        reduce using rule 57 (expression -> expression Difference expression .)
     Comma           reduce using rule 57 (expression -> expression Difference expression .)
     $end            reduce using rule 57 (expression -> expression Difference expression .)
     SemiColon       reduce using rule 57 (expression -> expression Difference expression .)
@@ -4618,7 +4619,6 @@ state 103
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 57 (expression -> expression Difference expression .) ]
   ! MinusSet        [ reduce using rule 57 (expression -> expression Difference expression .) ]
@@ -4626,7 +4626,6 @@ state 103
   ! DivSet          [ reduce using rule 57 (expression -> expression Difference expression .) ]
   ! ModSet          [ reduce using rule 57 (expression -> expression Difference expression .) ]
   ! Intersect       [ reduce using rule 57 (expression -> expression Difference expression .) ]
-  ! Contains        [ reduce using rule 57 (expression -> expression Difference expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4642,6 +4641,7 @@ state 103
   ! Difference      [ shift and go to state 66 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 104
@@ -4683,6 +4683,7 @@ state 104
     NotEquals       reduce using rule 44 (expression -> expression Mod expression .)
     And             reduce using rule 44 (expression -> expression Mod expression .)
     Or              reduce using rule 44 (expression -> expression Mod expression .)
+    Contains        reduce using rule 44 (expression -> expression Mod expression .)
     Comma           reduce using rule 44 (expression -> expression Mod expression .)
     $end            reduce using rule 44 (expression -> expression Mod expression .)
     SemiColon       reduce using rule 44 (expression -> expression Mod expression .)
@@ -4699,7 +4700,6 @@ state 104
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 44 (expression -> expression Mod expression .) ]
   ! MinusSet        [ reduce using rule 44 (expression -> expression Mod expression .) ]
@@ -4709,7 +4709,6 @@ state 104
   ! Union           [ reduce using rule 44 (expression -> expression Mod expression .) ]
   ! Difference      [ reduce using rule 44 (expression -> expression Mod expression .) ]
   ! Intersect       [ reduce using rule 44 (expression -> expression Mod expression .) ]
-  ! Contains        [ reduce using rule 44 (expression -> expression Mod expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4723,6 +4722,7 @@ state 104
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 105
@@ -4853,6 +4853,7 @@ state 106
     Intersect       reduce using rule 49 (expression -> expression ModSet expression .)
     And             reduce using rule 49 (expression -> expression ModSet expression .)
     Or              reduce using rule 49 (expression -> expression ModSet expression .)
+    Contains        reduce using rule 49 (expression -> expression ModSet expression .)
     Comma           reduce using rule 49 (expression -> expression ModSet expression .)
     $end            reduce using rule 49 (expression -> expression ModSet expression .)
     SemiColon       reduce using rule 49 (expression -> expression ModSet expression .)
@@ -4861,9 +4862,7 @@ state 106
     CloseCurly      reduce using rule 49 (expression -> expression ModSet expression .)
     CloseParen      reduce using rule 49 (expression -> expression ModSet expression .)
     Do              reduce using rule 49 (expression -> expression ModSet expression .)
-    Contains        shift and go to state 56
 
-  ! Contains        [ reduce using rule 49 (expression -> expression ModSet expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4885,6 +4884,7 @@ state 106
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 107
@@ -4926,6 +4926,7 @@ state 107
     NotEquals       reduce using rule 42 (expression -> expression Times expression .)
     And             reduce using rule 42 (expression -> expression Times expression .)
     Or              reduce using rule 42 (expression -> expression Times expression .)
+    Contains        reduce using rule 42 (expression -> expression Times expression .)
     Comma           reduce using rule 42 (expression -> expression Times expression .)
     $end            reduce using rule 42 (expression -> expression Times expression .)
     SemiColon       reduce using rule 42 (expression -> expression Times expression .)
@@ -4942,7 +4943,6 @@ state 107
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 42 (expression -> expression Times expression .) ]
   ! MinusSet        [ reduce using rule 42 (expression -> expression Times expression .) ]
@@ -4952,7 +4952,6 @@ state 107
   ! Union           [ reduce using rule 42 (expression -> expression Times expression .) ]
   ! Difference      [ reduce using rule 42 (expression -> expression Times expression .) ]
   ! Intersect       [ reduce using rule 42 (expression -> expression Times expression .) ]
-  ! Contains        [ reduce using rule 42 (expression -> expression Times expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -4966,6 +4965,7 @@ state 107
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 108
@@ -5004,6 +5004,7 @@ state 108
     NotEquals       reduce using rule 40 (expression -> expression Plus expression .)
     And             reduce using rule 40 (expression -> expression Plus expression .)
     Or              reduce using rule 40 (expression -> expression Plus expression .)
+    Contains        reduce using rule 40 (expression -> expression Plus expression .)
     Comma           reduce using rule 40 (expression -> expression Plus expression .)
     $end            reduce using rule 40 (expression -> expression Plus expression .)
     SemiColon       reduce using rule 40 (expression -> expression Plus expression .)
@@ -5023,7 +5024,6 @@ state 108
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! Times           [ reduce using rule 40 (expression -> expression Plus expression .) ]
   ! Div             [ reduce using rule 40 (expression -> expression Plus expression .) ]
@@ -5036,7 +5036,6 @@ state 108
   ! Union           [ reduce using rule 40 (expression -> expression Plus expression .) ]
   ! Difference      [ reduce using rule 40 (expression -> expression Plus expression .) ]
   ! Intersect       [ reduce using rule 40 (expression -> expression Plus expression .) ]
-  ! Contains        [ reduce using rule 40 (expression -> expression Plus expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! LessThan        [ shift and go to state 57 ]
@@ -5047,6 +5046,7 @@ state 108
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 109
@@ -5088,6 +5088,7 @@ state 109
     NotEquals       reduce using rule 43 (expression -> expression Div expression .)
     And             reduce using rule 43 (expression -> expression Div expression .)
     Or              reduce using rule 43 (expression -> expression Div expression .)
+    Contains        reduce using rule 43 (expression -> expression Div expression .)
     Comma           reduce using rule 43 (expression -> expression Div expression .)
     $end            reduce using rule 43 (expression -> expression Div expression .)
     SemiColon       reduce using rule 43 (expression -> expression Div expression .)
@@ -5104,7 +5105,6 @@ state 109
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! PlusSet         [ reduce using rule 43 (expression -> expression Div expression .) ]
   ! MinusSet        [ reduce using rule 43 (expression -> expression Div expression .) ]
@@ -5114,7 +5114,6 @@ state 109
   ! Union           [ reduce using rule 43 (expression -> expression Div expression .) ]
   ! Difference      [ reduce using rule 43 (expression -> expression Div expression .) ]
   ! Intersect       [ reduce using rule 43 (expression -> expression Div expression .) ]
-  ! Contains        [ reduce using rule 43 (expression -> expression Div expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -5128,6 +5127,7 @@ state 109
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 110
@@ -5166,6 +5166,7 @@ state 110
     NotEquals       reduce using rule 41 (expression -> expression Minus expression .)
     And             reduce using rule 41 (expression -> expression Minus expression .)
     Or              reduce using rule 41 (expression -> expression Minus expression .)
+    Contains        reduce using rule 41 (expression -> expression Minus expression .)
     Comma           reduce using rule 41 (expression -> expression Minus expression .)
     $end            reduce using rule 41 (expression -> expression Minus expression .)
     SemiColon       reduce using rule 41 (expression -> expression Minus expression .)
@@ -5185,7 +5186,6 @@ state 110
     Union           shift and go to state 55
     Difference      shift and go to state 66
     Intersect       shift and go to state 59
-    Contains        shift and go to state 56
 
   ! Times           [ reduce using rule 41 (expression -> expression Minus expression .) ]
   ! Div             [ reduce using rule 41 (expression -> expression Minus expression .) ]
@@ -5198,7 +5198,6 @@ state 110
   ! Union           [ reduce using rule 41 (expression -> expression Minus expression .) ]
   ! Difference      [ reduce using rule 41 (expression -> expression Minus expression .) ]
   ! Intersect       [ reduce using rule 41 (expression -> expression Minus expression .) ]
-  ! Contains        [ reduce using rule 41 (expression -> expression Minus expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! LessThan        [ shift and go to state 57 ]
@@ -5209,6 +5208,7 @@ state 110
   ! NotEquals       [ shift and go to state 62 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 111
@@ -5255,6 +5255,7 @@ state 111
     Intersect       reduce using rule 46 (expression -> expression MinusSet expression .)
     And             reduce using rule 46 (expression -> expression MinusSet expression .)
     Or              reduce using rule 46 (expression -> expression MinusSet expression .)
+    Contains        reduce using rule 46 (expression -> expression MinusSet expression .)
     Comma           reduce using rule 46 (expression -> expression MinusSet expression .)
     $end            reduce using rule 46 (expression -> expression MinusSet expression .)
     SemiColon       reduce using rule 46 (expression -> expression MinusSet expression .)
@@ -5266,12 +5267,10 @@ state 111
     TimesSet        shift and go to state 76
     DivSet          shift and go to state 65
     ModSet          shift and go to state 69
-    Contains        shift and go to state 56
 
   ! TimesSet        [ reduce using rule 46 (expression -> expression MinusSet expression .) ]
   ! DivSet          [ reduce using rule 46 (expression -> expression MinusSet expression .) ]
   ! ModSet          [ reduce using rule 46 (expression -> expression MinusSet expression .) ]
-  ! Contains        [ reduce using rule 46 (expression -> expression MinusSet expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -5290,6 +5289,7 @@ state 111
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 112
@@ -5420,6 +5420,7 @@ state 113
     Intersect       reduce using rule 47 (expression -> expression TimesSet expression .)
     And             reduce using rule 47 (expression -> expression TimesSet expression .)
     Or              reduce using rule 47 (expression -> expression TimesSet expression .)
+    Contains        reduce using rule 47 (expression -> expression TimesSet expression .)
     Comma           reduce using rule 47 (expression -> expression TimesSet expression .)
     $end            reduce using rule 47 (expression -> expression TimesSet expression .)
     SemiColon       reduce using rule 47 (expression -> expression TimesSet expression .)
@@ -5428,9 +5429,7 @@ state 113
     CloseCurly      reduce using rule 47 (expression -> expression TimesSet expression .)
     CloseParen      reduce using rule 47 (expression -> expression TimesSet expression .)
     Do              reduce using rule 47 (expression -> expression TimesSet expression .)
-    Contains        shift and go to state 56
 
-  ! Contains        [ reduce using rule 47 (expression -> expression TimesSet expression .) ]
   ! Plus            [ shift and go to state 71 ]
   ! Minus           [ shift and go to state 73 ]
   ! Times           [ shift and go to state 70 ]
@@ -5452,6 +5451,7 @@ state 113
   ! Intersect       [ shift and go to state 59 ]
   ! And             [ shift and go to state 68 ]
   ! Or              [ shift and go to state 64 ]
+  ! Contains        [ shift and go to state 56 ]
 
 
 state 114
