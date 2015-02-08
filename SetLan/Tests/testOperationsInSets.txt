@@ -1,0 +1,12 @@
+program {
+    using
+        set x, y;
+        int a, b;
+    in
+    scan a;
+    scan b;
+
+    x = {a, b, a + b, a - b, a * b, a / b, a % b};
+    y = {a, b, b + a, b - a, b * a, b / a, b % a};
+
+}

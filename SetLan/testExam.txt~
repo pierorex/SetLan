@@ -1,11 +1,13 @@
 program {
     using
-        int n;
-        bool x,y,z;
+        set x, y;
+        int a, b;
     in
+    scan a;
+    scan b;
+    
+    x = {a * 2, b};
+    #x = {a, b, a + b, a - b, a * b, a / b, a % b};
+    #y = {a, b, b + a, b - a, b * a, b / a, b % a};
 
-    x = {2,3,4,5} ++ {2,3,1,4,8,10,11,12,13,15,14,156};
-    
-    f = e or a + b @ c ++ d and m + y @ x ++ q and h @ {2,3,4,5} ++ {2,3,1,4,8} \ {1,2} >< {1} ++ {2,3,4,5} ++ {2,3,1,4,8} \ {1,2} >< {1} >< {1} >< {1} ; 
-    
 }
