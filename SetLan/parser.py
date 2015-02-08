@@ -117,7 +117,9 @@ precedence = (
     # int x int -> bool
     ("nonassoc", 'LessThan', 'LessThanEq', 'GreaterThan', 'GreaterThanEq'),
     # int|set x int|set -> bool
-    ("nonassoc", 'Equals', 'NotEquals'),          
+    ("nonassoc", 'Equals', 'NotEquals'),     
+    # int x set -> bool
+    ("right", 'Contains'),     
     # int
     ("left", 'Plus', 'Minus'),
     ("left", 'Times', 'Div', 'Mod'),
@@ -127,9 +129,7 @@ precedence = (
     ("left", 'Intersect'),
     # int x set -> set
     ("left", 'PlusSet', 'MinusSet'),
-    ("left", 'TimesSet', 'DivSet', 'ModSet'),
-    # int x set -> bool
-    ("right", 'Contains'),          
+    ("left", 'TimesSet', 'DivSet', 'ModSet'),          
     # set -> set    (unary set operators)
     ("right", 'MaxSet'),
     ("right", 'MinSet'),
