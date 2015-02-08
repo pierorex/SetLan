@@ -83,12 +83,12 @@ def p_expression_list(p):
 
 
 def p_if(p):
-    """statement : If expression statement
-                 | If expression statement Else statement"""
-    if len(p) == 4:
-        p[0] = If(p[2], p[3])
+    """statement : If OpenParen expression CloseParen statement
+                 | If OpenParen expression CloseParen  statement Else statement"""
+    if len(p) == 6:
+        p[0] = If(p[3], p[5])
     else:
-        p[0] = If(p[2], p[3], p[5])
+        p[0] = If(p[3], p[5], p[7])
 
 
 def p_for(p):
@@ -98,9 +98,9 @@ def p_for(p):
 
 
 def p_repeat(p):
-    """statement : Repeat statement While expression Do statement
-                 | Repeat statement While expression
-                 | While expression Do statement"""
+    """statement : Repeat statement While OpenParen expression CloseParen Do statement
+                 | Repeat statement While OpenParen expression CloseParen
+                 | While OpenParen expression CloseParen Do statement"""
     if len(p) == 7:
         p[0] = Repeat(p[2], p[4], p[6])
     elif p[1] == 'Repeat':
@@ -195,28 +195,28 @@ def p_binop(p):
                   | expression Or expression
                   | expression Contains expression"""
 
-    if p[2] == '+': p[0] = Plus(p[1], p[2])
-    elif p[2] == '-': p[0] = Minus(p[1], p[2])
-    elif p[2] == '*': p[0] = Times(p[1], p[2])
-    elif p[2] == '/': p[0] = Div(p[1], p[2])
-    elif p[2] == '%': p[0] = Mod(p[1], p[2])
-    elif p[2] == '<+>': p[0] = PlusSet(p[1], p[2])
-    elif p[2] == '<->': p[0] = MinusSet(p[1], p[2])
-    elif p[2] == '<*>': p[0] = TimesSet(p[1], p[2])
-    elif p[2] == '</>': p[0] = DivSet(p[1], p[2])
-    elif p[2] == '<%>': p[0] = ModSet(p[1], p[2])
-    elif p[2] == '<': p[0] = LessThan(p[1], p[2])
-    elif p[2] == '<=': p[0] = LessThanEq(p[1], p[2])
-    elif p[2] == '>': p[0] = GreaterThan(p[1], p[2])
-    elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[2])
-    elif p[2] == '==': p[0] = Equals(p[1], p[2])
-    elif p[2] == '\=': p[0] = NotEquals(p[1], p[2])
-    elif p[2] == '++': p[0] = Union(p[1], p[2])
-    elif p[2] == '\\': p[0] = Difference(p[1], p[2]) 
-    elif p[2] == '><': p[0] = Intersect(p[1], p[2])
-    elif p[2] == 'and': p[0] = And(p[1], p[2])
-    elif p[2] == 'or': p[0] = Or(p[1], p[2])
-    elif p[2] == '@': p[0] = Contains(p[1], p[2])
+    if p[2] == '+': p[0] = Plus(p[1], p[3])
+    elif p[2] == '-': p[0] = Minus(p[1], p[3])
+    elif p[2] == '*': p[0] = Times(p[1], p[3])
+    elif p[2] == '/': p[0] = Div(p[1], p[3])
+    elif p[2] == '%': p[0] = Mod(p[1], p[3])
+    elif p[2] == '<+>': p[0] = PlusSet(p[1], p[3])
+    elif p[2] == '<->': p[0] = MinusSet(p[1], p[3])
+    elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3])
+    elif p[2] == '</>': p[0] = DivSet(p[1], p[3])
+    elif p[2] == '<%>': p[0] = ModSet(p[1], p[3])
+    elif p[2] == '<': p[0] = LessThan(p[1], p[3])
+    elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3])
+    elif p[2] == '>': p[0] = GreaterThan(p[1], p[3])
+    elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3])
+    elif p[2] == '==': p[0] = Equals(p[1], p[3])
+    elif p[2] == '\=': p[0] = NotEquals(p[1], p[3])
+    elif p[2] == '++': p[0] = Union(p[1], p[3])
+    elif p[2] == '\\': p[0] = Difference(p[1], p[3]) 
+    elif p[2] == '><': p[0] = Intersect(p[1], p[3])
+    elif p[2] == 'and': p[0] = And(p[1], p[3])
+    elif p[2] == 'or': p[0] = Or(p[1], p[3])
+    elif p[2] == '@': p[0] = Contains(p[1], p[3])
 
 
 def p_unary_op(p):
@@ -249,7 +249,7 @@ def mainParser(arg):
     ast = parser.parse(open(arg,'r').read())
 
     if parsing_errors != '': return parsing_errors
-    else: return ast.__repr__()
+    else: return ast.repr()
 
 
 if __name__ == '__main__':
