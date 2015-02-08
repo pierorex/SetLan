@@ -15,8 +15,8 @@ program {
         for j min d ++ c do{
             c = c + j * k * 5;
             m = i + j;
-        }
-    }
+        };
+    };
     
 
 }
