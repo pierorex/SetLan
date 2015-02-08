@@ -120,6 +120,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testForInsideFor.txt'), open('Tests/answerForInsideFor.txt','r').read())
     def testAll(self):
         self.assertEqual(mainParser('Tests/testAll.txt'), open('Tests/answerAll.txt','r').read())
+    def testPrecedenceOperators(self):
+        self.assertEqual(mainParser('Tests/testPrecedenceOperators.txt'), open('Tests/answerPrecedenceOperators.txt','r').read())
     
 
 if __name__ == '__main__':
