@@ -137,8 +137,6 @@ def t_newline(t):
 t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
 
-# Global variables to return information
-lexing_s = ''
 
 def t_error(t):
     global lexing_errors
@@ -147,7 +145,9 @@ def t_error(t):
     else:    
         lexing_errors += 'Error: Se encontro un caracter inesperado "'+t.value[0]+'" en la Linea '+str(t.lexer.lineno)+', Columna '+str(t.lexer.lexpos - t.lexer.current_column)+'.\n'
     t.lexer.skip(1)
+
     
+lexing_errors = ''
 
 def mainLexer(arg):
     global lexing_errors, lexer

@@ -241,6 +241,9 @@ parsing_errors = ''
 
 def mainParser(arg):
     global parsing_errors, lexer
+    lexer_return = mainLexer(arg)
+    if(lexer_return.count('Error:') != 0):
+        return lexer_return
     lexer = lex.lex()
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())

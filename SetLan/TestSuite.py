@@ -56,6 +56,8 @@ class LexerTestSuite(unittest.TestCase):
 class ParserTestSuite(unittest.TestCase):
     def testSimple1(self):
         self.assertEqual(mainParser('Tests/testSimple1.txt'), open('Tests/answerSimple1.txt','r').read())
+    def testSimple2(self):
+        self.assertEqual(mainParser('Tests/testSimple2.txt'), open('Tests/answerSimple2.txt','r').read())
     def testSimpleError(self):
         self.assertEqual(mainParser('Tests/testSimpleError.txt'), open('Tests/answerSimpleError.txt','r').read())
     def testIfThen(self):
