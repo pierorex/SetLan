@@ -159,20 +159,17 @@ def p_id(p):
     p[0] = Variable(p[1])
 
 
-def p_number_list(p):
-    """number_list : Number
-                   | number_list Comma Number"""
-
-
 def p_set_elements_list(p):
     """set_elements_list : Number
+                         | arithmetic_op
                          | ID
                          | set_elements_list Comma Number
-                         | set_elements_list Comma ID"""
+                         | set_elements_list Comma ID
+                         | set_elements_list Comma arithmetic_op"""
     if len(p) == 2:
         try:
             if int(p[1]): p[0] = [Int(p[1])]
-        except ValueError:
+        except:
             p[0] = [Variable(p[1])]
     else:
         try:
@@ -191,13 +188,22 @@ def p_parenthesis(p):
     p[0] = p[2]
 
 
-def p_binop(p):
-    """expression : expression Plus expression
-                  | expression Minus expression
-                  | expression Times expression
-                  | expression Div expression
-                  | expression Mod expression
-                  | expression PlusSet expression
+def p_arithmetic_op(p):
+    """arithmetic_op : expression Plus expression
+                     | expression Minus expression
+                     | expression Times expression
+                     | expression Div expression
+                     | expression Mod expression"""
+    
+    if p[2] == '+': p[0] = Plus(p[1], p[3])
+    elif p[2] == '-': p[0] = Minus(p[1], p[3])
+    elif p[2] == '*': p[0] = Times(p[1], p[3])
+    elif p[2] == '/': p[0] = Div(p[1], p[3])
+    elif p[2] == '%': p[0] = Mod(p[1], p[3])
+
+
+def p_binop_(p):
+    """expression : expression PlusSet expression
                   | expression MinusSet expression
                   | expression TimesSet expression
                   | expression DivSet expression
@@ -213,30 +219,29 @@ def p_binop(p):
                   | expression Intersect expression
                   | expression And expression
                   | expression Or expression
-                  | expression Contains expression"""
+                  | expression Contains expression
+                  | arithmetic_op"""
 
-    if p[2] == '+': p[0] = Plus(p[1], p[3])
-    elif p[2] == '-': p[0] = Minus(p[1], p[3])
-    elif p[2] == '*': p[0] = Times(p[1], p[3])
-    elif p[2] == '/': p[0] = Div(p[1], p[3])
-    elif p[2] == '%': p[0] = Mod(p[1], p[3])
-    elif p[2] == '<+>': p[0] = PlusSet(p[1], p[3])
-    elif p[2] == '<->': p[0] = MinusSet(p[1], p[3])
-    elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3])
-    elif p[2] == '</>': p[0] = DivSet(p[1], p[3])
-    elif p[2] == '<%>': p[0] = ModSet(p[1], p[3])
-    elif p[2] == '<': p[0] = LessThan(p[1], p[3])
-    elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3])
-    elif p[2] == '>': p[0] = GreaterThan(p[1], p[3])
-    elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3])
-    elif p[2] == '==': p[0] = Equals(p[1], p[3])
-    elif p[2] == '/=': p[0] = NotEquals(p[1], p[3])
-    elif p[2] == '++': p[0] = Union(p[1], p[3])
-    elif p[2] == '\\': p[0] = Difference(p[1], p[3]) 
-    elif p[2] == '><': p[0] = Intersect(p[1], p[3])
-    elif p[2] == 'and': p[0] = And(p[1], p[3])
-    elif p[2] == 'or': p[0] = Or(p[1], p[3])
-    elif p[2] == '@': p[0] = Contains(p[1], p[3])
+    if len(p) != 2:
+        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3])
+        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3])
+        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3])
+        elif p[2] == '</>': p[0] = DivSet(p[1], p[3])
+        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3])
+        elif p[2] == '<': p[0] = LessThan(p[1], p[3])
+        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3])
+        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3])
+        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3])
+        elif p[2] == '==': p[0] = Equals(p[1], p[3])
+        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3])
+        elif p[2] == '++': p[0] = Union(p[1], p[3])
+        elif p[2] == '\\': p[0] = Difference(p[1], p[3]) 
+        elif p[2] == '><': p[0] = Intersect(p[1], p[3])
+        elif p[2] == 'and': p[0] = And(p[1], p[3])
+        elif p[2] == 'or': p[0] = Or(p[1], p[3])
+        elif p[2] == '@': p[0] = Contains(p[1], p[3])
+    else:
+        p[0] = p[1]
 
 
 def p_unary_op(p):

@@ -139,7 +139,11 @@ class Variable(Expression):
         self.name = name
 
     def repr(self, indent):
-        return 'Variable\n' + indent*' ' + self.name + '\n'
+        if getattr(self.name,'repr',None):
+            return str(self.name.repr(indent))
+        else: 
+            return 'Variable\n' + indent*' ' + self.name + '\n'
+        
     
 
 class Int(Expression):

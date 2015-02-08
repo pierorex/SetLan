@@ -7,7 +7,7 @@ program {
     scan a;
     scan b;
 
-    x = {a, b, a + b, a - b, a * b, a / b, a % b};
+    x = {a, 1, a + 3, a - b, 4 * b, a / b, a % 9};
     y = {a, b, b + a, b - a, b * a, b / a, b % a};
 
     # esto se asocia: (a <+> y) ++ (b <+> x) ++ y ++ x
