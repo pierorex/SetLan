@@ -53,7 +53,7 @@ class Scan(Statement):
         
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
-        return 'Scan\n' + indent*' ' + var + '\n'
+        return 'Scan\n' + indent*' ' + var
 
 
 class Print(Statement):

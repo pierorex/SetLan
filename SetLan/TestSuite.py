@@ -72,6 +72,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testUsingTwoDataTypes.txt'), open('Tests/answerUsingTwoDataTypes.txt','r').read())
     def testUsingThreeDataTypes(self):
         self.assertEqual(mainParser('Tests/testUsingThreeDataTypes.txt'), open('Tests/answerUsingThreeDataTypes.txt','r').read())
+    def testScan(self):
+        self.assertEqual(mainParser('Tests/testScan.txt'), open('Tests/answerScan.txt','r').read())
   
 
 if __name__ == '__main__':
