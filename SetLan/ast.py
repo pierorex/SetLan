@@ -54,7 +54,7 @@ class Print(Statement):
         return_string = 'Print\n'
         for element in self.print_list:
             e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
-            return_string += indent*' ' + e + '\n'
+            return_string += indent*' ' + e
         return return_string
 
 
@@ -81,8 +81,8 @@ class If(Statement):
         sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
         if self.statement2:
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
-            return 'If Condition\n' + indent*' ' + exp + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + indent*' ' + 'Statement False\n' + (indent+4)*' ' + sta_2 + (indent-4)*' ' + 'End If\n'
-        return 'If Condition\n' + indent*' ' + exp + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'End If\n'
+            return 'If Condition\n' + indent*' ' + exp + (indent-4)*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'Statement False\n' + indent*' ' + sta_2 + (indent-4)*' ' + 'End If\n'
+        return 'If Condition\n' + indent*' ' + exp + (indent-4)*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'End If\n'
 
 
 class For(Statement):

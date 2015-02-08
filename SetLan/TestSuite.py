@@ -60,6 +60,9 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testSimpleError.txt'), open('Tests/answerSimpleError.txt','r').read())
     def testIfThen(self):
         self.assertEqual(mainParser('Tests/testIfThen.txt'), open('Tests/answerIfThen.txt','r').read())
+    def testIfThenElse(self):
+        self.assertEqual(mainParser('Tests/testIfThenElse.txt'), open('Tests/answerIfThenElse.txt','r').read())
+
 
 if __name__ == '__main__':
     unittest.main()
