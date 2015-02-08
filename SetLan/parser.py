@@ -101,12 +101,12 @@ def p_repeat(p):
     """statement : Repeat statement While OpenParen expression CloseParen Do statement
                  | Repeat statement While OpenParen expression CloseParen
                  | While OpenParen expression CloseParen Do statement"""
-    if len(p) == 7:
-        p[0] = Repeat(p[2], p[4], p[6])
-    elif p[1] == 'Repeat':
-        p[0] = Repeat(p[2], p[4], None)
-    elif p[1] == 'While':
-        p[0] = Repeat(p[4], None, p[6])
+    if len(p) == 9:
+        p[0] = Repeat(p[2], p[5], p[8])
+    elif p[1] == 'repeat':
+        p[0] = Repeat(p[2], p[5], None)
+    elif p[1] == 'while':
+        p[0] = Repeat(None, p[3], p[6])
         
 
 precedence = (
