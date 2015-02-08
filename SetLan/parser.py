@@ -15,12 +15,12 @@ def p_assing(p):
 
 def p_block(p):
     """statement : OpenCurly statement_list CloseCurly
-                 | OpenCurly Using declarations_list In statement_list CloseCurly
+                 | OpenCurly Using declarations_list SemiColon In statement_list CloseCurly
                  | """
     if len(p) == 4:
         p[0] = Block(p[2])
     elif len(p) == 7:
-        p[0] = Block(p[4])
+        p[0] = Block(p[6],p[3])
     else:
         p[0] = None
 
@@ -31,7 +31,7 @@ def p_declarations_list(p):
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
     else:
-        p[0] = p[1] + [(p[2], p[3])]
+        p[0] = p[1] + [(p[3], p[4])]
 
 
 def p_variable_list(p):
