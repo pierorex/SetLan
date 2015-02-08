@@ -56,6 +56,8 @@ class LexerTestSuite(unittest.TestCase):
 class ParserTestSuite(unittest.TestCase):
     def testSimple1(self):
         self.assertEqual(mainParser('Tests/testSimple1.txt'), open('Tests/answerSimple1.txt','r').read())
+    def testSimple2(self):
+        self.assertEqual(mainParser('Tests/testSimple2.txt'), open('Tests/answerSimple2.txt','r').read())
     def testSimpleError(self):
         self.assertEqual(mainParser('Tests/testSimpleError.txt'), open('Tests/answerSimpleError.txt','r').read())
     def testIfThen(self):
@@ -64,7 +66,13 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testIfThenElse.txt'), open('Tests/answerIfThenElse.txt','r').read())
     def testAssign(self):
         self.assertEqual(mainParser('Tests/testAssign.txt'), open('Tests/answerAssign.txt','r').read())
-
+    def testUsing(self):
+        self.assertEqual(mainParser('Tests/testUsing.txt'), open('Tests/answerUsing.txt','r').read())
+    def testUsingTwoDataTypes(self):
+        self.assertEqual(mainParser('Tests/testUsingTwoDataTypes.txt'), open('Tests/answerUsingTwoDataTypes.txt','r').read())
+    def testUsingThreeDataTypes(self):
+        self.assertEqual(mainParser('Tests/testUsingThreeDataTypes.txt'), open('Tests/answerUsingThreeDataTypes.txt','r').read())
+  
 
 if __name__ == '__main__':
     unittest.main()

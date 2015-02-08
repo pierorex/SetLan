@@ -26,11 +26,20 @@ class Assign(Statement):
 
 
 class Block(Statement):
-    def __init__(self, statement_list):
+    def __init__(self, statement_list, declarations=None):
         self.statement_list = statement_list
+        self.declarations = declarations
 
     def repr(self, indent):
         s = 'Block Start\n'
+        if self.declarations:
+            s += indent*' ' + 'Using\n'
+            for var_list in self.declarations:
+                datatype = var_list[0]
+                for var in var_list[1]:
+                    s += (indent+4)*' ' + datatype + '\n' + (indent+8)*' ' + var.repr(indent+12)
+            s += indent*' ' + 'In\n'
+
         for statement in self.statement_list:
             sta = statement.__repr__() if not getattr(statement,'repr',None) else statement.repr(indent+4)
             if sta != 'None':
