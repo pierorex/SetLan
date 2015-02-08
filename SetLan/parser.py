@@ -14,12 +14,12 @@ def p_assing(p):
 
 
 def p_block(p):
-    """statement : OpenCurly statement_list CloseCurly
+    """statement : OpenCurly statement_list SemiColon CloseCurly
                  | OpenCurly Using declarations_list SemiColon In statement_list CloseCurly
                  | """
-    if len(p) == 4:
+    if len(p) == 5:
         p[0] = Block(p[2])
-    elif len(p) == 7:
+    elif len(p) == 8:
         p[0] = Block(p[6],p[3])
     else:
         p[0] = None
