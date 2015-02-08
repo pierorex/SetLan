@@ -85,10 +85,10 @@ def p_expression_list(p):
 def p_if(p):
     """statement : If OpenParen expression CloseParen statement
                  | If OpenParen expression CloseParen  statement Else statement"""
-    if len(p) == 4:
-        p[0] = If(p[2], p[3])
+    if len(p) == 6:
+        p[0] = If(p[3], p[5])
     else:
-        p[0] = If(p[2], p[3], p[5])
+        p[0] = If(p[3], p[5], p[7])
 
 
 def p_for(p):

@@ -81,8 +81,8 @@ class If(Statement):
         sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
         if self.statement2:
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
-            return 'If\n' + indent*' ' + 'Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n' + indent*' ' + 'Statement False\n' + indent*' ' + sta_2 + '\n'
-        return 'If\n' + indent*' ' + 'Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n'
+            return 'If Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n' + indent*' ' + 'Statement False\n' + indent*' ' + sta_2 + '\n'
+        return 'If Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n'
 
 
 class For(Statement):
@@ -159,7 +159,7 @@ class BinOp(Expression):
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
         op2 = self.operand2.__repr__() if not getattr(self.operand2,'repr',None) else self.operand2.repr(indent+4)
-        return  self.__class__.__name__ + '\n' + indent*' ' + op1 + '\n' + op2 + '\n'
+        return self.__class__.__name__ + '\n' + indent*' ' + op1 + '\n' + op2 + '\n'
 
 
 class Plus(BinOp): pass
