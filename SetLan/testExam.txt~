@@ -3,17 +3,5 @@ program {
         int n;
     in
 
-    #for i min d ++ c do
-    #    c = c + i * 2
-
-    while (count <= n) do {
-        tmp = low + high;
-        low = high;
-        high = tmp;
-        println "fib(", count, ") = ", low;
-        count = count + 1;
-    };
- 
-
     
 }
