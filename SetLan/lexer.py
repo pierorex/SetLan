@@ -137,11 +137,8 @@ def t_newline(t):
 t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
 
-<<<<<<< HEAD
 # Global variables to return information
 lexing_errors = ''
-=======
->>>>>>> bab1ada532173ac7e93735a048bb4af5da229039
 
 def t_error(t):
     global lexing_errors
