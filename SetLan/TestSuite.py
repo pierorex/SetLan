@@ -86,7 +86,12 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testIf2.txt'), open('Tests/answerIf2.txt','r').read())
     def testIfElse2(self):
         self.assertEqual(mainParser('Tests/testIfElse2.txt'), open('Tests/answerIfElse2.txt','r').read())
-
+    def testSimpleFor(self):
+        self.assertEqual(mainParser('Tests/testSimpleFor.txt'), open('Tests/answerSimpleFor.txt','r').read())
+    def testSimpleForMultiOperations(self):
+        self.assertEqual(mainParser('Tests/testSimpleForMultiOperations.txt'), open('Tests/answerSimpleForMultiOperations.txt','r').read())
+    def testSimpleForInvertedDirection(self):
+        self.assertEqual(mainParser('Tests/testSimpleForInvertedDirection.txt'), open('Tests/answerSimpleForInvertedDirection.txt','r').read())
 
 
 if __name__ == '__main__':
