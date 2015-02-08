@@ -1,8 +1,10 @@
 program {
-    if (a > b) println "If working!"
-    else print "Else working!"; $ $$$$$$$$
-    
-    if(a /= b) println "If 2 working!"
-    else print "Else 2 working!"; 
-   
+    using 
+        bool p,   q        ;
+        int e,f, g;
+        int a,b,c;
+        set S,Q;
+    in
+    print p == q, S;
+    println Q, "hola"
 }
