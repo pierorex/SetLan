@@ -138,7 +138,7 @@ t_ignore = " \t"
 t_ignore_COMMENT = r'\#.*'
 
 # Global variables to return information
-lexing_s = ''
+lexing_errors = ''
 
 def t_error(t):
     global lexing_errors
