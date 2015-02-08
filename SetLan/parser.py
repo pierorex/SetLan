@@ -229,7 +229,7 @@ def p_binop(p):
     elif p[2] == '>': p[0] = GreaterThan(p[1], p[3])
     elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3])
     elif p[2] == '==': p[0] = Equals(p[1], p[3])
-    elif p[2] == '\=': p[0] = NotEquals(p[1], p[3])
+    elif p[2] == '/=': p[0] = NotEquals(p[1], p[3])
     elif p[2] == '++': p[0] = Union(p[1], p[3])
     elif p[2] == '\\': p[0] = Difference(p[1], p[3]) 
     elif p[2] == '><': p[0] = Intersect(p[1], p[3])

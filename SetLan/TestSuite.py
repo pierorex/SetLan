@@ -76,7 +76,18 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testScan.txt'), open('Tests/answerScan.txt','r').read())
     def testCurlySet(self):
         self.assertEqual(mainParser('Tests/testCurlySet.txt'), open('Tests/answerCurlySet.txt','r').read())
-  
+    def testAssignErrors(self):
+        self.assertEqual(mainParser('Tests/testAssignErrors.txt'), open('Tests/answerAssignErrors.txt','r').read())
+    def testError(self):
+        self.assertEqual(mainParser('Tests/testError.txt'), open('Tests/answerError.txt','r').read())
+    def testError2(self):
+        self.assertEqual(mainParser('Tests/testError2.txt'), open('Tests/answerError2.txt','r').read())
+    def testIf2(self):
+        self.assertEqual(mainParser('Tests/testIf2.txt'), open('Tests/answerIf2.txt','r').read())
+    def testIfElse2(self):
+        self.assertEqual(mainParser('Tests/testIfElse2.txt'), open('Tests/answerIfElse2.txt','r').read())
+
+
 
 if __name__ == '__main__':
     unittest.main()
