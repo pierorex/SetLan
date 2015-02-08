@@ -92,6 +92,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testSimpleForMultiOperations.txt'), open('Tests/answerSimpleForMultiOperations.txt','r').read())
     def testSimpleForInvertedDirection(self):
         self.assertEqual(mainParser('Tests/testSimpleForInvertedDirection.txt'), open('Tests/answerSimpleForInvertedDirection.txt','r').read())
+    def testSimpleWhile(self):
+        self.assertEqual(mainParser('Tests/testSimpleWhile.txt'), open('Tests/answerSimpleWhile.txt','r').read())
 
 
 if __name__ == '__main__':

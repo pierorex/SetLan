@@ -87,12 +87,13 @@ class If(Statement):
         self.statement2 = statement2
     
     def repr(self, indent):
-        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+4)
-        sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
+        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
+        sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+8)
+        s = 'If\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + indent*' ' + 'Statement True\n' + (indent+4)*' ' + sta_1
         if self.statement2:
-            sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
-            return 'If Condition\n' + indent*' ' + exp + (indent-4)*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'Statement False\n' + indent*' ' + sta_2 + (indent-4)*' ' + 'End If\n'
-        return 'If Condition\n' + indent*' ' + exp + (indent-4)*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'End If\n'
+            sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
+            return s + indent*' ' + 'Statement False\n' + (indent+4)*' ' + sta_2 + (indent-4)*' ' + 'End If\n'
+        return s + (indent-4)*' ' + 'End If\n'
 
 
 class For(Statement):
@@ -116,16 +117,18 @@ class Repeat(Statement):
         self.statement2 = statement2
     
     def repr(self, indent):
-        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+4)
+        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
         if self.statement1:
             sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
+            s = 'Repeat\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + '\n' + indent*' ' + 'Do\n' + (indent+4)*' ' + sta_1 + '\n'
             if self.statement2:
-                sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
-                return 'Repeat\n' + indent*' ' + 'Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement 1\n' + indent*' ' +  sta_1 + '\n' + indent*' ' + 'Statement 2\n' + indent*' ' + sta_2 + '\n'
+                sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
+                return s + indent*' ' + 'Do\n' + indent*' ' + sta_2 + '\n'
             else:
-                return 'Repeat\n' + indent*' ' + 'Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement 1\n' + indent*' ' +  sta_1 + '\n'
+                return s
         else:
-            return 'Repeat\n' + indent*' ' + 'Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement 2\n' + indent*' ' +  sta_2 + '\n'
+            sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
+            return 'While\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + indent*' ' + 'Do\n' + (indent+4)*' ' +  sta_2 + '\n' + indent*' ' + 'End While\n'
         
     
 class Expression(object): pass
