@@ -3,11 +3,11 @@ program {
         set x, y;
         int a, b;
     in
+
     scan a;
     scan b;
-    
-    x = {7 * 2, (b + 100 * 200) / 15};
-    x = {a, b, a + b, a - b, a * b, a / b, a % b};
+
+    x = {a, 1, a + 3, a - b, 4 * b, a / b, a % 9};
     y = {a, b, b + a, b - a, b * a, b / a, b % a};
 
 }
