@@ -120,12 +120,12 @@ class Repeat(Statement):
         exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
         if self.statement1:
             sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
-            s = 'Repeat\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + '\n' + indent*' ' + 'Do\n' + (indent+4)*' ' + sta_1 + '\n'
+            s = 'Repeat\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'While\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp
             if self.statement2:
-                sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
-                return s + indent*' ' + 'Do\n' + indent*' ' + sta_2 + '\n'
+                sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
+                return s + (indent-4)*' ' + 'Do\n' + indent*' ' + sta_2 + (indent-4)*' ' + 'End Repeat\n'
             else:
-                return s
+                return s + (indent-4)*' ' + 'End Repeat\n'
         else:
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
             return 'While\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + indent*' ' + 'Do\n' + (indent+4)*' ' +  sta_2 + '\n' + indent*' ' + 'End While\n'
@@ -238,15 +238,15 @@ class UnaryOp(Expression):
         self.operand = operand
 
     def repr(self, indent):
-        op = self.op.__repr__() if not getattr(self.op,'repr',None) else self.op.repr(indent+4)
-        return self.class_name + '\n' + indent*' ' + op + '\n'
+        op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
+        return self.__class__.__name__ + '\n' + indent*' ' + op + '\n'
     
-class Uminus(Expression): pass
+class Uminus(UnaryOp): pass
 
-class Not(Expression): pass
+class Not(UnaryOp): pass
         
-class Len(Expression): pass    
+class Len(UnaryOp): pass    
         
-class MaxSet(Expression): pass
+class MaxSet(UnaryOp): pass
         
-class MinSet(Expression): pass    
+class MinSet(UnaryOp): pass    
