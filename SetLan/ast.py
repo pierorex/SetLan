@@ -20,9 +20,9 @@ class Assign(Statement):
         self.expression = expression
 
     def repr(self, indent): 
-        var = self.variable.__repr__() if not getattr(self.variable,'repr', None) else self.variable.repr(indent+4)
-        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+4)
-        return 'Assign\n' + indent*' ' + var + '\n' + indent*' ' + 'value\n' + indent*' ' + exp
+        var = self.variable.__repr__() if not getattr(self.variable,'repr', None) else self.variable.repr(indent+8)
+        exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
+        return 'Assign\n' + indent*' ' + var + indent*' ' + 'Value\n' + (indent+4)*' ' + exp
 
 
 class Block(Statement):
@@ -33,7 +33,8 @@ class Block(Statement):
         s = 'Block Start\n'
         for statement in self.statement_list:
             sta = statement.__repr__() if not getattr(statement,'repr',None) else statement.repr(indent+4)
-            s += indent*' ' + sta
+            if sta != 'None':
+                s += indent*' ' + sta
         return s + (indent-4)*' ' + 'Block End\n'
 
 
@@ -132,7 +133,7 @@ class Int(Expression):
         self.value = value    
         
     def repr(self, indent):
-        return 'Int\n' + indent*' ' + self.value + '\n'
+        return 'Int\n' + indent*' ' + str(self.value) + '\n'
     
     
 class Bool(Expression):
