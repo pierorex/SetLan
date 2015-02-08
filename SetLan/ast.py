@@ -33,7 +33,7 @@ class Block(Statement):
         s = 'Block Start\n'
         for statement in self.statement_list:
             sta = statement.__repr__() if not getattr(statement,'repr',None) else statement.repr(indent+4)
-            s += indent*' ' + sta + '\n'
+            s += indent*' ' + sta
         return s + (indent-4)*' ' + 'Block End\n'
 
 
@@ -54,7 +54,7 @@ class Print(Statement):
         return_string = 'Print\n'
         for element in self.print_list:
             e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
-            return_string +=  + indent*' ' + e + '\n'
+            return_string += indent*' ' + e + '\n'
         return return_string
 
 
@@ -66,7 +66,7 @@ class Println(Statement):
         return_string = 'Println\n'
         for element in self.print_list:
             e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
-            return_string +=  + indent*' ' + e + '\n'
+            return_string +=  + indent*' ' + e
         return return_string
 
 
@@ -81,8 +81,8 @@ class If(Statement):
         sta_1 = self.statement1.__repr__() if not getattr(self.statement1,'repr',None) else self.statement1.repr(indent+4)
         if self.statement2:
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+4)
-            return 'If Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n' + indent*' ' + 'Statement False\n' + (indent+4)*' ' + sta_2 + '\n'
-        return 'If Condition\n' + indent*' ' + exp + '\n' + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + '\n'
+            return 'If Condition\n' + indent*' ' + exp + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + indent*' ' + 'Statement False\n' + (indent+4)*' ' + sta_2 + (indent-4)*' ' + 'End If\n'
+        return 'If Condition\n' + indent*' ' + exp + indent*' ' + 'Statement True\n' + indent*' ' + sta_1 + (indent-4)*' ' + 'End If\n'
 
 
 class For(Statement):
@@ -159,7 +159,7 @@ class BinOp(Expression):
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
         op2 = self.operand2.__repr__() if not getattr(self.operand2,'repr',None) else self.operand2.repr(indent+4)
-        return self.__class__.__name__ + '\n' + indent*' ' + op1 + '\n' + indent*' ' + op2 + '\n'
+        return self.__class__.__name__ + '\n' + indent*' ' + op1 + indent*' ' + op2
 
 
 class Plus(BinOp): pass
