@@ -16,14 +16,10 @@ program {
 
     repeat{
         f = e or a + b @ c ++ d;
-<<<<<<< HEAD
         while (a < f) do {
-=======
-        while(a < f) do{
->>>>>>> b81c1c0b3bbbbd6fd0b5aab6f60c118d29e00399
             a = b + a;
             f = f - 1;
-        }
+        };
     }while (not f) do
         {   e = a < b or f;
             for i min d ++ c do

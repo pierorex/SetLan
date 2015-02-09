@@ -19,10 +19,10 @@ program {
         while(a < f) do{
             a = b + a;
             f = f - 1;
-        };
+        }
     }while (not f) do
         {   e = a < b or f;
             for i min d ++ c do
             c = c + 2 + i;
-        }
+        };
 }
