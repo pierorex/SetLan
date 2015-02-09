@@ -126,7 +126,8 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testAssociativeOperatorsSets.txt'), open('Tests/answerAssociativeOperatorsSets.txt','r').read())
     def testFibonacci(self):
         self.assertEqual(mainParser('Tests/testFibonacci.txt'), open('Tests/answerFibonacci.txt','r').read())
-
+    def testWhileInsideRepeat(self):
+        self.assertEqual(mainParser('Tests/testWhileInsideRepeat.txt'), open('Tests/answerWhileInsideRepeat.txt','r').read())
     
 
 if __name__ == '__main__':
