@@ -16,7 +16,7 @@ program {
 
     repeat{
         f = e or a + b @ c ++ d;
-        while(a < f){
+        while(a < f) do{
             a = b + a;
             f = f - 1;
         };
@@ -24,5 +24,5 @@ program {
         {   e = a < b or f;
             for i min d ++ c do
             c = c + 2 + i;
-        }
+        };
 }
