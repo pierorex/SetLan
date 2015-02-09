@@ -124,6 +124,9 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testPrecedenceOperators.txt'), open('Tests/answerPrecedenceOperators.txt','r').read())
     def testAssociativeOperatorsSets(self):
         self.assertEqual(mainParser('Tests/testAssociativeOperatorsSets.txt'), open('Tests/answerAssociativeOperatorsSets.txt','r').read())
+    def testFibonacci(self):
+        self.assertEqual(mainParser('Tests/testFibonacci.txt'), open('Tests/answerFibonacci.txt','r').read())
+
     
 
 if __name__ == '__main__':
