@@ -21,21 +21,25 @@ y cosas que no son palabras reservadas, esto facilita la distincion posterior
 entre variables y palabras reservadas, debido a que ambas son reconocidas como ID.
     Para el manejo de mensajes, se clasifican por separado errores y mensajes 
 regulares y se retorna la lista correspondiente.
+    Se decidió crear una clase del AST para cada tipo de elemento encontrado.
+    
     
 
 - Estado actual del proyecto:
 	En estos momentos el lenguaje reconoce los identificadores de cada variable, 
 los valores constantes permitidos por el lenguaje Setlan, como números enteros 
 y cadenas de caracteres (Estas encerradas entre comillas dobles); las 
-constantes booleanas y por último los símbolos utilizados para especificar valores,
-operadores, separadores y bloques. Además, reconoce los errores de caracteres como
-en los símbolos $, &, ~ y demas caracteres no definidos en el lenguaje.
+constantes booleanas, los símbolos utilizados para especificar valores,
+operadores, separadores, bloques y construcciones sintácticas complejas del 
+lenguaje. Además, reconoce los errores de caracteres como en los símbolos $, &,
+ ~ y demas caracteres no definidos en el lenguaje; en conjunto con errores 
+ sintácticos reconocidos por el módulo de parsing.
 
 - Problemas Presentes:
-	Ninguno.
+    [SOLUCIONADO] Error léxico al analizar Strings con salto de linea.
 
 - Comentarios Adicionales:
-	Se diseño una suite de pruebas con 16 casos de prueba que toman en cuenta todos
-los posibles estilos de entradas y salidas en los que el equipo pudo pensar. Esta 
-suite se encuentra en el archivo TestSuite.py y hace uso de los archivos que se
-encuentran en la carpeta Tests.
+	Se diseño una suite de pruebas con mas de 50 casos de prueba que toman en 
+	cuenta todos los posibles estilos de entradas y salidas en los que el equipo 
+	pudo pensar. Esta suite se encuentra en el archivo TestSuite.py y hace uso 
+	de los archivos que se encuentran en la carpeta Tests.
