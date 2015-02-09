@@ -4,4 +4,6 @@
 import parser, sys
 
 def main():
-    print (str(parser.mainParser()))
+    print parser.mainParser(sys.argv[1])
+
+main()
