@@ -25,4 +25,6 @@ program {
             for i min d ++ c do
             c = c + 2 + i;
         };
+
+    a = - <? {1,2};
 }
