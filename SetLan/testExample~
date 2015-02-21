@@ -7,5 +7,4 @@ program {
     print p == q, S;
     println Q, "hola";
     n = {1,2} == 2 <+> {0,1,2,2} ++ {1,2,3,4}
-    # 0 por alguna razon no lo acepta 
 }
