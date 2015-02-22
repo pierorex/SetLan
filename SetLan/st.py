@@ -1,6 +1,6 @@
 class SymbolTable(object):
     def __init__(self):
-        scope = dict()
+        self.scope = dict()
     
     def insert(self, symbol):
         self.scope[symbol.__class__.__name__] = symbol
