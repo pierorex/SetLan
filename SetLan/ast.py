@@ -135,16 +135,18 @@ class Expression(object): pass
 
 
 class Variable(Expression):
-    def __init__(self, name):
+    def __init__(self, name, type=None, value=None):
         self.name = name
+        self.type = type
+        self.value = value
 
     def repr(self, indent):
         if getattr(self.name,'repr',None):
             return str(self.name.repr(indent))
         else: 
             return 'Variable\n' + indent*' ' + self.name + '\n'
-        
-    
+
+
 
 class Int(Expression):
     def __init__(self, value):

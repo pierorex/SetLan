@@ -1,6 +1,7 @@
 from lexer import *
 import ply.yacc as yacc
 from ast import *
+from st import *
 import sys
 
 def p_program(p):
@@ -15,32 +16,58 @@ def p_assing(p):
 
 def p_block(p):
     """statement : OpenCurly statement_list SemiColon CloseCurly
-                 | OpenCurly Using declarations_list SemiColon In statement_list CloseCurly
+                 | OpenCurly Using new_scope declarations_list SemiColon In statement_list CloseCurly
                  | """
     if len(p) == 5:
         p[0] = Block(p[2])
-    elif len(p) == 8:
-        p[0] = Block(p[6],p[3])
+    elif len(p) == 9:
+        global scopes_list
+        scopes_list.pop()
+        p[0] = Block(p[7],p[4])
     else:
         p[0] = None
+
+
+def p_new_scope(p):
+    "new_scope :"
+    global scopes_list
+    scopes_list.append(SymbolTable())
 
 
 def p_declarations_list(p):
     """declarations_list : type variable_list
                          | declarations_list SemiColon type variable_list"""
+
+    def redeclaration(var_name):
+        global static_checking_errors, lexer
+        static_checking_errors += 'Error: Redeclaration \''+var_name+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
+
+
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
+        for var in p[2]:
+            if scopes_list[scopes_list.len()-1].contains(var.name):
+                redeclaration(var.name)
+            else:
+                scopes_list[scopes_list.len()-1].insert(var)
     else:
         p[0] = p[1] + [(p[3], p[4])]
+        for var in p[4]:
+            if scopes_list[scopes_list.len()-1].contains(var.name):
+                redeclaration(var.name)
+            else:
+                scopes_list[scopes_list.len()-1].insert(var)
 
 
 def p_variable_list(p):
     """variable_list : ID
                      | variable_list Comma ID"""
+    var_type = False if actual_type == 'Bool' else (0 if actual_type == 'Int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1])]
+        p[0] = [Variable(p[1], var_type)]
+        
     else:
-        p[0] = p[1] + [Variable(p[3])]
+        p[0] = p[1] + [Variable(p[3], var_type)]
 
 
 def p_statement_list(p):
@@ -57,6 +84,8 @@ def p_type(p):
             | Bool
             | Set"""
     p[0] = p[1]
+    global actual_type
+    actual_type = p[1]
 
 
 def p_scan(p):
@@ -258,11 +287,15 @@ def p_unary_op(p):
 
 
 def p_error(p):
-    global parsing_errors
+    global parsing_errors, lexer
     parsing_errors += 'Error: Unexpected \''+str(p.value)+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
 
 
 parsing_errors = ''
+static_checking_errors = ''
+scopes_list = []
+actual_type = None
+
 
 def mainParser(arg):
     global parsing_errors, lexer
@@ -278,6 +311,22 @@ def mainParser(arg):
 
     if parsing_errors != '': return parsing_errors
     else: return ast.repr()
+
+
+def mainStaticCheker(arg):
+    global parsing_errors, lexer, scopes_list, actual_type
+    lexer_return = mainLexer(arg)
+    if(lexer_return.count('Error:') != 0):
+        return lexer_return
+    lexer = lex.lex()
+    lexer.current_column = -1
+    lexer.input(open(arg,'r').read())
+    parsing_errors = ''
+    parser = yacc.yacc()
+    ast = parser.parse(open(arg,'r').read())
+
+    if parsing_errors != '': return parsing_errors
+    
 
 
 if __name__ == '__main__':
