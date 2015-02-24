@@ -45,24 +45,27 @@ def p_new_scope(p):
     scopes_list.append(SymbolTable())
 
 
+def error_redeclaration(var):
+    global static_checking_errors
+    static_checking_errors += 'Error: Redeclaration: variable \''+var.name+\
+        '\', in line '+str(var.lineno)+', column '+str(var.column)+'.\n'
+
+
 def p_declarations_list(p):
     """declarations_list : type variable_list
                          | declarations_list SemiColon type variable_list"""
-    global static_checking_errors, lexer
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
         for var in p[2]:
             if scopes_list[len(scopes_list)-1].contains(var.name):
-                static_checking_errors += 'Error: Redeclaration: variable \''+\
-                var.name+'\', in line '+str(p.lineno(2))+', column '+str(p.lexpos(2))+'.\n'
+                error_redeclaration(var)
             else:
                 scopes_list[len(scopes_list)-1].insert(var)
     else:
         p[0] = p[1] + [(p[3], p[4])]
         for var in p[4]:
             if scopes_list[len(scopes_list)-1].contains(var.name):
-                static_checking_errors += 'Error: Redeclaration: variable \''+\
-                var.name+'\', in line '+str(p.lineno(2))+', column '+str(p.lexpos(2))+'.\n'
+                error_redeclaration(var)
             else:
                 scopes_list[len(scopes_list)-1].insert(var)
 
@@ -70,11 +73,11 @@ def p_declarations_list(p):
 def p_variable_list(p):
     """variable_list : ID
                      | variable_list Comma variable_list"""
+    global lexer
     var_value = False if actual_type == 'bool' else (0 if actual_type == 'int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1], actual_type, var_value, p.lineno, p.lexpos(1)-lexer.current_column)]
+        p[0] = [Variable(p[1], actual_type, var_value, p.lineno(1), p.lexpos(1)-lexer.current_column)]
     else:
-        #p[0] = p[1] + [Variable(p[3], actual_type, var_value, p.lineno, p.lexpos-lexer.current_column)]
         p[0] = p[1] + p[3]
 
 
@@ -128,11 +131,20 @@ def p_if(p):
         p[0] = If(p[3], p[5], p[7])
 
 
+def p_ID_for(p):
+    'ID_for : ID'
+    p[0] = p[1]
+    scopes_list[len(scopes_list)-1].insert(Variable(p[1],'int',0,p.lineno(1),p.lexpos(1)-lexer.current_column))
+
+
 def p_for(p):
-    """statement : For new_scope ID scope_filled Min expression Do statement
-                 | For new_scope ID scope_filled Max expression Do statement"""
-    global lexer
-    p[0] = For(Variable(p[3],'int',0,p.lineno,p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
+    """statement : For new_scope ID_for scope_filled Min expression Do statement
+                 | For new_scope ID_for scope_filled Max expression Do statement"""
+    global lexer, scopes_list, static_checking_log
+    p[0] = For(Variable(p[3],'int',0,p.lineno(3),p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
+    indent = (len(scopes_list)-1)*4 
+    static_checking_log += indent*' ' + 'End Scope\n'
+    scopes_list.pop()
 
 
 def p_repeat(p):
@@ -195,7 +207,7 @@ def p_string(p):
 def p_id(p):
     "expression : ID"
     global lexer
-    p[0] = Variable(p[1], lineno = p.lineno, column = p.lexpos(1) - lexer.current_column)
+    p[0] = Variable(p[1], lineno = p.lineno(1), column = p.lexpos(1) - lexer.current_column)
 
 
 def p_set_elements_list(p):
@@ -238,11 +250,11 @@ def p_arithmetic_op(p):
                      | expression Mod expression"""
     
     global lexer
-    if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-    elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-    elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-    elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-    elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+    if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+    elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+    elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+    elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+    elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
 
 
 def p_binop_(p):
@@ -267,23 +279,23 @@ def p_binop_(p):
 
     if len(p) != 2:
         global lexer
-        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '</>': p[0] = DivSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '<': p[0] = LessThan(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '==': p[0] = Equals(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '++': p[0] = Union(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '\\': p[0] = Difference(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column) 
-        elif p[2] == '><': p[0] = Intersect(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
-        elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '</>': p[0] = DivSet(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<': p[0] = LessThan(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '==': p[0] = Equals(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '++': p[0] = Union(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '\\': p[0] = Difference(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column) 
+        elif p[2] == '><': p[0] = Intersect(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     else:
         p[0] = p[1]
 
@@ -294,11 +306,11 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
-    if p[1] == '-': p[0] = Uminus(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
-    elif p[1] == 'not': p[0] = Not(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
-    elif p[1] == '$?': p[0] = Len(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
-    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
-    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
 
 
 def p_error(p):
@@ -325,23 +337,34 @@ def mainParser(arg):
     parser = yacc.yacc()
     ast = parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
-    else: return ast.repr()
+    return ast.repr()
 
 
 def mainStaticChecker(arg):
-    global parsing_errors, lexer, scopes_list, actual_type, static_checking_log
+    global parsing_errors, lexer, scopes_list, static_checking_log, static_checking_errors, actual_type
     lexer_return = mainLexer(arg)
     if(lexer_return.count('Error:') != 0):
         return lexer_return
     lexer = lex.lex()
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())
+    static_checking_log = ''
     parsing_errors = ''
     parser = yacc.yacc()
     parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
-    if static_checking_errors != '': return static_checking_errors
-    return static_checking_log
+    if static_checking_errors != '':
+        tmp = static_checking_errors
+        static_checking_log = ''
+        static_checking_errors = ''
+        scopes_list = []
+        actual_type = None 
+        return tmp
+    tmp = static_checking_log
+    static_checking_log = ''
+    scopes_list = []
+    actual_type = None
+    return tmp
 
 
 if __name__ == '__main__':
