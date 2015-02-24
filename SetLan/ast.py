@@ -1,4 +1,6 @@
-from fileinput import lineno
+static_checking_errors = ''
+
+
 class Program(object):
     def __init__(self, statement):
         self.statement = statement
@@ -150,24 +152,27 @@ class Variable(Expression):
             return 'Variable\n' + indent*' ' + str(self.name) + '\n'
 
 
-
 class Int(Expression):
     def __init__(self, value):
-        self.value = value    
+        self.value = value
         
     def repr(self, indent):
         return 'Int\n' + indent*' ' + str(self.value) + '\n'
     
+    def type(self): return 'int' 
+    
     
 class Set(Expression):
     def __init__(self, elements):
-        self.elements = elements   
+        self.elements = elements  
         
     def repr(self, indent):
         s = 'Set\n' + indent*' '
         for e in self.elements:
             s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
         return s[:len(s)-indent]
+    
+    def type(self): return 'set'
     
     
 class Bool(Expression):
@@ -177,6 +182,8 @@ class Bool(Expression):
     def repr(self, indent):
         return 'Bool\n' + indent*' ' + self.value + '\n'
     
+    def type(self): return 'bool'
+    
 
 class String(Expression):
     def __init__(self, value):
@@ -185,6 +192,8 @@ class String(Expression):
     def repr(self, indent):
         return 'String\n' + indent*' ' + self.value + '\n'
 
+    def type(self): return 'string'
+
 
 class BinOp(Expression): 
     def __init__(self, operand1, operand2, lineno, column):
@@ -192,57 +201,151 @@ class BinOp(Expression):
         self.operand2 = operand2
         self.lineno = lineno
         self.column = column
+        self.init()
 
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
         op2 = self.operand2.__repr__() if not getattr(self.operand2,'repr',None) else self.operand2.repr(indent+4)
         return self.__class__.__name__ + '\n' + indent*' ' + op1 + indent*' ' + op2
 
+    def type(self):
+        global static_checking_errors
+        if self.operand1.type() == self.operand2.type(): return self.operand1.type()
+        static_checking_errors += 'Error: Incompatible types for operator '+\
+            self.__class__.__name__+": '"+self.operand1.type()+"' and '"+\
+            self.operand2.type()+', in line '+str(self.lineno)+', column '+\
+            str(self.column)+'.\n'
+        return 'None'
 
-class Plus(BinOp): pass
 
-class Minus(BinOp): pass
+class Plus(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'
 
-class Times(BinOp): pass
+class Minus(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'    
 
-class Div(BinOp): pass
-    
-class Mod(BinOp): pass
-    
-class PlusSet(BinOp): pass
-    
-class MinusSet(BinOp): pass
+class Times(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'
 
-class TimesSet(BinOp): pass
+class Div(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'
     
-class DivSet(BinOp): pass
+class Mod(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'
+        
+class PlusSet(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
 
-class ModSet(BinOp): pass
+class MinusSet(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
+        
+class TimesSet(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
+        
+class DivSet(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
+        
+class ModSet(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
+        
+class LessThan(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'bool'
+        
+class LessThanEq(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'bool'
+        
+class GreaterThan(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'bool'
+        
+class GreaterThanEq(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'bool'
     
-class LessThan(BinOp): pass
-        
-class LessThanEq(BinOp): pass
-        
-class GreaterThan(BinOp): pass
+class Equals(BinOp):
+    def init(self):
+        pass    
     
-class GreaterThanEq(BinOp): pass
+class NotEquals(BinOp):
+    def init(self):
+        pass
         
-class Equals(BinOp): pass
-        
-class NotEquals(BinOp): pass
+class Union(BinOp):
+    def init(self):
+        self.expected_type1 = 'set'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
 
-class Union(BinOp): pass
-    
-class Difference(BinOp): pass
+class Difference(BinOp):
+    def init(self):
+        self.expected_type1 = 'set'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
         
-class Intersect(BinOp): pass
+class Intersect(BinOp):
+    def init(self):
+        self.expected_type1 = 'set'
+        self.expected_type2 = 'set'
+        self.return_type = 'set'
         
-class And(BinOp): pass
+class And(BinOp):
+    def init(self):
+        self.expected_type1 = 'bool'
+        self.expected_type2 = 'bool'
+        self.return_type = 'bool'
         
-class Or(BinOp): pass
+class Or(BinOp):
+    def init(self):
+        self.expected_type1 = 'bool'
+        self.expected_type2 = 'bool'
+        self.return_type = 'bool'
         
-class Contains(BinOp): pass
-    
+class Contains(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'bool'
+
 
 class UnaryOp(Expression):
     def __init__(self, operand, lineno, column):
@@ -253,13 +356,37 @@ class UnaryOp(Expression):
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
         return self.__class__.__name__ + '\n' + indent*' ' + op
-    
-class Uminus(UnaryOp): pass
 
-class Not(UnaryOp): pass
+    def type(self):
+        global static_checking_errors
+        if self.operand.type() == self.expected_type: return self.return_type
+        static_checking_errors += 'Error: Incompatible type for operator '+\
+            self.__class__.__name__+": '"+self.operand.type()+"', in line "+str(self.lineno)+', column '+\
+            str(self.column)+'.\n'
+        return 'None'
+    
+
+class Uminus(UnaryOp):
+    def init(self):
+        self.expected_type = 'int'
+        self.return_type = 'int'
+
+class Not(UnaryOp):
+    def init(self):
+        self.expected_type = 'bool'
+        self.return_type = 'bool'
         
-class Len(UnaryOp): pass    
+class Len(UnaryOp):
+    def init(self):
+        self.expected_type = 'set'
+        self.return_type = 'int'
         
-class MaxSet(UnaryOp): pass
+class MaxSet(UnaryOp):
+    def init(self):
+        self.expected_type = 'set'
+        self.return_type = 'int'
         
-class MinSet(UnaryOp): pass    
+class MinSet(UnaryOp):
+    def init(self):
+        self.expected_type = 'set'
+        self.return_type = 'int'

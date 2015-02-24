@@ -10,7 +10,10 @@ def p_program(p):
 
 def p_assing(p):
     "statement : ID Assign expression"
-    p[0] = Assign(Variable(p[1]), p[3])
+    var = Variable(p[1])
+    if var_in_scope(var) and var_type == p[3].type():
+        pass
+    p[0] = Assign(var, p[3])
 
 
 def p_block(p):
@@ -306,11 +309,11 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
-    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-    elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-    elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'int')
+    elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'bool')
+    elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
+    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
+    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
 
 
 def p_error(p):
@@ -319,7 +322,7 @@ def p_error(p):
 
 
 parsing_errors = ''
-static_checking_errors = ''
+#static_checking_errors = ''
 static_checking_log = ''
 scopes_list = []
 actual_type = None
@@ -349,22 +352,15 @@ def mainStaticChecker(arg):
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())
     static_checking_log = ''
+    static_checking_errors = ''
+    scopes_list = []
+    actual_type = None
     parsing_errors = ''
     parser = yacc.yacc()
     parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
-    if static_checking_errors != '':
-        tmp = static_checking_errors
-        static_checking_log = ''
-        static_checking_errors = ''
-        scopes_list = []
-        actual_type = None 
-        return tmp
-    tmp = static_checking_log
-    static_checking_log = ''
-    scopes_list = []
-    actual_type = None
-    return tmp
+    if static_checking_errors != '': return static_checking_errors
+    return static_checking_log
 
 
 if __name__ == '__main__':
