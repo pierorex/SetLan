@@ -135,9 +135,9 @@ class Expression(object): pass
 
 
 class Variable(Expression):
-    def __init__(self, name, type=None, value=None):
+    def __init__(self, name, var_type=None, value=None):
         self.name = name
-        self.type = type
+        self.var_type = var_type
         self.value = value
 
     def repr(self, indent):

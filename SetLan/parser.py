@@ -16,20 +16,31 @@ def p_assing(p):
 
 def p_block(p):
     """statement : OpenCurly statement_list SemiColon CloseCurly
-                 | OpenCurly Using new_scope declarations_list SemiColon In statement_list CloseCurly
+                 | OpenCurly Using new_scope declarations_list SemiColon scope_filled In statement_list CloseCurly
                  | """
     if len(p) == 5:
         p[0] = Block(p[2])
-    elif len(p) == 9:
+    elif len(p) == 10:
         global scopes_list
         scopes_list.pop()
-        p[0] = Block(p[7],p[4])
+        p[0] = Block(p[8],p[4])
     else:
         p[0] = None
 
 
+def p_scope_filled(p):
+    'scope_filled :'
+    global scopes_list, static_checking_log
+    indent = len(scopes_list)*4
+    static_checking_log += indent*' ' + 'Scope\n'
+    for v in scopes_list[len(scopes_list)-1].scope.values():
+        static_checking_log += (indent+4)*' ' + 'Variable: ' + v.name + ' | Type: ' + \
+                                v.var_type + ' | Value: ' + str(v.value) + '\n'
+    static_checking_log += indent*' ' + 'End Scope\n'
+
+
 def p_new_scope(p):
-    "new_scope :"
+    'new_scope :'
     global scopes_list
     scopes_list.append(SymbolTable())
 
@@ -42,32 +53,30 @@ def p_declarations_list(p):
         global static_checking_errors, lexer
         static_checking_errors += 'Error: Redeclaration \''+var_name+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
 
-
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
         for var in p[2]:
-            if scopes_list[scopes_list.len()-1].contains(var.name):
+            if scopes_list[len(scopes_list)-1].contains(var.name):
                 redeclaration(var.name)
             else:
-                scopes_list[scopes_list.len()-1].insert(var)
+                scopes_list[len(scopes_list)-1].insert(var)
     else:
         p[0] = p[1] + [(p[3], p[4])]
         for var in p[4]:
-            if scopes_list[scopes_list.len()-1].contains(var.name):
+            if scopes_list[len(scopes_list)-1].contains(var.name):
                 redeclaration(var.name)
             else:
-                scopes_list[scopes_list.len()-1].insert(var)
+                scopes_list[len(scopes_list)-1].insert(var)
 
 
 def p_variable_list(p):
     """variable_list : ID
                      | variable_list Comma ID"""
-    var_type = False if actual_type == 'Bool' else (0 if actual_type == 'Int' else {})
+    var_value = False if actual_type == 'Bool' else (0 if actual_type == 'Int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1], var_type)]
-        
+        p[0] = [Variable(p[1], actual_type, var_value)]
     else:
-        p[0] = p[1] + [Variable(p[3], var_type)]
+        p[0] = p[1] + [Variable(p[3], actual_type, var_value)]
 
 
 def p_statement_list(p):
@@ -293,6 +302,7 @@ def p_error(p):
 
 parsing_errors = ''
 static_checking_errors = ''
+static_checking_log = ''
 scopes_list = []
 actual_type = None
 
@@ -308,13 +318,12 @@ def mainParser(arg):
     parsing_errors = ''
     parser = yacc.yacc()
     ast = parser.parse(open(arg,'r').read())
-
     if parsing_errors != '': return parsing_errors
     else: return ast.repr()
 
 
 def mainStaticCheker(arg):
-    global parsing_errors, lexer, scopes_list, actual_type
+    global parsing_errors, lexer, scopes_list, actual_type, static_checking_log
     lexer_return = mainLexer(arg)
     if(lexer_return.count('Error:') != 0):
         return lexer_return
@@ -324,10 +333,14 @@ def mainStaticCheker(arg):
     parsing_errors = ''
     parser = yacc.yacc()
     ast = parser.parse(open(arg,'r').read())
-
     if parsing_errors != '': return parsing_errors
-    
+    if static_checking_errors != '': return static_checking_errors
+    return static_checking_log
 
 
 if __name__ == '__main__':
     print(mainParser(sys.argv[1]))
+
+
+
+
