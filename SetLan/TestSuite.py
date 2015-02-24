@@ -1,6 +1,6 @@
 import unittest
 from lexer import mainLexer
-from parser import mainParser
+from parser import mainParser, mainStaticChecker
 
 class LexerTestSuite(unittest.TestCase):
     def testSimple(self):
@@ -128,7 +128,17 @@ class ParserTestSuite(unittest.TestCase):
         self.assertEqual(mainParser('Tests/testFibonacci.txt'), open('Tests/answerFibonacci.txt','r').read())
     def testWhileInsideRepeat(self):
         self.assertEqual(mainParser('Tests/testWhileInsideRepeat.txt'), open('Tests/answerWhileInsideRepeat.txt','r').read())
-    
+    def testSetZeroElement(self):
+        self.assertEqual(mainParser('Tests/testSetZeroElement.txt'), open('Tests/answerSetZeroElement.txt','r').read())
+    def testEmptySet(self):
+        self.assertEqual(mainParser('Tests/testEmptySet.txt'), open('Tests/answerEmptySet.txt','r').read())
+    def testStaticEmptySet(self):
+        self.assertEqual(mainStaticChecker('Tests/testStaticEmptySet.txt'), open('Tests/answerStaticEmptySet.txt','r').read())
+    def testTwoSeparateScopes(self):
+        self.assertEqual(mainParser('Tests/testTwoSeparateScopes.txt'), open('Tests/answerTwoSeparateScopes.txt','r').read())
+
+class StaticCheckerTestSuite(unittest.TestCase):
+    pass
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,6 +4,6 @@
 import parser, sys
 
 def main():
-    print parser.mainParser(sys.argv[1])
+    print parser.mainStaticChecker(sys.argv[1])
 
 main()

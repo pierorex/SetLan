@@ -1,3 +1,4 @@
+from fileinput import lineno
 class Program(object):
     def __init__(self, statement):
         self.statement = statement
@@ -135,16 +136,18 @@ class Expression(object): pass
 
 
 class Variable(Expression):
-    def __init__(self, name, var_type=None, value=None):
+    def __init__(self, name, var_type=None, value=None, lineno=None, column=None):
         self.name = name
         self.var_type = var_type
         self.value = value
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         if getattr(self.name,'repr',None):
             return str(self.name.repr(indent))
         else: 
-            return 'Variable\n' + indent*' ' + self.name + '\n'
+            return 'Variable\n' + indent*' ' + str(self.name) + '\n'
 
 
 
@@ -184,9 +187,11 @@ class String(Expression):
 
 
 class BinOp(Expression): 
-    def __init__(self, operand1, operand2):
+    def __init__(self, operand1, operand2, lineno, column):
         self.operand1 = operand1
         self.operand2 = operand2
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
@@ -240,8 +245,10 @@ class Contains(BinOp): pass
     
 
 class UnaryOp(Expression):
-    def __init__(self, operand):
+    def __init__(self, operand, lineno, column):
         self.operand = operand
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)

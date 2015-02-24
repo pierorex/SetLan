@@ -2,7 +2,6 @@ from lexer import *
 import ply.yacc as yacc
 from ast import *
 from st import *
-import sys
 
 def p_program(p):
     "program : Program statement"
@@ -21,7 +20,9 @@ def p_block(p):
     if len(p) == 5:
         p[0] = Block(p[2])
     elif len(p) == 10:
-        global scopes_list
+        global scopes_list, static_checking_log
+        indent = (len(scopes_list)-1)*4 
+        static_checking_log += indent*' ' + 'End Scope\n'
         scopes_list.pop()
         p[0] = Block(p[8],p[4])
     else:
@@ -31,12 +32,11 @@ def p_block(p):
 def p_scope_filled(p):
     'scope_filled :'
     global scopes_list, static_checking_log
-    indent = len(scopes_list)*4
+    indent = (len(scopes_list)-1)*4
     static_checking_log += indent*' ' + 'Scope\n'
     for v in scopes_list[len(scopes_list)-1].scope.values():
         static_checking_log += (indent+4)*' ' + 'Variable: ' + v.name + ' | Type: ' + \
                                 v.var_type + ' | Value: ' + str(v.value) + '\n'
-    static_checking_log += indent*' ' + 'End Scope\n'
 
 
 def p_new_scope(p):
@@ -48,23 +48,21 @@ def p_new_scope(p):
 def p_declarations_list(p):
     """declarations_list : type variable_list
                          | declarations_list SemiColon type variable_list"""
-
-    def redeclaration(var_name):
-        global static_checking_errors, lexer
-        static_checking_errors += 'Error: Redeclaration \''+var_name+'\' in line '+str(p.lineno)+', column '+str(p.lexpos - lexer.current_column)+'.\n'
-
+    global static_checking_errors, lexer
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
         for var in p[2]:
             if scopes_list[len(scopes_list)-1].contains(var.name):
-                redeclaration(var.name)
+                static_checking_errors += 'Error: Redeclaration: variable \''+\
+                var.name+'\', in line '+str(p.lineno(2))+', column '+str(p.lexpos(2))+'.\n'
             else:
                 scopes_list[len(scopes_list)-1].insert(var)
     else:
         p[0] = p[1] + [(p[3], p[4])]
         for var in p[4]:
             if scopes_list[len(scopes_list)-1].contains(var.name):
-                redeclaration(var.name)
+                static_checking_errors += 'Error: Redeclaration: variable \''+\
+                var.name+'\', in line '+str(p.lineno(2))+', column '+str(p.lexpos(2))+'.\n'
             else:
                 scopes_list[len(scopes_list)-1].insert(var)
 
@@ -72,11 +70,11 @@ def p_declarations_list(p):
 def p_variable_list(p):
     """variable_list : ID
                      | variable_list Comma ID"""
-    var_value = False if actual_type == 'Bool' else (0 if actual_type == 'Int' else {})
+    var_value = False if actual_type == 'bool' else (0 if actual_type == 'int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1], actual_type, var_value)]
+        p[0] = [Variable(p[1], actual_type, var_value, p.lineno, p.lexpos-p.current_column)]
     else:
-        p[0] = p[1] + [Variable(p[3], actual_type, var_value)]
+        p[0] = p[1] + [Variable(p[3], actual_type, var_value, p.lineno, p.lexpos-p.current_column)]
 
 
 def p_statement_list(p):
@@ -130,9 +128,10 @@ def p_if(p):
 
 
 def p_for(p):
-    """statement : For ID Min expression Do statement
-                 | For ID Max expression Do statement"""
-    p[0] = For(Variable(p[2]), p[3], p[4], p[6])
+    """statement : For new_scope ID scope_filled Min expression Do statement
+                 | For new_scope ID scope_filled Max expression Do statement"""
+    global lexer
+    p[0] = For(Variable(p[3],'int',0,p.lineno,p.lexpos-lexer.current_column), p[5], p[6], p[8])
 
 
 def p_repeat(p):
@@ -194,7 +193,8 @@ def p_string(p):
 
 def p_id(p):
     "expression : ID"
-    p[0] = Variable(p[1])
+    global lexer
+    p[0] = Variable(p[1], lineno = p.lineno, column = p.lexpos - lexer.current_column)
 
 
 def p_set_elements_list(p):
@@ -214,10 +214,12 @@ def p_set_elements_list(p):
             if int(p[3]):
                 p[0] = p[1] + [Int(p[3])]
         except:
+            if p[1] == None: p[1] = [Int('0')]
             p[0] = p[1] + [Variable(p[3])]
 
 def p_set(p):
-    "expression : OpenCurly set_elements_list CloseCurly"
+    """expression : OpenCurly set_elements_list CloseCurly
+                  | OpenCurly CloseCurly"""
     p[0] = Set(p[2])
 
 
@@ -233,11 +235,12 @@ def p_arithmetic_op(p):
                      | expression Div expression
                      | expression Mod expression"""
     
-    if p[2] == '+': p[0] = Plus(p[1], p[3])
-    elif p[2] == '-': p[0] = Minus(p[1], p[3])
-    elif p[2] == '*': p[0] = Times(p[1], p[3])
-    elif p[2] == '/': p[0] = Div(p[1], p[3])
-    elif p[2] == '%': p[0] = Mod(p[1], p[3])
+    global lexer
+    if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+    elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+    elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+    elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+    elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
 
 
 def p_binop_(p):
@@ -261,23 +264,24 @@ def p_binop_(p):
                   | arithmetic_op"""
 
     if len(p) != 2:
-        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3])
-        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3])
-        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3])
-        elif p[2] == '</>': p[0] = DivSet(p[1], p[3])
-        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3])
-        elif p[2] == '<': p[0] = LessThan(p[1], p[3])
-        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3])
-        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3])
-        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3])
-        elif p[2] == '==': p[0] = Equals(p[1], p[3])
-        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3])
-        elif p[2] == '++': p[0] = Union(p[1], p[3])
-        elif p[2] == '\\': p[0] = Difference(p[1], p[3]) 
-        elif p[2] == '><': p[0] = Intersect(p[1], p[3])
-        elif p[2] == 'and': p[0] = And(p[1], p[3])
-        elif p[2] == 'or': p[0] = Or(p[1], p[3])
-        elif p[2] == '@': p[0] = Contains(p[1], p[3])
+        global lexer
+        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '</>': p[0] = DivSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '<': p[0] = LessThan(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '==': p[0] = Equals(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '++': p[0] = Union(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '\\': p[0] = Difference(p[1], p[3], p.lineno, p.lexpos-lexer.current_column) 
+        elif p[2] == '><': p[0] = Intersect(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
     else:
         p[0] = p[1]
 
@@ -288,11 +292,11 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
-    if p[1] == '-': p[0] = Uminus(p[2])
-    elif p[1] == 'not': p[0] = Not(p[2])
-    elif p[1] == '$?': p[0] = Len(p[2])
-    elif p[1] == '>?': p[0] = MaxSet(p[2])
-    elif p[1] == '<?': p[0] = MinSet(p[2])
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno, p.lexpos-lexer.current_column)
+    elif p[1] == 'not': p[0] = Not(p[2], p.lineno, p.lexpos-lexer.current_column)
+    elif p[1] == '$?': p[0] = Len(p[2], p.lineno, p.lexpos-lexer.current_column)
+    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno, p.lexpos-lexer.current_column)
+    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno, p.lexpos-lexer.current_column)
 
 
 def p_error(p):
@@ -322,7 +326,7 @@ def mainParser(arg):
     else: return ast.repr()
 
 
-def mainStaticCheker(arg):
+def mainStaticChecker(arg):
     global parsing_errors, lexer, scopes_list, actual_type, static_checking_log
     lexer_return = mainLexer(arg)
     if(lexer_return.count('Error:') != 0):
@@ -332,7 +336,7 @@ def mainStaticCheker(arg):
     lexer.input(open(arg,'r').read())
     parsing_errors = ''
     parser = yacc.yacc()
-    ast = parser.parse(open(arg,'r').read())
+    parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
     if static_checking_errors != '': return static_checking_errors
     return static_checking_log
