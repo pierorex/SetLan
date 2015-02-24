@@ -69,12 +69,13 @@ def p_declarations_list(p):
 
 def p_variable_list(p):
     """variable_list : ID
-                     | variable_list Comma ID"""
+                     | variable_list Comma variable_list"""
     var_value = False if actual_type == 'bool' else (0 if actual_type == 'int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1], actual_type, var_value, p.lineno, p.lexpos-p.current_column)]
+        p[0] = [Variable(p[1], actual_type, var_value, p.lineno, p.lexpos(1)-lexer.current_column)]
     else:
-        p[0] = p[1] + [Variable(p[3], actual_type, var_value, p.lineno, p.lexpos-p.current_column)]
+        #p[0] = p[1] + [Variable(p[3], actual_type, var_value, p.lineno, p.lexpos-lexer.current_column)]
+        p[0] = p[1] + p[3]
 
 
 def p_statement_list(p):
@@ -131,7 +132,7 @@ def p_for(p):
     """statement : For new_scope ID scope_filled Min expression Do statement
                  | For new_scope ID scope_filled Max expression Do statement"""
     global lexer
-    p[0] = For(Variable(p[3],'int',0,p.lineno,p.lexpos-lexer.current_column), p[5], p[6], p[8])
+    p[0] = For(Variable(p[3],'int',0,p.lineno,p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
 
 
 def p_repeat(p):
@@ -194,7 +195,7 @@ def p_string(p):
 def p_id(p):
     "expression : ID"
     global lexer
-    p[0] = Variable(p[1], lineno = p.lineno, column = p.lexpos - lexer.current_column)
+    p[0] = Variable(p[1], lineno = p.lineno, column = p.lexpos(1) - lexer.current_column)
 
 
 def p_set_elements_list(p):
@@ -217,6 +218,7 @@ def p_set_elements_list(p):
             if p[1] == None: p[1] = [Int('0')]
             p[0] = p[1] + [Variable(p[3])]
 
+
 def p_set(p):
     """expression : OpenCurly set_elements_list CloseCurly
                   | OpenCurly CloseCurly"""
@@ -236,11 +238,11 @@ def p_arithmetic_op(p):
                      | expression Mod expression"""
     
     global lexer
-    if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-    elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-    elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-    elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-    elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+    if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+    elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+    elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+    elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+    elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
 
 
 def p_binop_(p):
@@ -265,23 +267,23 @@ def p_binop_(p):
 
     if len(p) != 2:
         global lexer
-        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '</>': p[0] = DivSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '<': p[0] = LessThan(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '==': p[0] = Equals(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '++': p[0] = Union(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '\\': p[0] = Difference(p[1], p[3], p.lineno, p.lexpos-lexer.current_column) 
-        elif p[2] == '><': p[0] = Intersect(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
-        elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno, p.lexpos-lexer.current_column)
+        if p[2] == '<+>': p[0] = PlusSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<->': p[0] = MinusSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<*>': p[0] = TimesSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '</>': p[0] = DivSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<%>': p[0] = ModSet(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<': p[0] = LessThan(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '<=': p[0] = LessThanEq(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '>': p[0] = GreaterThan(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '>=': p[0] = GreaterThanEq(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '==': p[0] = Equals(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '/=': p[0] = NotEquals(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '++': p[0] = Union(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '\\': p[0] = Difference(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column) 
+        elif p[2] == '><': p[0] = Intersect(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
+        elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno, p.lexpos(2)-lexer.current_column)
     else:
         p[0] = p[1]
 
@@ -292,11 +294,11 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
-    if p[1] == '-': p[0] = Uminus(p[2], p.lineno, p.lexpos-lexer.current_column)
-    elif p[1] == 'not': p[0] = Not(p[2], p.lineno, p.lexpos-lexer.current_column)
-    elif p[1] == '$?': p[0] = Len(p[2], p.lineno, p.lexpos-lexer.current_column)
-    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno, p.lexpos-lexer.current_column)
-    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno, p.lexpos-lexer.current_column)
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
+    elif p[1] == 'not': p[0] = Not(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
+    elif p[1] == '$?': p[0] = Len(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
+    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
+    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno, p.lexpos(1)-lexer.current_column)
 
 
 def p_error(p):
