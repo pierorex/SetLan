@@ -40,9 +40,9 @@ Rule 18    statement -> Print expression_list
 Rule 19    statement -> Println expression_list
 Rule 20    expression_list -> expression
 Rule 21    expression_list -> expression_list Comma expression
-Rule 22    bool_expression -> expression
-Rule 23    statement -> If OpenParen bool_expression CloseParen statement
-Rule 24    statement -> If OpenParen bool_expression CloseParen statement Else statement
+Rule 22    if_expression -> expression
+Rule 23    statement -> If OpenParen if_expression CloseParen statement
+Rule 24    statement -> If OpenParen if_expression CloseParen statement Else statement
 Rule 25    ID_for -> ID
 Rule 26    for_expression -> expression
 Rule 27    statement -> For new_scope ID_for scope_filled Min for_expression Do statement
@@ -162,11 +162,11 @@ Nonterminals, with rules where they appear
 
 ID_for               : 27 28
 arithmetic_op        : 39 43 69
-bool_expression      : 23 24
 declarations_list    : 4 9
 expression           : 2 20 21 22 26 29 46 47 47 48 48 49 49 50 50 51 51 52 52 53 53 54 54 55 55 56 56 57 57 58 58 59 59 60 60 61 61 62 62 63 63 64 64 65 65 66 66 67 67 68 68 70 71 72 73 74
 expression_list      : 18 19 21
 for_expression       : 27 28
+if_expression        : 23 24
 new_scope            : 4 27 28
 program              : 0
 repeat_expression    : 30 31 32
@@ -201,8 +201,8 @@ state 1
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -243,8 +243,8 @@ state 3
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -349,8 +349,8 @@ state 6
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -466,8 +466,8 @@ state 11
 
 state 12
 
-    (23) statement -> If . OpenParen bool_expression CloseParen statement
-    (24) statement -> If . OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> If . OpenParen if_expression CloseParen statement
+    (24) statement -> If . OpenParen if_expression CloseParen statement Else statement
 
     OpenParen       shift and go to state 37
 
@@ -1368,9 +1368,9 @@ state 36
 
 state 37
 
-    (23) statement -> If OpenParen . bool_expression CloseParen statement
-    (24) statement -> If OpenParen . bool_expression CloseParen statement Else statement
-    (22) bool_expression -> . expression
+    (23) statement -> If OpenParen . if_expression CloseParen statement
+    (24) statement -> If OpenParen . if_expression CloseParen statement Else statement
+    (22) if_expression -> . expression
     (33) expression -> . Number
     (34) expression -> . True
     (35) expression -> . False
@@ -1422,9 +1422,9 @@ state 37
     MinSet          shift and go to state 24
 
 
+    if_expression                  shift and go to state 81
+    expression                     shift and go to state 82
     arithmetic_op                  shift and go to state 23
-    expression                     shift and go to state 81
-    bool_expression                shift and go to state 82
 
 state 38
 
@@ -1454,8 +1454,8 @@ state 39
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -3588,7 +3588,16 @@ state 80
 
 state 81
 
-    (22) bool_expression -> expression .
+    (23) statement -> If OpenParen if_expression . CloseParen statement
+    (24) statement -> If OpenParen if_expression . CloseParen statement Else statement
+
+    CloseParen      shift and go to state 119
+
+
+
+state 82
+
+    (22) if_expression -> expression .
     (52) expression -> expression . PlusSet expression
     (53) expression -> expression . MinusSet expression
     (54) expression -> expression . TimesSet expression
@@ -3612,7 +3621,7 @@ state 81
     (50) arithmetic_op -> expression . Div expression
     (51) arithmetic_op -> expression . Mod expression
 
-    CloseParen      reduce using rule 22 (bool_expression -> expression .)
+    CloseParen      reduce using rule 22 (if_expression -> expression .)
     PlusSet         shift and go to state 59
     MinusSet        shift and go to state 73
     TimesSet        shift and go to state 75
@@ -3635,15 +3644,6 @@ state 81
     Times           shift and go to state 69
     Div             shift and go to state 71
     Mod             shift and go to state 66
-
-
-
-state 82
-
-    (23) statement -> If OpenParen bool_expression . CloseParen statement
-    (24) statement -> If OpenParen bool_expression . CloseParen statement Else statement
-
-    CloseParen      shift and go to state 119
 
 
 
@@ -5764,8 +5764,8 @@ state 118
 
 state 119
 
-    (23) statement -> If OpenParen bool_expression CloseParen . statement
-    (24) statement -> If OpenParen bool_expression CloseParen . statement Else statement
+    (23) statement -> If OpenParen if_expression CloseParen . statement
+    (24) statement -> If OpenParen if_expression CloseParen . statement Else statement
     (2) statement -> . ID Assign expression
     (3) statement -> . OpenCurly statement_list SemiColon CloseCurly
     (4) statement -> . OpenCurly Using new_scope declarations_list SemiColon scope_filled In statement_list CloseCurly
@@ -5773,8 +5773,8 @@ state 119
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6070,8 +6070,8 @@ state 129
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6099,17 +6099,17 @@ state 129
 
 state 130
 
-    (23) statement -> If OpenParen bool_expression CloseParen statement .
-    (24) statement -> If OpenParen bool_expression CloseParen statement . Else statement
+    (23) statement -> If OpenParen if_expression CloseParen statement .
+    (24) statement -> If OpenParen if_expression CloseParen statement . Else statement
 
   ! shift/reduce conflict for Else resolved as shift.
-    SemiColon       reduce using rule 23 (statement -> If OpenParen bool_expression CloseParen statement .)
-    $end            reduce using rule 23 (statement -> If OpenParen bool_expression CloseParen statement .)
-    While           reduce using rule 23 (statement -> If OpenParen bool_expression CloseParen statement .)
-    CloseCurly      reduce using rule 23 (statement -> If OpenParen bool_expression CloseParen statement .)
+    SemiColon       reduce using rule 23 (statement -> If OpenParen if_expression CloseParen statement .)
+    $end            reduce using rule 23 (statement -> If OpenParen if_expression CloseParen statement .)
+    While           reduce using rule 23 (statement -> If OpenParen if_expression CloseParen statement .)
+    CloseCurly      reduce using rule 23 (statement -> If OpenParen if_expression CloseParen statement .)
     Else            shift and go to state 139
 
-  ! Else            [ reduce using rule 23 (statement -> If OpenParen bool_expression CloseParen statement .) ]
+  ! Else            [ reduce using rule 23 (statement -> If OpenParen if_expression CloseParen statement .) ]
 
 
 state 131
@@ -6238,7 +6238,7 @@ state 138
 
 state 139
 
-    (24) statement -> If OpenParen bool_expression CloseParen statement Else . statement
+    (24) statement -> If OpenParen if_expression CloseParen statement Else . statement
     (2) statement -> . ID Assign expression
     (3) statement -> . OpenCurly statement_list SemiColon CloseCurly
     (4) statement -> . OpenCurly Using new_scope declarations_list SemiColon scope_filled In statement_list CloseCurly
@@ -6246,8 +6246,8 @@ state 139
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6285,8 +6285,8 @@ state 140
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6341,8 +6341,8 @@ state 143
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6378,8 +6378,8 @@ state 144
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6415,8 +6415,8 @@ state 145
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement
@@ -6444,13 +6444,13 @@ state 145
 
 state 146
 
-    (24) statement -> If OpenParen bool_expression CloseParen statement Else statement .
+    (24) statement -> If OpenParen if_expression CloseParen statement Else statement .
 
-    SemiColon       reduce using rule 24 (statement -> If OpenParen bool_expression CloseParen statement Else statement .)
-    Else            reduce using rule 24 (statement -> If OpenParen bool_expression CloseParen statement Else statement .)
-    $end            reduce using rule 24 (statement -> If OpenParen bool_expression CloseParen statement Else statement .)
-    While           reduce using rule 24 (statement -> If OpenParen bool_expression CloseParen statement Else statement .)
-    CloseCurly      reduce using rule 24 (statement -> If OpenParen bool_expression CloseParen statement Else statement .)
+    SemiColon       reduce using rule 24 (statement -> If OpenParen if_expression CloseParen statement Else statement .)
+    Else            reduce using rule 24 (statement -> If OpenParen if_expression CloseParen statement Else statement .)
+    $end            reduce using rule 24 (statement -> If OpenParen if_expression CloseParen statement Else statement .)
+    While           reduce using rule 24 (statement -> If OpenParen if_expression CloseParen statement Else statement .)
+    CloseCurly      reduce using rule 24 (statement -> If OpenParen if_expression CloseParen statement Else statement .)
 
 
 
@@ -6510,8 +6510,8 @@ state 151
     (17) statement -> . Scan ID
     (18) statement -> . Print expression_list
     (19) statement -> . Println expression_list
-    (23) statement -> . If OpenParen bool_expression CloseParen statement
-    (24) statement -> . If OpenParen bool_expression CloseParen statement Else statement
+    (23) statement -> . If OpenParen if_expression CloseParen statement
+    (24) statement -> . If OpenParen if_expression CloseParen statement Else statement
     (27) statement -> . For new_scope ID_for scope_filled Min for_expression Do statement
     (28) statement -> . For new_scope ID_for scope_filled Max for_expression Do statement
     (30) statement -> . Repeat statement While OpenParen repeat_expression CloseParen Do statement

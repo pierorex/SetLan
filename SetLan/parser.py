@@ -4,6 +4,7 @@ import config
 from ast import *
 from st import *
 
+
 def p_program(p):
     "program : Program statement"
     p[0] = Program(p[2])
@@ -57,7 +58,6 @@ def p_new_scope(p):
 
 
 def error_redeclaration(var):
-    #global static_checking_errors
     config.static_checking_errors += 'Error: Redeclaration: variable \''+var.name+\
         '\', in line '+str(var.lineno)+', column '+str(var.column)+'.\n'
 
@@ -142,7 +142,7 @@ def p_expression_list(p):
 
 
 def p_bool_expression(p):
-    'bool_expression : expression'
+    'if_expression : expression'
     global static_checking, scopes_list
     p[0] = p[1]
     if static_checking:
@@ -150,8 +150,8 @@ def p_bool_expression(p):
 
 
 def p_if(p):
-    """statement : If OpenParen bool_expression CloseParen statement
-                 | If OpenParen bool_expression CloseParen statement Else statement"""
+    """statement : If OpenParen if_expression CloseParen statement
+                 | If OpenParen if_expression CloseParen statement Else statement"""
     global scopes_list, static_checking
     if len(p) == 6:
         p[0] = If(expression=p[3], statement1=p[5],lineno=p[3].lineno,
