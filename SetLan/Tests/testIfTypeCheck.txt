@@ -17,6 +17,8 @@ program {
     if ($? {}) c = true;
         
     # No static-check error
+    if (false) c = true;
+    if (true) c = true;
     if (not c) c = true;
     if (a < b) c = true;
     if (c) c = true;
