@@ -1,4 +1,5 @@
 import config
+from fileinput import lineno
 
 def get_var_in_scope(var_name, scopes_list):
     for symbol_table in scopes_list[::-1]:
@@ -90,11 +91,12 @@ class Scan(Statement):
     def typecheck(self, scopes_list):
         #global static_checking_errors
         var = get_var_in_scope(self.variable.name, scopes_list)
+        print var.return_type
         if not var:
             config.static_checking_errors += 'Error: Variable ' + self.variable.var_name+\
                 ' not defined in this scope, in line ' + str(self.lineno)+\
-                ', column ' + str(self.column)+'.\n'
-        elif var.return_type not in {bool, int} :
+                ', column ' + str(self.column)+'.\n'        
+        elif var.return_type not in {'bool', 'int'} :
             config.static_checking_errors += 'Error: Incompatible type for statement '+\
                 self.__class__.__name__ + ": '" + str(self.variable.return_type)+\
                 "', in line "+str(self.variable.lineno)+', column ' + str(self.variable.column)+'.\n'
@@ -125,10 +127,13 @@ class Println(Statement):
 
 
 class If(Statement):
-    def __init__(self, expression, statement1, statement2=None):
+    def __init__(self, expression=None, statement1=None, statement2=None, lineno=None, column=None):
         self.expression = expression
         self.statement1 = statement1
         self.statement2 = statement2
+        self.return_type = 'None'
+        self.lineno = lineno
+        self.column = column
     
     def repr(self, indent):
         exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
@@ -140,16 +145,16 @@ class If(Statement):
         return s + (indent-4)*' ' + 'End If\n'
 
     def typecheck(self, scopes_list):
-        #global static_checking_errors
-        var = get_var_in_scope(self.variable.var_name, scopes_list)
-        if not var:
-            config.static_checking_errors += 'Error: Variable ' + self.variable.var_name+\
-                ' not defined in this scope, in line ' + str(self.lineno)+\
-                ', column ' + str(self.column)+'.\n'
-        elif var.return_type != bool:
-            config.static_checking_errors += 'Error: Incompatible type for statement '+\
-                self.__class__.__name__ + ": '" +var.return_type.__name__+\
-                "', in line "+str(self.lineno)+', column ' + str(self.column)+'.\n'
+        if isinstance(self.expression, Variable):
+            var = get_var_in_scope(self.expression.name, scopes_list)
+            if not var:
+                config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
+                    ' not defined in this scope, in line ' + str(self.lineno)+\
+                    ', column ' + str(self.column)+'.\n'
+        if self.expression.return_type != 'bool':
+            config.static_checking_errors += 'Error: Incompatible type for operator '+\
+                self.__class__.__name__+": '"+str(self.expression.return_type)+\
+                "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
     
 
 class For(Statement):
@@ -211,18 +216,25 @@ class Variable(Expression):
 
 
 class Int(Expression):
-    def __init__(self, value):
+    def __init__(self, value, lineno, column):
         self.value = value
         self.return_type = 'int'
+        self.lineno = lineno
+        self.column = column
         
     def repr(self, indent):
         return 'Int\n' + indent*' ' + str(self.value) + '\n' 
     
+    def typecheck(self, scopes_list):
+        pass
+    
     
 class Set(Expression):
-    def __init__(self, elements):
+    def __init__(self, elements, lineno, column):
         self.elements = elements
         self.return_type = 'set'
+        self.lineno = lineno
+        self.column = column
         
     def repr(self, indent):
         s = 'Set\n' + indent*' '
@@ -230,11 +242,16 @@ class Set(Expression):
             s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
         return s[:len(s)-indent]
     
+    def typecheck(self, scopes_list):
+        pass
+    
     
 class Bool(Expression):
-    def __init__(self, value):
+    def __init__(self, value, lineno, column):
         self.value = value
         self.return_type = 'bool'
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         return 'Bool\n' + indent*' ' + self.value + '\n'
@@ -244,9 +261,11 @@ class Bool(Expression):
     
 
 class String(Expression):
-    def __init__(self, value):
+    def __init__(self, value, lineno, column):
         self.value = value
         self.return_type = 'str'
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         return 'String\n' + indent*' ' + self.value + '\n'
@@ -274,7 +293,6 @@ class ArithmeticOp(BinOp):
         self.return_type = 'int'
 
     def typecheck(self, scopes_list):
-        #global static_checking_errors
         if isinstance(self.operand1, Variable):
             var = get_var_in_scope(self.operand1.name, scopes_list)
             if not var:
@@ -338,8 +356,14 @@ class TimesSet(IntSetOp): pass
 class DivSet(IntSetOp): pass
 class ModSet(IntSetOp): pass
 
+class Contains(IntSetOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'set'
+        self.return_type = 'bool'
 
-class BoolIntOp(BinOp):
+
+class IntIntOp(BinOp):
     def init(self):
         self.expected_type1 = 'int'
         self.expected_type2 = 'int'
@@ -359,16 +383,16 @@ class BoolIntOp(BinOp):
                 config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
                     ', column ' + str(self.column)+'.\n'
-        if self.operand1.return_type != 'int' or self.operand2.return_type != 'set':
+        if self.operand1.return_type != 'int' or self.operand2.return_type != 'int':
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
                 self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
                 str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
                 str(self.column)+'.\n'
-        
-class LessThan(BoolIntOp): pass
-class LessThanEq(BoolIntOp): pass
-class GreaterThan(BoolIntOp): pass
-class GreaterThanEq(BoolIntOp): pass
+
+class LessThan(IntIntOp): pass
+class LessThanEq(IntIntOp): pass
+class GreaterThan(IntIntOp): pass
+class GreaterThanEq(IntIntOp): pass
 
 
 class EqOp(BinOp):
@@ -456,7 +480,6 @@ class BoolOp(BinOp):
         
 class And(BoolOp): pass 
 class Or(BoolOp): pass
-class Contains(BoolOp): pass
 
 
 class UnaryOp(Expression):
@@ -464,6 +487,7 @@ class UnaryOp(Expression):
         self.operand = operand
         self.lineno = lineno
         self.column = column
+        self.init()
 
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
@@ -523,7 +547,7 @@ class SetIntOp(UnaryOp):
                     ', column ' + str(self.column)+'.\n'
         if self.operand.return_type != 'set':
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+\
+                self.__class__.__name__+": '"+str(self.operand.return_type)+\
                 "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
         
         

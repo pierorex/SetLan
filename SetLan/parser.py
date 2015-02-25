@@ -139,16 +139,24 @@ def p_expression_list(p):
         p[0] = p[1] + [p[3]]
 
 
+def p_bool_expression(p):
+    'bool_expression : expression'
+    global static_checking, scopes_list
+    p[0] = If(p[1],lineno=p[1].lineno,column=p[1].column)
+    if static_checking:
+        p[0].typecheck(scopes_list)
+
+
 def p_if(p):
-    """statement : If OpenParen expression CloseParen statement
-                 | If OpenParen expression CloseParen  statement Else statement"""
+    """statement : If OpenParen bool_expression CloseParen statement
+                 | If OpenParen bool_expression CloseParen statement Else statement"""
     global scopes_list, static_checking
     if len(p) == 6:
-        p[0] = If(p[3], p[5])
+        p[0] = If(expression=p[3].expression, statement1=p[5],lineno=p[3].lineno,
+                  column=p[3].column)
     else:
-        p[0] = If(p[3], p[5], p[7])
-    if static_checking:
-        p[3].typecheck(scopes_list)
+        p[0] = If(expression=p[3].expression, statement1=p[5], statement2=p[7],
+                  lineno=p[3].lineno, column=p[3].column)
 
 
 def p_ID_for(p):
@@ -156,14 +164,19 @@ def p_ID_for(p):
     p[0] = p[1]
     global scopes_list, static_checking
     if static_checking:
-        scopes_list[len(scopes_list)-1].insert(Variable(p[1],scopes_list=scopes_list,return_type='int',value=0,lineno=p.lineno(1),column=p.lexpos(1)-lexer.current_column))
+        scopes_list[len(scopes_list)-1].insert(Variable(p[1],scopes_list=scopes_list,
+                                                return_type='int',value=0,
+                                                lineno=p.lineno(1),
+                                                column=p.lexpos(1)-lexer.current_column))
 
 
 def p_for(p):
     """statement : For new_scope ID_for scope_filled Min expression Do statement
                  | For new_scope ID_for scope_filled Max expression Do statement"""
     global lexer, scopes_list, static_checking_log, static_checking
-    p[0] = For(Variable(p[3],scopes_list=scopes_list,return_type='int',value=0,lineno=p.lineno(3),column=p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
+    p[0] = For(Variable(p[3],scopes_list=scopes_list,return_type='int',value=0,
+                        lineno=p.lineno(3),column=p.lexpos(3)-lexer.current_column),
+                p[5], p[6], p[8])
     if static_checking:
         indent = (len(scopes_list)-1)*4 
         static_checking_log += indent*' ' + 'End Scope\n'
@@ -213,18 +226,21 @@ precedence = (
 
 def p_int(p):
     "expression : Number"
-    p[0] = Int(p[1])
+    global lexer
+    p[0] = Int(p[1],p.lineno(1),p.lexpos(1)-lexer.current_column)
 
 
 def p_bool(p):
     """expression : True
                   | False"""
-    p[0] = Bool(p[1].lower())
+    global lexer
+    p[0] = Bool(p[1].lower(), p.lineno(1), p.lexpos(1) - lexer.current_column)
 
 
 def p_string(p):
     "expression : String"
-    p[0] = String(p[1])
+    global lexer
+    p[0] = String(p[1], p.lineno(1), p.lexpos(1) - lexer.current_column)
 
 
 def p_id(p):
@@ -240,24 +256,28 @@ def p_set_elements_list(p):
                          | set_elements_list Comma Number
                          | set_elements_list Comma ID
                          | set_elements_list Comma arithmetic_op"""
+    global lexer
     if len(p) == 2:
         try:
-            if int(p[1]): p[0] = [Int(p[1])]
+            if int(p[1]): p[0] = [Int(p[1], p.lineno(1), p.lexpos(1) - lexer.current_column)]
         except:
-            p[0] = [Variable(p[1],scopes_list=scopes_list)]
+            p[0] = [Variable(p[1],scopes_list=scopes_list,lineno=p.lineno(1),
+                             column=p.lexpos(1) - lexer.current_column)]
     else:
         try:
             if int(p[3]):
-                p[0] = p[1] + [Int(p[3])]
+                p[0] = p[1] + [Int(p[3], p.lineno(1), p.lexpos(1) - lexer.current_column)]
         except:
-            if p[1] == None: p[1] = [Int('0')]
-            p[0] = p[1] + [Variable(p[3],scopes_list=scopes_list)]
+            if p[1] == None: p[1] = [Int('0',p.lineno(1), p.lexpos(1) - lexer.current_column)]
+            p[0] = p[1] + [Variable(p[3],scopes_list=scopes_list, lineno=p.lineno(1), 
+                                    column=p.lexpos(1) - lexer.current_column)]
 
 
 def p_set(p):
     """expression : OpenCurly set_elements_list CloseCurly
                   | OpenCurly CloseCurly"""
-    p[0] = Set(p[2])
+    global lexer
+    p[0] = Set(p[2], p.lineno(1), p.lexpos(1) - lexer.current_column)
 
 
 def p_parenthesis(p):
