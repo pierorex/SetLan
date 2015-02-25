@@ -3,7 +3,7 @@
 
 import parser, sys
 
-def main():
+if len(sys.argv) == 1:
     print parser.mainStaticChecker(sys.argv[1])
-
-main()
+else:
+    parser.mainFlags(sys.argv)

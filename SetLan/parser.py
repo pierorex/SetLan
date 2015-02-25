@@ -389,8 +389,36 @@ def mainStaticChecker(arg):
     return static_checking_log
 
 
+def mainFlags(argv):
+    global parsing_errors, lexer, scopes_list, static_checking_log, actual_type, static_checking
+    lexer_return = mainLexer(argv[1])
+    if(lexer_return.count('Error:') != 0):
+        print lexer_return
+        return
+    if '-t' in argv: print lexer_return
+    lexer = lex.lex()
+    lexer.current_column = -1
+    lexer.input(open(argv[1],'r').read())
+    static_checking_log = ''
+    scopes_list = []
+    actual_type = None
+    parsing_errors = ''
+    static_checking = True
+    config.static_checking_errors = ''
+    parser = yacc.yacc()
+    ast = parser.parse(open(argv[1],'r').read())
+    if parsing_errors != '': 
+        print parsing_errors
+        return
+    if '-a' in argv: print ast.repr()
+    if config.static_checking_errors != '' and '-s' in argv: 
+        print config.static_checking_errors
+        return
+    if '-s' in argv: print static_checking_log
+
+
 if __name__ == '__main__':
-    print(mainParser(sys.argv[1]))
+    print(mainFlags(sys.argv))
 
 
 
