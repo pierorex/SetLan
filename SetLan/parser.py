@@ -1,5 +1,6 @@
 from lexer import *
 import ply.yacc as yacc
+import config
 from ast import *
 from st import *
 
@@ -10,23 +11,28 @@ def p_program(p):
 
 def p_assing(p):
     "statement : ID Assign expression"
-    var = Variable(p[1])
-    if var_in_scope(var) and var_type == p[3].type():
-        pass
-    p[0] = Assign(var, p[3])
+    global scopes_list, lexer, static_checking
+    p[0] = Assign(Variable(p[1],scopes_list=scopes_list,lineno=p.lineno(1), 
+                           column=p.lexpos(1) - lexer.current_column), 
+                  p[3],
+                  lineno=p.lineno(2), column=p.lexpos(2) - lexer.current_column)
+    if static_checking: 
+        p[0].typecheck(scopes_list)
 
 
 def p_block(p):
     """statement : OpenCurly statement_list SemiColon CloseCurly
                  | OpenCurly Using new_scope declarations_list SemiColon scope_filled In statement_list CloseCurly
                  | """
+    global static_checking
     if len(p) == 5:
         p[0] = Block(p[2])
     elif len(p) == 10:
-        global scopes_list, static_checking_log
-        indent = (len(scopes_list)-1)*4 
-        static_checking_log += indent*' ' + 'End Scope\n'
-        scopes_list.pop()
+        if static_checking: 
+            global scopes_list, static_checking_log
+            indent = (len(scopes_list)-1)*4 
+            static_checking_log += indent*' ' + 'End Scope\n'
+            scopes_list.pop()
         p[0] = Block(p[8],p[4])
     else:
         p[0] = None
@@ -34,52 +40,57 @@ def p_block(p):
 
 def p_scope_filled(p):
     'scope_filled :'
-    global scopes_list, static_checking_log
-    indent = (len(scopes_list)-1)*4
-    static_checking_log += indent*' ' + 'Scope\n'
-    for v in scopes_list[len(scopes_list)-1].scope.values():
-        static_checking_log += (indent+4)*' ' + 'Variable: ' + v.name + ' | Type: ' + \
-                                v.var_type + ' | Value: ' + str(v.value) + '\n'
+    global static_checking, scopes_list, static_checking_log
+    if static_checking:
+        indent = (len(scopes_list)-1)*4
+        static_checking_log += indent*' ' + 'Scope\n'
+        for v in scopes_list[len(scopes_list)-1].scope.values():
+            static_checking_log += (indent+4)*' ' + 'Variable: ' + v.name + ' | Type: ' + \
+                                    v.return_type + ' | Value: ' + str(v.value) + '\n'
 
 
 def p_new_scope(p):
     'new_scope :'
-    global scopes_list
-    scopes_list.append(SymbolTable())
+    global static_checking, scopes_list
+    if static_checking:
+        scopes_list.append(SymbolTable())
 
 
 def error_redeclaration(var):
-    global static_checking_errors
-    static_checking_errors += 'Error: Redeclaration: variable \''+var.name+\
+    #global static_checking_errors
+    config.static_checking_errors += 'Error: Redeclaration: variable \''+var.name+\
         '\', in line '+str(var.lineno)+', column '+str(var.column)+'.\n'
 
 
 def p_declarations_list(p):
     """declarations_list : type variable_list
                          | declarations_list SemiColon type variable_list"""
+    global static_checking, scopes_list
     if len(p) == 3:
         p[0] = [(p[1], p[2])]
-        for var in p[2]:
-            if scopes_list[len(scopes_list)-1].contains(var.name):
-                error_redeclaration(var)
-            else:
-                scopes_list[len(scopes_list)-1].insert(var)
+        if static_checking: 
+            for var in p[2]:
+                if scopes_list[len(scopes_list)-1].contains(var.name):
+                    error_redeclaration(var)
+                else:
+                    scopes_list[len(scopes_list)-1].insert(var)
     else:
         p[0] = p[1] + [(p[3], p[4])]
-        for var in p[4]:
-            if scopes_list[len(scopes_list)-1].contains(var.name):
-                error_redeclaration(var)
-            else:
-                scopes_list[len(scopes_list)-1].insert(var)
+        if static_checking: 
+            for var in p[4]:
+                if scopes_list[len(scopes_list)-1].contains(var.name):
+                    error_redeclaration(var)
+                else:
+                    scopes_list[len(scopes_list)-1].insert(var)
 
 
 def p_variable_list(p):
     """variable_list : ID
                      | variable_list Comma variable_list"""
-    global lexer
+    global lexer, scopes_list, static_checking
     var_value = False if actual_type == 'bool' else (0 if actual_type == 'int' else {})
     if len(p) == 2:
-        p[0] = [Variable(p[1], actual_type, var_value, p.lineno(1), p.lexpos(1)-lexer.current_column)]
+        p[0] = [Variable(p[1], scopes_list=scopes_list, return_type=actual_type, value=var_value, lineno=p.lineno(1), column=p.lexpos(1)-lexer.current_column)]
     else:
         p[0] = p[1] + p[3]
 
@@ -98,13 +109,16 @@ def p_type(p):
             | Bool
             | Set"""
     p[0] = p[1]
-    global actual_type
-    actual_type = p[1]
+    if static_checking: 
+        global actual_type
+        actual_type = p[1]
 
 
 def p_scan(p):
     "statement : Scan ID"
-    p[0] = Scan(Variable(p[2]))
+    global scopes_list, static_checking
+    p[0] = Scan(Variable(p[2],scopes_list=scopes_list))
+    if static_checking: p[0].typecheck(scopes_list)
 
 
 def p_print(p):
@@ -128,26 +142,32 @@ def p_expression_list(p):
 def p_if(p):
     """statement : If OpenParen expression CloseParen statement
                  | If OpenParen expression CloseParen  statement Else statement"""
+    global scopes_list, static_checking
     if len(p) == 6:
         p[0] = If(p[3], p[5])
     else:
         p[0] = If(p[3], p[5], p[7])
+    if static_checking:
+        p[3].typecheck(scopes_list)
 
 
 def p_ID_for(p):
     'ID_for : ID'
     p[0] = p[1]
-    scopes_list[len(scopes_list)-1].insert(Variable(p[1],'int',0,p.lineno(1),p.lexpos(1)-lexer.current_column))
+    global scopes_list, static_checking
+    if static_checking:
+        scopes_list[len(scopes_list)-1].insert(Variable(p[1],scopes_list=scopes_list,return_type='int',value=0,lineno=p.lineno(1),column=p.lexpos(1)-lexer.current_column))
 
 
 def p_for(p):
     """statement : For new_scope ID_for scope_filled Min expression Do statement
                  | For new_scope ID_for scope_filled Max expression Do statement"""
-    global lexer, scopes_list, static_checking_log
-    p[0] = For(Variable(p[3],'int',0,p.lineno(3),p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
-    indent = (len(scopes_list)-1)*4 
-    static_checking_log += indent*' ' + 'End Scope\n'
-    scopes_list.pop()
+    global lexer, scopes_list, static_checking_log, static_checking
+    p[0] = For(Variable(p[3],scopes_list=scopes_list,return_type='int',value=0,lineno=p.lineno(3),column=p.lexpos(3)-lexer.current_column), p[5], p[6], p[8])
+    if static_checking:
+        indent = (len(scopes_list)-1)*4 
+        static_checking_log += indent*' ' + 'End Scope\n'
+        scopes_list.pop()
 
 
 def p_repeat(p):
@@ -210,7 +230,7 @@ def p_string(p):
 def p_id(p):
     "expression : ID"
     global lexer
-    p[0] = Variable(p[1], lineno = p.lineno(1), column = p.lexpos(1) - lexer.current_column)
+    p[0] = Variable(p[1], scopes_list=scopes_list, lineno = p.lineno(1), column = p.lexpos(1) - lexer.current_column)
 
 
 def p_set_elements_list(p):
@@ -224,14 +244,14 @@ def p_set_elements_list(p):
         try:
             if int(p[1]): p[0] = [Int(p[1])]
         except:
-            p[0] = [Variable(p[1])]
+            p[0] = [Variable(p[1],scopes_list=scopes_list)]
     else:
         try:
             if int(p[3]):
                 p[0] = p[1] + [Int(p[3])]
         except:
             if p[1] == None: p[1] = [Int('0')]
-            p[0] = p[1] + [Variable(p[3])]
+            p[0] = p[1] + [Variable(p[3],scopes_list=scopes_list)]
 
 
 def p_set(p):
@@ -252,12 +272,13 @@ def p_arithmetic_op(p):
                      | expression Div expression
                      | expression Mod expression"""
     
-    global lexer
+    global lexer, static_checking
     if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '/': p[0] = Div(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '%': p[0] = Mod(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+    if static_checking: p[0].typecheck(scopes_list)
 
 
 def p_binop_(p):
@@ -299,6 +320,7 @@ def p_binop_(p):
         elif p[2] == 'and': p[0] = And(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
         elif p[2] == 'or': p[0] = Or(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
         elif p[2] == '@': p[0] = Contains(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
+        if static_checking: p[0].typecheck(scopes_list)
     else:
         p[0] = p[1]
 
@@ -309,11 +331,13 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
-    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'int')
-    elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'bool')
-    elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
-    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
-    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column,'set')
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
+    global static_checking, scopes_list
+    if static_checking: p[0].typecheck(scopes_list)
 
 
 def p_error(p):
@@ -322,14 +346,14 @@ def p_error(p):
 
 
 parsing_errors = ''
-#static_checking_errors = ''
 static_checking_log = ''
 scopes_list = []
 actual_type = None
+static_checking = True
 
 
 def mainParser(arg):
-    global parsing_errors, lexer
+    global parsing_errors, lexer, static_checking
     lexer_return = mainLexer(arg)
     if(lexer_return.count('Error:') != 0):
         return lexer_return
@@ -337,6 +361,7 @@ def mainParser(arg):
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())
     parsing_errors = ''
+    static_checking = False
     parser = yacc.yacc()
     ast = parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
@@ -344,7 +369,7 @@ def mainParser(arg):
 
 
 def mainStaticChecker(arg):
-    global parsing_errors, lexer, scopes_list, static_checking_log, static_checking_errors, actual_type
+    global parsing_errors, lexer, scopes_list, static_checking_log, actual_type, static_checking
     lexer_return = mainLexer(arg)
     if(lexer_return.count('Error:') != 0):
         return lexer_return
@@ -352,14 +377,15 @@ def mainStaticChecker(arg):
     lexer.current_column = -1
     lexer.input(open(arg,'r').read())
     static_checking_log = ''
-    static_checking_errors = ''
     scopes_list = []
     actual_type = None
     parsing_errors = ''
+    static_checking = True
+    config.static_checking_errors = ''
     parser = yacc.yacc()
     parser.parse(open(arg,'r').read())
     if parsing_errors != '': return parsing_errors
-    if static_checking_errors != '': return static_checking_errors
+    if config.static_checking_errors != '': return config.static_checking_errors
     return static_checking_log
 
 

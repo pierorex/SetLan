@@ -8,6 +8,6 @@ program {
             bool a;
             int b;
         in
-        a = false;
+        a = 3;
     }
 }

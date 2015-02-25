@@ -131,6 +131,10 @@ class StaticCheckerTestSuite(unittest.TestCase):
         self.assertEqual(mainStaticChecker('Tests/testSameVariableTwoScopes.txt'), open('Tests/answerSameVariableTwoScopes.txt','r').read())
     def testForScope(self):
         self.assertEqual(mainStaticChecker('Tests/testForScope.txt'), open('Tests/answerForScope.txt','r').read())
+    def testSimpleTypeChecking(self):
+        self.assertEqual(mainStaticChecker('Tests/testSimpleTypeChecking.txt'), open('Tests/answerSimpleTypeChecking.txt','r').read())
+    def testDifferentiatingScopes(self):
+        self.assertEqual(mainStaticChecker('Tests/testDifferentiatingScopes.txt'), open('Tests/answerDifferentiatingScopes.txt','r').read())
 
 
 if __name__ == '__main__':

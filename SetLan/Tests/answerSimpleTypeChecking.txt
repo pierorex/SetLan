@@ -1,0 +1,16 @@
+Error: Variable g not defined in this scope, in line 7, column 11.
+Error: Variable h not defined in this scope, in line 7, column 11.
+Error: Incompatible types for operator Mod: 'None' and 'None', in line 7, column 11.
+Error: Variable i not defined in this scope, in line 7, column 15.
+Error: Incompatible types for operator Plus: 'int' and 'None', in line 7, column 15.
+Error: Variable j not defined in this scope, in line 7, column 23.
+Error: Variable k not defined in this scope, in line 7, column 23.
+Error: Incompatible types for operator Times: 'None' and 'None', in line 7, column 23.
+Error: Variable l not defined in this scope, in line 8, column 11.
+Error: Incompatible types for operator PlusSet: 'None' and 'int', in line 8, column 11.
+Error: Incompatible types for operator Union: 'int' and 'int', in line 9, column 11.
+Error: Variable o not defined in this scope, in line 10, column 7.
+Error: Incompatible types for statement Assign: 'int' and 'None', in line 10, column 7.
+Error: Variable q not defined in this scope, in line 11, column 7.
+Error: Variable o not defined in this scope, in line 12, column 7.
+Error: Variable q not defined in this scope, in line 12, column 7.

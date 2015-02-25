@@ -1,0 +1,13 @@
+program {
+    using 
+        int a,b,c;
+        set x;
+    in
+    a = b + c;
+    b = g % h + i - j * k;
+    x = l <+> a;
+    x = 1 ++ c;
+    a = o;
+    q = a;
+    q = o;
+}
