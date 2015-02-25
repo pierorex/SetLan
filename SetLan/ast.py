@@ -81,8 +81,10 @@ class Block(Statement):
 
 
 class Scan(Statement):
-    def __init__(self, variable):
+    def __init__(self, variable, lineno, column):
         self.variable = variable
+        self.lineno = lineno
+        self.column = column
         
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
@@ -91,7 +93,6 @@ class Scan(Statement):
     def typecheck(self, scopes_list):
         #global static_checking_errors
         var = get_var_in_scope(self.variable.name, scopes_list)
-        print var.return_type
         if not var:
             config.static_checking_errors += 'Error: Variable ' + self.variable.var_name+\
                 ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -152,17 +153,19 @@ class If(Statement):
                     ' not defined in this scope, in line ' + str(self.lineno)+\
                     ', column ' + str(self.column)+'.\n'
         if self.expression.return_type != 'bool':
-            config.static_checking_errors += 'Error: Incompatible type for operator '+\
+            config.static_checking_errors += 'Error: Incompatible type for statement '+\
                 self.__class__.__name__+": '"+str(self.expression.return_type)+\
                 "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
     
 
 class For(Statement):
-    def __init__(self, variable, order, expression, statement):
+    def __init__(self, variable=None, order=None, expression=None, statement=None, lineno=None, column=None):
         self.variable = variable
         self.order = order
         self.expression = expression
         self.statement = statement
+        self.lineno = lineno
+        self.column = column
 
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
@@ -170,12 +173,26 @@ class For(Statement):
         sta = self.statement.__repr__() if not getattr(self.statement,'repr',None) else self.statement.repr(indent+8)
         return 'For\n' + indent*' ' + var + indent*' ' + 'Direction\n' + (indent+4)*' ' + self.order + '\n' + indent*' ' + 'In\n' + (indent+4)*' '  + exp + indent*' ' + 'Do\n' + (indent+4)*' ' + sta + (indent-4)*' ' + 'End For\n'
 
+    def typecheck(self, scopes_list):
+        if isinstance(self.expression, Variable):
+            var = get_var_in_scope(self.expression.name, scopes_list)
+            if not var:
+                config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
+                    ' not defined in this scope, in line ' + str(self.lineno)+\
+                    ', column ' + str(self.column)+'.\n'
+        if self.expression.return_type != 'set':
+            config.static_checking_errors += 'Error: Incompatible type for statement '+\
+                self.__class__.__name__+": '"+str(self.expression.return_type)+\
+                "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
+
 
 class Repeat(Statement):
-    def __init__(self, statement1, expression, statement2):
+    def __init__(self, statement1=None, expression=None, statement2=None, lineno=None, column=None):
         self.statement1 = statement1
         self.expression = expression
         self.statement2 = statement2
+        self.lineno = lineno
+        self.column = column
     
     def repr(self, indent):
         exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
@@ -191,7 +208,19 @@ class Repeat(Statement):
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
             return 'While\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + indent*' ' + 'Do\n' + (indent+4)*' ' +  sta_2 + '\n' + indent*' ' + 'End While\n'
         
-    
+    def typecheck(self, scopes_list):
+        if isinstance(self.expression, Variable):
+            var = get_var_in_scope(self.expression.name, scopes_list)
+            if not var:
+                config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
+                    ' not defined in this scope, in line ' + str(self.lineno)+\
+                    ', column ' + str(self.column)+'.\n'
+        if self.expression.return_type != 'bool':
+            config.static_checking_errors += 'Error: Incompatible type for statement '+\
+                self.__class__.__name__+": '"+str(self.expression.return_type)+\
+                "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'    
+        
+        
 class Expression(object): pass
 
 
@@ -285,13 +314,6 @@ class BinOp(Expression):
         op2 = self.operand2.__repr__() if not getattr(self.operand2,'repr',None) else self.operand2.repr(indent+4)
         return self.__class__.__name__ + '\n' + indent*' ' + op1 + indent*' ' + op2
     
-
-class ArithmeticOp(BinOp):
-    def init(self):
-        self.expected_type1 = 'int'
-        self.expected_type2 = 'int'
-        self.return_type = 'int'
-
     def typecheck(self, scopes_list):
         if isinstance(self.operand1, Variable):
             var = get_var_in_scope(self.operand1.name, scopes_list)
@@ -307,14 +329,18 @@ class ArithmeticOp(BinOp):
                     ' not defined in this scope, in line ' + str(self.lineno)+\
                     ', column ' + str(self.column)+'.\n'
                                  
-        if self.operand1.return_type != 'int' or self.operand2.return_type != 'int':
-            #print(scopes_list[0].scope)
-            #print(self.__class__.__name__, str(self.operand1.return_type), str(self.operand2.return_type), str(self.column), str(self.lineno))
+        if self.operand1.return_type != self.expected_type1 or self.operand2.return_type != self.expected_type2:
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
                 self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
                 str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
                 str(self.column)+'.\n'
+    
 
+class ArithmeticOp(BinOp):
+    def init(self):
+        self.expected_type1 = 'int'
+        self.expected_type2 = 'int'
+        self.return_type = 'int'
 
 class Plus(ArithmeticOp): pass
 class Minus(ArithmeticOp): pass
@@ -327,35 +353,13 @@ class IntSetOp(BinOp):
     def init(self):
         self.expected_type1 = 'int'
         self.expected_type2 = 'set'
-        self.return_type = 'set'
+        self.return_type = 'set'    
     
-    def typecheck(self, scopes_list):
-        #global static_checking_errors
-        if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-                    
-        if self.operand1.return_type != 'int' or self.operand2.return_type != 'set':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
-                str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
-                str(self.column)+'.\n'
-
 class PlusSet(IntSetOp): pass
 class MinusSet(IntSetOp): pass
 class TimesSet(IntSetOp): pass
 class DivSet(IntSetOp): pass
 class ModSet(IntSetOp): pass
-
 class Contains(IntSetOp):
     def init(self):
         self.expected_type1 = 'int'
@@ -368,26 +372,6 @@ class IntIntOp(BinOp):
         self.expected_type1 = 'int'
         self.expected_type2 = 'int'
         self.return_type = 'bool'
-    
-    def typecheck(self, scopes_list):
-        #global static_checking_errors
-        if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if self.operand1.return_type != 'int' or self.operand2.return_type != 'int':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
-                str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
-                str(self.column)+'.\n'
 
 class LessThan(IntIntOp): pass
 class LessThanEq(IntIntOp): pass
@@ -402,7 +386,6 @@ class EqOp(BinOp):
         self.return_type = 'bool'
         
     def typecheck(self, scopes_list):
-        #global static_checking_errors
         if isinstance(self.operand1, Variable):
             var = get_var_in_scope(self.operand1.name, scopes_list)
             if not var:
@@ -426,27 +409,6 @@ class SetOp(BinOp):
         self.expected_type2 = 'set'
         self.return_type = 'set'        
 
-    def typecheck(self, scopes_list):
-        #global static_checking_errors
-        if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'       
-                    
-        if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if self.operand1.return_type != 'set' or self.operand2.return_type != 'set':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
-                str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
-                str(self.column)+'.\n'
-
 class Union(SetOp): pass
 class Difference(SetOp): pass
 class Intersect(SetOp): pass
@@ -457,27 +419,7 @@ class BoolOp(BinOp):
         self.expected_type1 = 'bool'
         self.expected_type2 = 'bool'
         self.return_type = 'bool'
-        
-    def typecheck(self, scopes_list):
-        #global config.static_checking_errors
-        if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if self.operand1.return_type != 'bool' or self.operand2.return_type != 'bool':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+"' and '"+\
-                str(self.operand2.return_type)+"', in line "+str(self.lineno)+', column '+\
-                str(self.column)+'.\n' 
-        
+                
 class And(BoolOp): pass 
 class Or(BoolOp): pass
 
@@ -493,63 +435,32 @@ class UnaryOp(Expression):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
         return self.__class__.__name__ + '\n' + indent*' ' + op
     
-
-class Uminus(UnaryOp):
-    def init(self):
-        self.expected_type = 'int'
-        self.return_type = 'int'
-
     def typecheck(self, scopes_list):
-        #global static_checking_errors
         if isinstance(self.operand, Variable):
             var = get_var_in_scope(self.operand.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
                     ', column ' + str(self.column)+'.\n'
-        if self.operand.return_type != 'int':
+        if self.operand.return_type != self.expected_type:
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+\
+                self.__class__.__name__+": '"+str(self.operand.return_type)+\
                 "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
-
+    
+class Uminus(UnaryOp):
+    def init(self):
+        self.expected_type = 'int'
+        self.return_type = 'int'
 
 class Not(UnaryOp):
     def init(self):
         self.expected_type = 'bool'
         self.return_type = 'bool'
         
-    def typecheck(self, scopes_list):
-        #global static_checking_errors
-        if isinstance(self.operand, Variable):
-            var = get_var_in_scope(self.operand.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if self.operand.return_type != 'bool':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand1.return_type)+\
-                "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
-
-
 class SetIntOp(UnaryOp):
     def init(self):
         self.expected_type = 'set'
         self.return_type = 'int'
-
-    def typecheck(self, scopes_list):
-        #global static_checking_errors
-        if isinstance(self.operand, Variable):
-            var = get_var_in_scope(self.operand.name, scopes_list)
-            if not var:
-                config.static_checking_errors += 'Error: Variable ' + self.operand.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
-        if self.operand.return_type != 'set':
-            config.static_checking_errors += 'Error: Incompatible types for operator '+\
-                self.__class__.__name__+": '"+str(self.operand.return_type)+\
-                "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'
-        
         
 class Len(SetIntOp): pass        
 class MaxSet(SetIntOp): pass

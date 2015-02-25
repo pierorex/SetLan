@@ -116,8 +116,10 @@ def p_type(p):
 
 def p_scan(p):
     "statement : Scan ID"
-    global scopes_list, static_checking
-    p[0] = Scan(Variable(p[2],scopes_list=scopes_list))
+    global scopes_list, static_checking, lexer
+    p[0] = Scan(Variable(p[2],scopes_list=scopes_list, lineno=p.lineno(2), 
+                         column=p.lexpos(2)-lexer.current_column),
+                lineno=p.lineno(1), column=p.lexpos(1)-lexer.current_column)
     if static_checking: p[0].typecheck(scopes_list)
 
 
@@ -142,9 +144,9 @@ def p_expression_list(p):
 def p_bool_expression(p):
     'bool_expression : expression'
     global static_checking, scopes_list
-    p[0] = If(p[1],lineno=p[1].lineno,column=p[1].column)
+    p[0] = p[1]
     if static_checking:
-        p[0].typecheck(scopes_list)
+        If(p[1],lineno=p[1].lineno,column=p[1].column).typecheck(scopes_list)
 
 
 def p_if(p):
@@ -152,10 +154,10 @@ def p_if(p):
                  | If OpenParen bool_expression CloseParen statement Else statement"""
     global scopes_list, static_checking
     if len(p) == 6:
-        p[0] = If(expression=p[3].expression, statement1=p[5],lineno=p[3].lineno,
+        p[0] = If(expression=p[3], statement1=p[5],lineno=p[3].lineno,
                   column=p[3].column)
     else:
-        p[0] = If(expression=p[3].expression, statement1=p[5], statement2=p[7],
+        p[0] = If(expression=p[3], statement1=p[5], statement2=p[7],
                   lineno=p[3].lineno, column=p[3].column)
 
 
@@ -170,9 +172,17 @@ def p_ID_for(p):
                                                 column=p.lexpos(1)-lexer.current_column))
 
 
+def p_for_expression(p):
+    'for_expression : expression'
+    global static_checking, scopes_list
+    p[0] = p[1]
+    if static_checking:
+        For(expression=p[1], lineno=p[1].lineno, column=p[1].column).typecheck(scopes_list)
+
+
 def p_for(p):
-    """statement : For new_scope ID_for scope_filled Min expression Do statement
-                 | For new_scope ID_for scope_filled Max expression Do statement"""
+    """statement : For new_scope ID_for scope_filled Min for_expression Do statement
+                 | For new_scope ID_for scope_filled Max for_expression Do statement"""
     global lexer, scopes_list, static_checking_log, static_checking
     p[0] = For(Variable(p[3],scopes_list=scopes_list,return_type='int',value=0,
                         lineno=p.lineno(3),column=p.lexpos(3)-lexer.current_column),
@@ -183,10 +193,18 @@ def p_for(p):
         scopes_list.pop()
 
 
+def p_repeat_expression(p):
+    'repeat_expression : expression'
+    global static_checking, scopes_list
+    p[0] = p[1]
+    if static_checking:
+        Repeat(expression=p[1], lineno=p[1].lineno, column=p[1].column).typecheck(scopes_list)
+
+
 def p_repeat(p):
-    """statement : Repeat statement While OpenParen expression CloseParen Do statement
-                 | Repeat statement While OpenParen expression CloseParen
-                 | While OpenParen expression CloseParen Do statement"""
+    """statement : Repeat statement While OpenParen repeat_expression CloseParen Do statement
+                 | Repeat statement While OpenParen repeat_expression CloseParen
+                 | While OpenParen repeat_expression CloseParen Do statement"""
     if len(p) == 9:
         p[0] = Repeat(p[2], p[5], p[8])
     elif p[1] == 'repeat':
