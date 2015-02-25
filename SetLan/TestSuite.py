@@ -141,6 +141,8 @@ class StaticCheckerTestSuite(unittest.TestCase):
         self.assertEqual(mainStaticChecker('Tests/testScanChecker.txt'), open('Tests/answerScanChecker.txt','r').read())
     def testForTypeCheck(self):
         self.assertEqual(mainStaticChecker('Tests/testForTypeCheck.txt'), open('Tests/answerForTypeCheck.txt','r').read())
+    def testRepeatTypeCheck(self):
+        self.assertEqual(mainStaticChecker('Tests/testRepeatTypeCheck.txt'), open('Tests/answerRepeatTypeCheck.txt','r').read())
 
 
 if __name__ == '__main__':

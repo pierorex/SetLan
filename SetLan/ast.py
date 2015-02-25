@@ -319,15 +319,15 @@ class BinOp(Expression):
             var = get_var_in_scope(self.operand1.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
+                    ' not defined in this scope, in line ' + str(self.operand1.lineno)+\
+                    ', column ' + str(self.operand1.column)+'.\n'
                     
         if isinstance(self.operand2, Variable):
             var = get_var_in_scope(self.operand2.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
+                    ' not defined in this scope, in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
                                  
         if self.operand1.return_type != self.expected_type1 or self.operand2.return_type != self.expected_type2:
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
@@ -390,14 +390,14 @@ class EqOp(BinOp):
             var = get_var_in_scope(self.operand1.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
+                    ' not defined in this scope, in line ' + str(self.operand1.lineno)+\
+                    ', column ' + str(self.operand1.column)+'.\n'
         if isinstance(self.operand2, Variable):
             var = get_var_in_scope(self.operand2.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
+                    ' not defined in this scope, in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
                 
 class Equals(EqOp): pass
 class NotEquals(EqOp): pass
@@ -440,8 +440,8 @@ class UnaryOp(Expression):
             var = get_var_in_scope(self.operand.name, scopes_list)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand.name+\
-                    ' not defined in this scope, in line ' + str(self.lineno)+\
-                    ', column ' + str(self.column)+'.\n'
+                    ' not defined in this scope, in line ' + str(self.operand.lineno)+\
+                    ', column ' + str(self.operand.column)+'.\n'
         if self.operand.return_type != self.expected_type:
             config.static_checking_errors += 'Error: Incompatible types for operator '+\
                 self.__class__.__name__+": '"+str(self.operand.return_type)+\
