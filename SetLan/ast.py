@@ -267,8 +267,9 @@ class Set(Expression):
         
     def repr(self, indent):
         s = 'Set\n' + indent*' '
-        for e in self.elements:
-            s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
+        if self.elements:
+            for e in self.elements:
+                s += str(e.__repr__()) if not getattr(e,'repr',None) else str(e.repr(indent+4)) + indent*' '
         return s[:len(s)-indent]
     
     def typecheck(self, scopes_list):
