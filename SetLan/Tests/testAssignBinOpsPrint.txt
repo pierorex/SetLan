@@ -1,6 +1,8 @@
 program {
     using int a,b;
     in
+    println 1+1, 2-2, 3*3, 4/4, 5%5;
+    println {1,2}, " " ,{1,2}++{3,4}, " " ,{2,2,3,3};
     a = 3;
     a = a + 2;
     b = a + 1;

@@ -40,13 +40,13 @@ class Assign(Statement):
 
     def typecheck(self):
         if isinstance(self.expression, Variable):
-            var = get_var_in_scope(self.expression.name, config.scopes_list)
+            var = get_var_in_scope(self.expression.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
                     ', column ' + str(self.column)+'.\n'
         
-        var = get_var_in_scope(self.variable.name, config.scopes_list)
+        var = get_var_in_scope(self.variable.name)
         if not var:
             config.static_checking_errors += 'Error: Variable ' + self.variable.name+\
                 ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -65,10 +65,11 @@ class Block(Statement):
         self.declarations = declarations
 
     def execute(self):
+        pass
+        """print len(self.statement_list)
         for statement in self.statement_list:
-            if statement:
-                statement.execute()
-
+            if statement != None: statement.execute()"""
+            
     def repr(self, indent):
         s = 'Block Start\n'
         if self.declarations:
@@ -93,14 +94,14 @@ class Scan(Statement):
         self.column = column
         
     def execute(self):
-        SymbolTable.update(config.scopes_list, self.variable.name, raw_input())
+        SymbolTable.update(self.variable.name, raw_input())
 
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
         return 'Scan\n' + indent*' ' + var
     
     def typecheck(self):
-        var = get_var_in_scope(self.variable.name, config.scopes_list)
+        var = get_var_in_scope(self.variable.name)
         if not var:
             config.static_checking_errors += 'Error: Variable ' + self.variable.var_name+\
                 ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -116,10 +117,12 @@ class Print(Statement):
         self.print_list = print_list
 
     def execute(self):
-        s = ''
-        for e in self.print_list: s += str(e.evaluate())
-        config.dynamic_checking_log += s
-
+        for e in self.print_list:
+            if e.return_type == 'set': 
+                config.dynamic_checking_log += '{'+','.join(e.evaluate())+'}'
+            else: 
+                config.dynamic_checking_log += str(e.evaluate())
+                
     def repr(self, indent):
         return_string = 'Print\n'
         for element in self.print_list:
@@ -133,9 +136,12 @@ class Println(Statement):
         self.print_list = print_list
 
     def execute(self):
-        s = ''
-        for e in self.print_list: s += e.evaluate()
-        config.dynamic_checking_log += s + '\n'
+        for e in self.print_list:
+            if e.return_type == 'set': 
+                config.dynamic_checking_log += '{'+','.join(e.evaluate())+'}'
+            else: 
+                config.dynamic_checking_log += str(e.evaluate())
+        config.dynamic_checking_log += '\n'
 
     def repr(self, indent):
         return_string = 'Println\n'
@@ -169,7 +175,7 @@ class If(Statement):
 
     def typecheck(self):
         if isinstance(self.expression, Variable):
-            var = get_var_in_scope(self.expression.name, config.scopes_list)
+            var = get_var_in_scope(self.expression.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -192,7 +198,7 @@ class For(Statement):
     def execute(self):
         if self.order == 'Min':
             for e in sorted(self.expression.evaluate(), reverse=True if self.order=='Max' else False):
-                SymbolTable.update(config.scopes_list, e.name, e.value)
+                SymbolTable.update(e.name, e.value)
                 self.statement.execute()
 
     def repr(self, indent):
@@ -203,7 +209,7 @@ class For(Statement):
 
     def typecheck(self):
         if isinstance(self.expression, Variable):
-            var = get_var_in_scope(self.expression.name, config.scopes_list)
+            var = get_var_in_scope(self.expression.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -238,7 +244,7 @@ class Repeat(Statement):
         
     def typecheck(self):
         if isinstance(self.expression, Variable):
-            var = get_var_in_scope(self.expression.name, config.scopes_list)
+            var = get_var_in_scope(self.expression.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.expression.name+\
                     ' not defined in this scope, in line ' + str(self.lineno)+\
@@ -264,11 +270,11 @@ class Variable(Expression):
         self.column = column
         
         if return_type == None:
-            var = get_var_in_scope(self.name, config.scopes_list)
+            var = get_var_in_scope(self.name)
             if var: self.return_type = var.return_type
 
     def evaluate(self):
-        var = get_var_in_scope(self.name, config.scopes_list)
+        var = get_var_in_scope(self.name)
         self.value = var.value
         return self.value
 
@@ -303,10 +309,7 @@ class Set(Expression):
         self.column = column
 
     def evaluate(self):
-        l = []
-        for e in self.elements: l += e.evaluate()
-        self.elements = sorted(l)
-        return self.elements
+        return sorted(list(set(map(lambda x: str(x.evaluate()), self.elements))))
 
     def repr(self, indent):
         s = 'Set\n' + indent*' '
@@ -342,7 +345,7 @@ class String(Expression):
         self.lineno = lineno
         self.column = column
 
-    def evaluate(self): return self.value
+    def evaluate(self): return self.value[1:len(self.value)-1]
 
     def repr(self, indent):
         return 'String\n' + indent*' ' + self.value + '\n'
@@ -369,14 +372,14 @@ class BinOp(Expression):
     
     def typecheck(self):
         if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, config.scopes_list)
+            var = get_var_in_scope(self.operand1.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
                     ' not defined in this scope, in line ' + str(self.operand1.lineno)+\
                     ', column ' + str(self.operand1.column)+'.\n'
                     
         if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, config.scopes_list)
+            var = get_var_in_scope(self.operand2.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
                     ' not defined in this scope, in line ' + str(self.operand2.lineno)+\
@@ -456,13 +459,13 @@ class EqOp(BinOp):
         
     def typecheck(self):
         if isinstance(self.operand1, Variable):
-            var = get_var_in_scope(self.operand1.name, config.scopes_list)
+            var = get_var_in_scope(self.operand1.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand1.name+\
                     ' not defined in this scope, in line ' + str(self.operand1.lineno)+\
                     ', column ' + str(self.operand1.column)+'.\n'
         if isinstance(self.operand2, Variable):
-            var = get_var_in_scope(self.operand2.name, config.scopes_list)
+            var = get_var_in_scope(self.operand2.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand2.name+\
                     ' not defined in this scope, in line ' + str(self.operand2.lineno)+\
@@ -522,7 +525,7 @@ class UnaryOp(Expression):
     
     def typecheck(self):
         if isinstance(self.operand, Variable):
-            var = get_var_in_scope(self.operand.name, config.scopes_list)
+            var = get_var_in_scope(self.operand.name)
             if not var:
                 config.static_checking_errors += 'Error: Variable ' + self.operand.name+\
                     ' not defined in this scope, in line ' + str(self.operand.lineno)+\

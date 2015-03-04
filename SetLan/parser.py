@@ -306,7 +306,7 @@ def p_set(p):
     """expression : OpenCurly set_elements_list CloseCurly
                   | OpenCurly CloseCurly"""
     global lexer
-    p[0] = Set(p[2], p.lineno(1), p.lexpos(1) - lexer.current_column)
+    p[0] = Set(sorted(list(set(p[2]))), p.lineno(1), p.lexpos(1) - lexer.current_column)
 
 
 def p_parenthesis(p):
@@ -439,7 +439,6 @@ def mainFlags(argv):
     config.dynamic_checking_log = ''
     config.dynamic_checking_errors = ''
     parser.parse(input_file)
-    
     if config.dynamic_checking_errors != '': return config.dynamic_checking_errors
     return config.dynamic_checking_log
     

@@ -1,5 +1,7 @@
-def get_var_in_scope(var_name, scopes_list):
-    for symbol_table in scopes_list[::-1]:
+import config
+
+def get_var_in_scope(var_name):
+    for symbol_table in config.scopes_list[::-1]:
         var = symbol_table.lookup(var_name)
         if var: return var
     return None
@@ -23,8 +25,8 @@ class SymbolTable(object):
 
 
     @classmethod
-    def update(scopes_list, var_name, value):
-        var = get_var_in_scope(var_name, scopes_list)
+    def update(self, var_name, value):
+        var = get_var_in_scope(var_name)
         var.value = value
 
 
