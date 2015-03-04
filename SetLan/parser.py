@@ -306,7 +306,7 @@ def p_set(p):
     """expression : OpenCurly set_elements_list CloseCurly
                   | OpenCurly CloseCurly"""
     global lexer
-    p[0] = Set(sorted(list(set(p[2]))), p.lineno(1), p.lexpos(1) - lexer.current_column)
+    p[0] = Set(p[2], p.lineno(1), p.lexpos(1) - lexer.current_column)
 
 
 def p_parenthesis(p):
@@ -418,11 +418,12 @@ def mainFlags(argv):
     actual_type = None
     parsing_errors = ''
     static_checking = True
+    dynamic_checking = False
     config.static_checking_errors = ''
     parser = yacc.yacc()
     input_file = open(argv[1],'r').read()
     ast = parser.parse(input_file)
-    
+
     if parsing_errors != '': return parsing_errors
     if '-a' in argv:
         if len(argv) == 3: return ast.repr()
@@ -433,7 +434,7 @@ def mainFlags(argv):
     if '-s' in argv:
         if len(argv) == 3: return config.static_checking_log
         else: print config.static_checking_log
-    
+    if len(argv) != 2: return
     static_checking = False
     dynamic_checking = True
     config.dynamic_checking_log = ''

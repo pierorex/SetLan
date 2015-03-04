@@ -147,8 +147,8 @@ class StaticCheckerTestSuite(unittest.TestCase):
 
 
 class DynamicCheckerTestSuite(unittest.TestCase):
-    def testAssignBinOpsPrint(self):
-        self.assertEqual(mainFlags(['','Tests/testAssignArithmeticOpsPrint.txt']), open('Tests/answerAssignArithmeticOpsPrint.txt','r').read())
+    def testInterpretOps(self):
+        self.assertEqual(mainFlags(['','Tests/testInterpretOps.txt']), open('Tests/answerInterpretOps.txt','r').read())
 
 
 if __name__ == '__main__':

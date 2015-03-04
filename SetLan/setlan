@@ -3,7 +3,4 @@
 
 import parser, sys
 
-if len(sys.argv) == 2:
-    print parser.mainFlags(sys.argv)
-else:
-    print parser.mainFlags(sys.argv)
+print parser.mainFlags(sys.argv)

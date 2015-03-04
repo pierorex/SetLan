@@ -119,36 +119,23 @@ class Print(Statement):
     def execute(self):
         for e in self.print_list:
             if e.return_type == 'set': 
-                config.dynamic_checking_log += '{'+','.join(e.evaluate())+'}'
+                #print '\nasdasd' + '{'+','.join(set(sorted(e.evaluate())))+'}' + '\nasdasd'
+                config.dynamic_checking_log += '{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}'
             else: 
                 config.dynamic_checking_log += str(e.evaluate())
-                
+
     def repr(self, indent):
-        return_string = 'Print\n'
+        return_string = self.__class__.__name__ + '\n'
         for element in self.print_list:
             e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
             return_string += indent*' ' + e
         return return_string
 
 
-class Println(Statement):
-    def __init__(self, print_list):
-        self.print_list = print_list
-
+class Println(Print):
     def execute(self):
-        for e in self.print_list:
-            if e.return_type == 'set': 
-                config.dynamic_checking_log += '{'+','.join(e.evaluate())+'}'
-            else: 
-                config.dynamic_checking_log += str(e.evaluate())
+        Print.execute(self)
         config.dynamic_checking_log += '\n'
-
-    def repr(self, indent):
-        return_string = 'Println\n'
-        for element in self.print_list:
-            e = element.__repr__() if not getattr(element,'repr',None) else element.repr(indent+4)
-            return_string +=  + indent*' ' + e
-        return return_string
 
 
 class If(Statement):
@@ -309,7 +296,7 @@ class Set(Expression):
         self.column = column
 
     def evaluate(self):
-        return sorted(list(set(map(lambda x: str(x.evaluate()), self.elements))))
+        return map(lambda x: x.evaluate(), self.elements)
 
     def repr(self, indent):
         s = 'Set\n' + indent*' '
@@ -417,15 +404,15 @@ class IntSetOp(BinOp):
         self.return_type = 'set'    
     
 class PlusSet(IntSetOp):
-    def calculate(self): return map(lambda x: x + self.operand1, self.operand2)
+    def calculate(self): return map(lambda x: str(self.operand1 + int(x)), self.operand2)
 class MinusSet(IntSetOp):
-    def calculate(self): return map(lambda x: x - self.operand1, self.operand2)
+    def calculate(self): return map(lambda x: str(self.operand1 - int(x)), self.operand2)
 class TimesSet(IntSetOp):
-    def calculate(self): return map(lambda x: x * self.operand1, self.operand2)
+    def calculate(self): return map(lambda x: str(self.operand1 * int(x)), self.operand2)
 class DivSet(IntSetOp):
-    def calculate(self): return map(lambda x: x / self.operand1, self.operand2)
+    def calculate(self): return map(lambda x: str(self.operand1 / int(x)), self.operand2)
 class ModSet(IntSetOp):
-    def calculate(self): return map(lambda x: x % self.operand1, self.operand2)
+    def calculate(self): return map(lambda x: str(self.operand1 % int(x)), self.operand2)
 class Contains(IntSetOp):
     def init(self):
         self.expected_type1 = 'int'
@@ -451,11 +438,16 @@ class GreaterThanEq(IntIntOp):
     def calculate(self): return self.operand1 >= self.operand2
 
 
-class EqOp(BinOp):
+class Equals(BinOp):
     def init(self):
         self.expected_type1 = object
         self.expected_type2 = object
         self.return_type = 'bool'
+        
+    def calculate(self): 
+        if isinstance(self.operand1, list) and isinstance(self.operand2, list):
+            return set(self.operand1) == set(self.operand2)
+        return self.operand1 == self.operand2
         
     def typecheck(self):
         if isinstance(self.operand1, Variable):
@@ -471,16 +463,9 @@ class EqOp(BinOp):
                     ' not defined in this scope, in line ' + str(self.operand2.lineno)+\
                     ', column ' + str(self.operand2.column)+'.\n'
                 
-class Equals(EqOp):
-    def calculate(self): 
-        if isinstance(self.operand1, list) and isinstance(self.operand2, list):
-            return set(self.operand1.evaluate()) == set(self.operand2.evaluate())
-        return self.operand1 == self.operand2
-class NotEquals(EqOp): 
-    def calculate(self):
-        if isinstance(self.operand1, list) and isinstance(self.operand2, list):
-            return set(self.operand1.evaluate()) != set(self.operand2.evaluate())
-        return self.operand1 != self.operand2
+    
+class NotEquals(Equals): 
+    def calculate(self): return not Equals.calculate(self)
 
 class SetOp(BinOp):
     def init(self):
@@ -491,7 +476,7 @@ class SetOp(BinOp):
 class Union(SetOp):
     def calculate(self): return self.operand1 + self.operand2
 class Difference(SetOp):
-    def calculate(self): return [e for e in self.operand2 if e not in self.operand1]
+    def calculate(self): return [e for e in self.operand1 if e not in self.operand2]
 class Intersect(SetOp):
     def calculate(self): return [e for e in self.operand1 if e in self.operand2]
         
