@@ -4,6 +4,6 @@
 import parser, sys
 
 if len(sys.argv) == 2:
-    print parser.mainStaticChecker(sys.argv[1])
+    print parser.mainFlags(sys.argv)
 else:
-    parser.mainFlags(sys.argv)
+    print parser.mainFlags(sys.argv)
