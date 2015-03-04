@@ -8,7 +8,7 @@ class Program(object):
         self.statement = statement
 
     def execute(self):
-        self.estatement.execute()
+        self.statement.execute()
         
     def repr(self):
         indent = 4
@@ -65,10 +65,16 @@ class Block(Statement):
         self.declarations = declarations
 
     def execute(self):
-        pass
-        """print len(self.statement_list)
+        config.scopes_list.append(SymbolTable())
+        #print self.declarations
+        if self.declarations != None:
+            for (_,var_list) in self.declarations:
+                for var in var_list:
+                    config.scopes_list[len(config.scopes_list)-1].insert(var)
+        #print self.statement_list
         for statement in self.statement_list:
-            if statement != None: statement.execute()"""
+            if statement != None: statement.execute()
+        config.scopes_list.pop()
             
     def repr(self, indent):
         s = 'Block Start\n'
@@ -149,7 +155,7 @@ class If(Statement):
     
     def execute(self):
         if self.expression.evaluate(): self.statement1.execute()
-        else: self.statement2.execute()
+        elif self.statement2 != None: self.statement2.execute()
     
     def repr(self, indent):
         exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
