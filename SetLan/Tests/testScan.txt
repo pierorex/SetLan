@@ -5,5 +5,5 @@ program {
     in
     scan a;
     scan b;
-    print b, a;
+    print b,a;
 }

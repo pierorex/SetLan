@@ -1,0 +1,34 @@
+program {
+    using
+        int i;
+        set s;
+    in
+    i = 10;
+    s = {6,5,2,1};
+    for i max {1,2,3} do {
+        using
+            int i;
+        in
+        print i," ";
+    };
+    println "";
+    for i max 0<->s do {
+        using
+            int j;
+        in
+        print i," ";
+    };
+    println "";
+    for i max 0<->s do {
+        using
+            int j;
+        in
+        for q min 0<->s do {
+            using
+                int j;
+            in
+            print i," ",q," ";
+        };
+        println "";
+    };
+}

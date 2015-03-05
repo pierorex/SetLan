@@ -12,34 +12,27 @@ def p_program(p):
 
 def p_assign(p):
     "statement : ID Assign expression"
-    global lexer, static_checking, dynamic_checking
+    global lexer, static_checking
     p[0] = Assign(Variable(p[1], lineno=p.lineno(1), 
                            column=p.lexpos(1) - lexer.current_column), 
                   p[3],
                   lineno=p.lineno(2), column=p.lexpos(2) - lexer.current_column)
-    if static_checking:
-        p[0].typecheck()
-    """if dynamic_checking:
-        p[0].execute()"""
+    if static_checking: p[0].typecheck()
 
 
 def p_block(p):
     """statement : OpenCurly statement_list SemiColon CloseCurly
                  | OpenCurly Using new_scope declarations_list SemiColon scope_filled In statement_list CloseCurly
                  | """
-    global static_checking, dynamic_checking
-    if len(p) == 5:
-        p[0] = Block(p[2])
-        #if dynamic_checking: p[0].execute()
+    global static_checking
+    if len(p) == 5:  p[0] = Block(p[2])
     elif len(p) == 10:
         p[0] = Block(p[8],p[4])
-        #if dynamic_checking: p[0].execute()
-        if static_checking or dynamic_checking:
+        if static_checking:
             indent = (len(config.scopes_list)-1)*4 
             config.static_checking_log += indent*' ' + 'End Scope\n'
             config.scopes_list.pop()
-    else:
-        p[0] = None
+    else: p[0] = None
 
 
 def p_scope_filled(p):
@@ -55,9 +48,8 @@ def p_scope_filled(p):
 
 def p_new_scope(p):
     'new_scope :'
-    global static_checking, dynamic_checking
-    if static_checking or dynamic_checking:
-        config.scopes_list.append(SymbolTable())
+    global static_checking
+    if static_checking: config.scopes_list.append(SymbolTable())
 
 
 def error_redeclaration(var):
@@ -94,8 +86,7 @@ def p_variable_list(p):
     var_value = False if actual_type == 'bool' else (0 if actual_type == 'int' else {})
     if len(p) == 2:
         p[0] = [Variable(p[1], return_type=actual_type, value=var_value, lineno=p.lineno(1), column=p.lexpos(1)-lexer.current_column)]
-    else:
-        p[0] = p[1] + p[3]
+    else: p[0] = p[1] + p[3]
 
 
 def p_statement_list(p):
@@ -111,32 +102,27 @@ def p_type(p):
     """type : Int
             | Bool
             | Set"""
-    global static_checking, dynamic_checking
+    global static_checking, actual_type
     p[0] = p[1]
-    if static_checking or dynamic_checking: 
-        global actual_type
-        actual_type = p[1]
+    if static_checking: actual_type = p[1]
 
 
 def p_scan(p):
     "statement : Scan ID"
-    global static_checking, lexer, dynamic_checking
+    global static_checking, lexer
     p[0] = Scan(Variable(p[2], lineno=p.lineno(2), 
                          column=p.lexpos(2)-lexer.current_column),
                 lineno=p.lineno(1), column=p.lexpos(1)-lexer.current_column)
     if static_checking: p[0].typecheck()
-    #if dynamic_checking: p[0].execute()
 
 
 def p_print(p):
     """statement : Print expression_list
                  | Println expression_list"""
-    global dynamic_checking
     if p[1] == 'print':
         p[0] = Print(p[2])
     else:
         p[0] = Println(p[2])
-    #if dynamic_checking: p[0].execute()
 
 
 def p_expression_list(p):
@@ -166,14 +152,13 @@ def p_if(p):
     else:
         p[0] = If(expression=p[3], statement1=p[5], statement2=p[7],
                   lineno=p[3].lineno, column=p[3].column)
-    #if dynamic_checking: p[0].execute()
 
 
 def p_ID_for(p):
     'ID_for : ID'
-    global static_checking, dynamic_checking
+    global static_checking
     p[0] = p[1]
-    if static_checking or dynamic_checking:
+    if static_checking:
         config.scopes_list[len(config.scopes_list)-1].insert(Variable(p[1],
                                                 return_type='int',value=0,
                                                 lineno=p.lineno(1),
@@ -191,14 +176,13 @@ def p_for_expression(p):
 def p_for(p):
     """statement : For new_scope ID_for scope_filled Min for_expression Do statement
                  | For new_scope ID_for scope_filled Max for_expression Do statement"""
-    global lexer, static_checking, dynamic_checking
+    global lexer, static_checking
     p[0] = For(Variable(p[3], return_type='int',value=0,
                         lineno=p.lineno(3),column=p.lexpos(3)-lexer.current_column), 
                         order=p[5], expression=p[6], statement=p[8])
     if static_checking:
         indent = (len(config.scopes_list)-1)*4
         config.static_checking_log += indent*' ' + 'End Scope\n'
-        #if dynamic_checking: p[0].execute()
         config.scopes_list.pop()
 
 
@@ -214,14 +198,12 @@ def p_repeat(p):
     """statement : Repeat statement While OpenParen repeat_expression CloseParen Do statement
                  | Repeat statement While OpenParen repeat_expression CloseParen
                  | While OpenParen repeat_expression CloseParen Do statement"""
-    global dynamic_checking
     if len(p) == 9:
         p[0] = Repeat(p[2], p[5], p[8])
     elif p[1] == 'repeat':
         p[0] = Repeat(p[2], p[5], None)
     elif p[1] == 'while':
         p[0] = Repeat(None, p[3], p[6])
-    #if dynamic_checking: p[0].execute()
         
 
 precedence = (
@@ -380,12 +362,12 @@ def p_unary_op(p):
                   | Len expression
                   | MaxSet expression
                   | MinSet expression"""
+    global static_checking
     if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == '<?': p[0] = MinSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-    global static_checking
     if static_checking: p[0].typecheck()
 
 
@@ -398,7 +380,6 @@ parsing_errors = ''
 config.static_checking_log = ''
 actual_type = None
 static_checking = True
-dynamic_checking = False
 
 
 def mainFlags(argv):
@@ -436,12 +417,10 @@ def mainFlags(argv):
         else: print config.static_checking_log
     if len(argv) != 2: return
     static_checking = False
-    dynamic_checking = True
     config.dynamic_checking_log = ''
     config.dynamic_checking_errors = ''
     config.scopes_list = []
     ast.execute()
-    #parser.parse(input_file)
     if config.dynamic_checking_errors != '': return config.dynamic_checking_errors
     return config.dynamic_checking_log
     

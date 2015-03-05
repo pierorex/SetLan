@@ -66,12 +66,10 @@ class Block(Statement):
 
     def execute(self):
         config.scopes_list.append(SymbolTable())
-        #print self.declarations
         if self.declarations != None:
             for (_,var_list) in self.declarations:
                 for var in var_list:
                     config.scopes_list[len(config.scopes_list)-1].insert(var)
-        #print self.statement_list
         for statement in self.statement_list:
             if statement != None: statement.execute()
         config.scopes_list.pop()
@@ -125,7 +123,6 @@ class Print(Statement):
     def execute(self):
         for e in self.print_list:
             if e.return_type == 'set': 
-                #print '\nasdasd' + '{'+','.join(set(sorted(e.evaluate())))+'}' + '\nasdasd'
                 config.dynamic_checking_log += '{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}'
             else: 
                 config.dynamic_checking_log += str(e.evaluate())
@@ -189,10 +186,14 @@ class For(Statement):
         self.column = column
 
     def execute(self):
-        if self.order == 'Min':
-            for e in sorted(self.expression.evaluate(), reverse=True if self.order=='Max' else False):
-                SymbolTable.update(e.name, e.value)
-                self.statement.execute()
+        config.scopes_list.append(SymbolTable())
+        config.scopes_list[len(config.scopes_list)-1].insert(self.variable)
+        #print config.scopes_list[1].scope
+        for e in sorted(self.expression.evaluate(), reverse=True if self.order=='min' else False):
+            SymbolTable.update(self.variable.name, e)
+            self.statement.execute()
+        config.scopes_list.pop()
+        
 
     def repr(self, indent):
         var = self.variable.__repr__() if not getattr(self.variable,'repr',None) else self.variable.repr(indent+4)
@@ -248,10 +249,7 @@ class Repeat(Statement):
                 "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'    
         
         
-class Expression(object):
-    def evaluate(self):
-        if isinstance(self.value, Expression): return self.value.evaluate()
-        else: return self.value
+class Expression(object): pass
 
 
 class Variable(Expression):
