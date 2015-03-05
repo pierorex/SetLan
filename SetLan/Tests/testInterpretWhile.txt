@@ -1,0 +1,11 @@
+program {
+    using
+        int i,j;
+    in
+    i = 0;
+    j = 5;
+    while (i < j) do {
+        i = i + 1;
+        print i;
+    };
+}

@@ -188,7 +188,6 @@ class For(Statement):
     def execute(self):
         config.scopes_list.append(SymbolTable())
         config.scopes_list[len(config.scopes_list)-1].insert(self.variable)
-        #print config.scopes_list[1].scope
         for e in sorted(self.expression.evaluate(), reverse=True if self.order=='min' else False):
             SymbolTable.update(self.variable.name, e)
             self.statement.execute()
@@ -222,6 +221,15 @@ class Repeat(Statement):
         self.lineno = lineno
         self.column = column
     
+    def execute(self):
+        if self.statement1: self.statement1.execute()
+        while self.expression.evaluate():
+            #print self.expression.evaluate()
+            print config.scopes_list[0].scope
+            print self.expression.operand1
+            if self.statement2: self.statement2.execute()
+            if self.statement1: self.statement1.execute()
+    
     def repr(self, indent):
         exp = self.expression.__repr__() if not getattr(self.expression,'repr',None) else self.expression.repr(indent+8)
         if self.statement1:
@@ -247,8 +255,8 @@ class Repeat(Statement):
             config.static_checking_errors += 'Error: Incompatible type for statement '+\
                 self.__class__.__name__+": '"+str(self.expression.return_type)+\
                 "', in line "+str(self.lineno)+', column '+str(self.column)+'.\n'    
-        
-        
+
+
 class Expression(object): pass
 
 
@@ -259,15 +267,14 @@ class Variable(Expression):
         self.value = value
         self.lineno = lineno
         self.column = column
-        
+
         if return_type == None:
             var = get_var_in_scope(self.name)
             if var: self.return_type = var.return_type
 
     def evaluate(self):
         var = get_var_in_scope(self.name)
-        self.value = var.value
-        return self.value
+        return var.value
 
     def repr(self, indent):
         if getattr(self.name,'repr',None):
@@ -351,10 +358,10 @@ class BinOp(Expression):
         self.column = column
         self.init()
 
-    def evaluate(self):
+    """def evaluate(self):
         if isinstance(self.operand1, Expression): self.operand1 = self.operand1.evaluate()
         if isinstance(self.operand2, Expression): self.operand2 = self.operand2.evaluate()
-        return self.calculate()
+        return self.calculate()"""
 
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
@@ -388,17 +395,17 @@ class ArithmeticOp(BinOp):
         self.expected_type1 = 'int'
         self.expected_type2 = 'int'
         self.return_type = 'int'
-
+        
 class Plus(ArithmeticOp): 
-    def calculate(self): return self.operand1 + self.operand2
+    def evaluate(self): return self.operand1.evaluate() + self.operand2.evaluate()
 class Minus(ArithmeticOp):
-    def calculate(self): return self.operand1 - self.operand2
+    def evaluate(self): return self.operand1.evaluate() - self.operand2.evaluate()
 class Times(ArithmeticOp):
-    def calculate(self): return self.operand1 * self.operand2
+    def evaluate(self): return self.operand1.evaluate() * self.operand2.evaluate()
 class Div(ArithmeticOp):
-    def calculate(self): return self.operand1 / self.operand2
+    def evaluate(self): return self.operand1.evaluate() / self.operand2.evaluate()
 class Mod(ArithmeticOp):
-    def calculate(self): return self.operand1 % self.operand2
+    def evaluate(self): return self.operand1.evaluate() % self.operand2.evaluate()
 
 
 class IntSetOp(BinOp): 
@@ -408,22 +415,22 @@ class IntSetOp(BinOp):
         self.return_type = 'set'    
     
 class PlusSet(IntSetOp):
-    def calculate(self): return map(lambda x: str(self.operand1 + int(x)), self.operand2)
+    def evaluate(self): return map(lambda x: str(self.operand1.evaluate() + int(x)), self.operand2.evaluate())
 class MinusSet(IntSetOp):
-    def calculate(self): return map(lambda x: str(self.operand1 - int(x)), self.operand2)
+    def evaluate(self): return map(lambda x: str(self.operand1.evaluate() - int(x)), self.operand2.evaluate())
 class TimesSet(IntSetOp):
-    def calculate(self): return map(lambda x: str(self.operand1 * int(x)), self.operand2)
+    def evaluate(self): return map(lambda x: str(self.operand1.evaluate() * int(x)), self.operand2.evaluate())
 class DivSet(IntSetOp):
-    def calculate(self): return map(lambda x: str(self.operand1 / int(x)), self.operand2)
+    def evaluate(self): return map(lambda x: str(self.operand1.evaluate() / int(x)), self.operand2.evaluate())
 class ModSet(IntSetOp):
-    def calculate(self): return map(lambda x: str(self.operand1 % int(x)), self.operand2)
+    def evaluate(self): return map(lambda x: str(self.operand1.evaluate() % int(x)), self.operand2.evaluate())
 class Contains(IntSetOp):
     def init(self):
         self.expected_type1 = 'int'
         self.expected_type2 = 'set'
         self.return_type = 'bool'
         
-    def calculate(self): return self.operand1 in self.operand2
+    def evaluate(self): return self.operand1.evaluate() in self.operand2.evaluate()
 
 
 class IntIntOp(BinOp):
@@ -433,13 +440,13 @@ class IntIntOp(BinOp):
         self.return_type = 'bool'
 
 class LessThan(IntIntOp):
-    def calculate(self): return self.operand1 < self.operand2
+    def evaluate(self): return self.operand1.evaluate() < self.operand2.evaluate()
 class LessThanEq(IntIntOp):
-    def calculate(self): return self.operand1 <= self.operand2
+    def evaluate(self): return self.operand1.evaluate() <= self.operand2.evaluate()
 class GreaterThan(IntIntOp):
-    def calculate(self): return self.operand1 > self.operand2
+    def evaluate(self): return self.operand1.evaluate() > self.operand2.evaluate()
 class GreaterThanEq(IntIntOp):
-    def calculate(self): return self.operand1 >= self.operand2
+    def evaluate(self): return self.operand1.evaluate() >= self.operand2.evaluate()
 
 
 class Equals(BinOp):
@@ -448,10 +455,11 @@ class Equals(BinOp):
         self.expected_type2 = object
         self.return_type = 'bool'
         
-    def calculate(self): 
-        if isinstance(self.operand1, list) and isinstance(self.operand2, list):
-            return set(self.operand1) == set(self.operand2)
-        return self.operand1 == self.operand2
+    def evaluate(self): 
+        op1 = self.operand1.evaluate()
+        op2 = self.operand2.evaluate()
+        if isinstance(op1, list) and isinstance(op2, list): return set(op1) == set(op2)
+        return op1 == op2
         
     def typecheck(self):
         if isinstance(self.operand1, Variable):
@@ -469,7 +477,7 @@ class Equals(BinOp):
                 
     
 class NotEquals(Equals): 
-    def calculate(self): return not Equals.calculate(self)
+    def evaluate(self): return not Equals.evaluate(self)
 
 class SetOp(BinOp):
     def init(self):
@@ -478,11 +486,11 @@ class SetOp(BinOp):
         self.return_type = 'set'        
 
 class Union(SetOp):
-    def calculate(self): return self.operand1 + self.operand2
+    def evaluate(self): return self.operand1.evaluate() + self.operand2.evaluate()
 class Difference(SetOp):
-    def calculate(self): return [e for e in self.operand1 if e not in self.operand2]
+    def evaluate(self): return [e for e in self.operand1.evaluate() if e not in self.operand2.evaluate()]
 class Intersect(SetOp):
-    def calculate(self): return [e for e in self.operand1 if e in self.operand2]
+    def evaluate(self): return [e for e in self.operand1.evaluate() if e in self.operand2.evaluate()]
         
        
 class BoolOp(BinOp):
@@ -492,9 +500,9 @@ class BoolOp(BinOp):
         self.return_type = 'bool'
                 
 class And(BoolOp):
-    def calculate(self): return self.operand1 and self.operand2
+    def evaluate(self): return self.operand1.evaluate() and self.operand2.evaluate()
 class Or(BoolOp):
-    def calculate(self): return self.operand1 or self.operand2
+    def evaluate(self): return self.operand1.evaluate() or self.operand2.evaluate()
 
 
 class UnaryOp(Expression):
@@ -504,9 +512,9 @@ class UnaryOp(Expression):
         self.column = column
         self.init()
 
-    def evaluate(self):
+    """def evaluate(self):
         if isinstance(self.operand, Expression): self.operand = self.operand.evaluate()
-        return self.calculate()
+        return self.calculate()"""
 
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
@@ -529,27 +537,27 @@ class Uminus(UnaryOp):
         self.expected_type = 'int'
         self.return_type = 'int'
     
-    def calculate(self): return -self.operand
+    def evaluate(self): return -self.operand.evaluate()
 
 class Not(UnaryOp):
     def init(self):
         self.expected_type = 'bool'
         self.return_type = 'bool'
         
-    def calculate(self): return not self.operand
+    def evaluate(self): return not self.operand.evaluate()
         
 class SetIntOp(UnaryOp):
     def init(self):
         self.expected_type = 'set'
         self.return_type = 'int'
     
-    def evaluate(self):
+    """def evaluate(self):
         if isinstance(self.operand, Expression): self.operand = self.operand.evaluate()
-        return self.calculate()
+        return self.calculate()"""
         
 class Len(SetIntOp):
-    def calculate(self): return len(set(self.operand))
+    def evaluate(self): return len(set(self.operand.evaluate()))
 class MaxSet(SetIntOp):
-    def calculate(self): return max(self.operand)
+    def evaluate(self): return max(self.operand.evaluate())
 class MinSet(SetIntOp):
-    def calculate(self): return min(self.operand)
+    def evaluate(self): return min(self.operand.evaluate())
