@@ -224,9 +224,6 @@ class Repeat(Statement):
     def execute(self):
         if self.statement1: self.statement1.execute()
         while self.expression.evaluate():
-            #print self.expression.evaluate()
-            print config.scopes_list[0].scope
-            print self.expression.operand1
             if self.statement2: self.statement2.execute()
             if self.statement1: self.statement1.execute()
     
@@ -357,11 +354,6 @@ class BinOp(Expression):
         self.lineno = lineno
         self.column = column
         self.init()
-
-    """def evaluate(self):
-        if isinstance(self.operand1, Expression): self.operand1 = self.operand1.evaluate()
-        if isinstance(self.operand2, Expression): self.operand2 = self.operand2.evaluate()
-        return self.calculate()"""
 
     def repr(self, indent):
         op1 = self.operand1.__repr__() if not getattr(self.operand1,'repr',None) else self.operand1.repr(indent+4)
@@ -512,10 +504,6 @@ class UnaryOp(Expression):
         self.column = column
         self.init()
 
-    """def evaluate(self):
-        if isinstance(self.operand, Expression): self.operand = self.operand.evaluate()
-        return self.calculate()"""
-
     def repr(self, indent):
         op = self.operand.__repr__() if not getattr(self.operand,'repr',None) else self.operand.repr(indent+4)
         return self.__class__.__name__ + '\n' + indent*' ' + op
@@ -550,10 +538,6 @@ class SetIntOp(UnaryOp):
     def init(self):
         self.expected_type = 'set'
         self.return_type = 'int'
-    
-    """def evaluate(self):
-        if isinstance(self.operand, Expression): self.operand = self.operand.evaluate()
-        return self.calculate()"""
         
 class Len(SetIntOp):
     def evaluate(self): return len(set(self.operand.evaluate()))
