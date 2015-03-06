@@ -153,6 +153,8 @@ class DynamicCheckerTestSuite(unittest.TestCase):
         self.assertEqual(mainFlags(['','Tests/testInterpretIf.txt']), open('Tests/answerInterpretIf.txt','r').read())
     def testInterpretFor(self):
         self.assertEqual(mainFlags(['','Tests/testInterpretFor.txt']), open('Tests/answerInterpretFor.txt','r').read())
+    def testInterpretWhile(self):
+        self.assertEqual(mainFlags(['','Tests/testInterpretWhile.txt']), open('Tests/answerInterpretWhile.txt','r').read())
 
 
 if __name__ == '__main__':

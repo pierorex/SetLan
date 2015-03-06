@@ -240,7 +240,7 @@ class Repeat(Statement):
         else:
             sta_2 = self.statement2.__repr__() if not getattr(self.statement2,'repr',None) else self.statement2.repr(indent+8)
             return 'While\n' + indent*' ' + 'Condition\n' + (indent+4)*' ' + exp + indent*' ' + 'Do\n' + (indent+4)*' ' +  sta_2 + '\n' + indent*' ' + 'End While\n'
-        
+
     def typecheck(self):
         if isinstance(self.expression, Variable):
             var = get_var_in_scope(self.expression.name)
@@ -271,6 +271,8 @@ class Variable(Expression):
 
     def evaluate(self):
         var = get_var_in_scope(self.name)
+        if var == None:
+            return 0
         return var.value
 
     def repr(self, indent):
@@ -395,9 +397,21 @@ class Minus(ArithmeticOp):
 class Times(ArithmeticOp):
     def evaluate(self): return self.operand1.evaluate() * self.operand2.evaluate()
 class Div(ArithmeticOp):
-    def evaluate(self): return self.operand1.evaluate() / self.operand2.evaluate()
+    def evaluate(self):
+        op2 = self.operand2.evaluate()
+        if op2 == 0:
+            config.dynamic_checking_log += 'ERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
+            return
+        return self.operand1.evaluate() / op2
 class Mod(ArithmeticOp):
-    def evaluate(self): return self.operand1.evaluate() % self.operand2.evaluate()
+    def evaluate(self): 
+        op2 = self.operand2.evaluate()
+        if op2 == 0:
+            config.dynamic_checking_log += 'ERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
+            return
+        return self.operand1.evaluate() % op2
 
 
 class IntSetOp(BinOp): 
