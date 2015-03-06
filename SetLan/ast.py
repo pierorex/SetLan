@@ -1,6 +1,6 @@
 import config
 from st import SymbolTable, get_var_in_scope
-
+from sys import stdout
 
 
 class Program(object):
@@ -123,9 +123,9 @@ class Print(Statement):
     def execute(self):
         for e in self.print_list:
             if e.return_type == 'set': 
-                config.dynamic_checking_log += '{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}'
+                stdout.write('{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}')
             else: 
-                config.dynamic_checking_log += str(e.evaluate())
+                stdout.write(str(e.evaluate()))
 
     def repr(self, indent):
         return_string = self.__class__.__name__ + '\n'
@@ -138,7 +138,7 @@ class Print(Statement):
 class Println(Print):
     def execute(self):
         Print.execute(self)
-        config.dynamic_checking_log += '\n'
+        stdout.write('\n')
 
 
 class If(Statement):
@@ -400,8 +400,8 @@ class Div(ArithmeticOp):
     def evaluate(self):
         op2 = self.operand2.evaluate()
         if op2 == 0:
-            config.dynamic_checking_log += '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.(ERROR_FLAG)\n'
+            stdout.write('\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n')
             return
         return self.operand1.evaluate() / op2
 class Mod(ArithmeticOp):

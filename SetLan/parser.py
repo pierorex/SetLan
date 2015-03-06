@@ -385,12 +385,12 @@ static_checking = True
 def mainFlags(argv):
     global parsing_errors, lexer, actual_type, static_checking
     lexer_return = mainLexer(argv[1])
-    
+
     if lexer_return.count('Error:') != 0: return lexer_return
     if '-t' in argv:
         if len(argv) == 3: return lexer_return
         else: print lexer_return
-    
+
     lexer = lex.lex()
     lexer.current_column = -1
     lexer.input(open(argv[1],'r').read())
@@ -409,7 +409,7 @@ def mainFlags(argv):
     if '-a' in argv:
         if len(argv) == 3: return ast.repr()
         else: print ast.repr()
-    
+
     if config.static_checking_errors != '':
         return config.static_checking_errors
     if '-s' in argv:
@@ -420,9 +420,8 @@ def mainFlags(argv):
     config.dynamic_checking_log = ''
     config.scopes_list = []
     ast.execute()
-    error_pos = config.dynamic_checking_log.find('(ERROR_FLAG)')
-    return config.dynamic_checking_log[:error_pos if error_pos != -1 else len(config.dynamic_checking_log)]
-    
+    return ''
+
 
 
 if __name__ == '__main__':

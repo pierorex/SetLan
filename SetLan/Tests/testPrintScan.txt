@@ -1,0 +1,7 @@
+program {
+    using int a; 
+    in
+    print "type something: ";
+    scan a;
+    print a;
+}
