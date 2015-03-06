@@ -400,16 +400,16 @@ class Div(ArithmeticOp):
     def evaluate(self):
         op2 = self.operand2.evaluate()
         if op2 == 0:
-            config.dynamic_checking_log += 'ERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.\n'
+            config.dynamic_checking_log += '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.(ERROR_FLAG)\n'
             return
         return self.operand1.evaluate() / op2
 class Mod(ArithmeticOp):
     def evaluate(self): 
         op2 = self.operand2.evaluate()
         if op2 == 0:
-            config.dynamic_checking_log += 'ERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.\n'
+            config.dynamic_checking_log += '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.(ERROR_FLAG)\n'
             return
         return self.operand1.evaluate() % op2
 

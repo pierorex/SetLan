@@ -3,6 +3,7 @@ program {
     in
     a = 10;
     b = 10;
+    print b;
     a = b / (a-b);
     print a;
 }

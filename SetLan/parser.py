@@ -383,7 +383,7 @@ static_checking = True
 
 
 def mainFlags(argv):
-    global parsing_errors, lexer, actual_type, static_checking, dynamic_checking
+    global parsing_errors, lexer, actual_type, static_checking
     lexer_return = mainLexer(argv[1])
     
     if lexer_return.count('Error:') != 0: return lexer_return
@@ -418,11 +418,10 @@ def mainFlags(argv):
     if len(argv) != 2: return
     static_checking = False
     config.dynamic_checking_log = ''
-    config.dynamic_checking_errors = ''
     config.scopes_list = []
     ast.execute()
-    if config.dynamic_checking_errors != '': return config.dynamic_checking_errors
-    return config.dynamic_checking_log
+    error_pos = config.dynamic_checking_log.find('(ERROR_FLAG)')
+    return config.dynamic_checking_log[:error_pos if error_pos != -1 else len(config.dynamic_checking_log)]
     
 
 

@@ -1,0 +1,2 @@
+10
+ERROR: division by zero in line 7, column 15.
