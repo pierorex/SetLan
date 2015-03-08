@@ -3,4 +3,5 @@
 
 import parser, sys
 
-print parser.mainFlags(sys.argv)
+output = parser.mainFlags(sys.argv)
+if output: print output

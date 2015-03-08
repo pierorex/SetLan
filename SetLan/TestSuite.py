@@ -1,5 +1,7 @@
 import unittest
 from parser import mainFlags
+import sys
+from StringIO import StringIO
 
 class LexerTestSuite(unittest.TestCase):
     def testSimple(self):
@@ -148,15 +150,15 @@ class StaticCheckerTestSuite(unittest.TestCase):
 
 class DynamicCheckerTestSuite(unittest.TestCase):
     def testInterpretOps(self):
-        self.assertEqual(mainFlags(['','Tests/testInterpretOps.txt']), open('Tests/answerInterpretOps.txt','r').read())
+        self.assertEqual(mainFlags(['','Tests/testInterpretOps.txt','--testing']), open('Tests/answerInterpretOps.txt','r').read())
     def testInterpretIf(self):
-        self.assertEqual(mainFlags(['','Tests/testInterpretIf.txt']), open('Tests/answerInterpretIf.txt','r').read())
+        self.assertEqual(mainFlags(['','Tests/testInterpretIf.txt','--testing']), open('Tests/answerInterpretIf.txt','r').read())
     def testInterpretFor(self):
-        self.assertEqual(mainFlags(['','Tests/testInterpretFor.txt']), open('Tests/answerInterpretFor.txt','r').read())
+        self.assertEqual(mainFlags(['','Tests/testInterpretFor.txt','--testing']), open('Tests/answerInterpretFor.txt','r').read())
     def testInterpretWhile(self):
-        self.assertEqual(mainFlags(['','Tests/testInterpretWhile.txt']), open('Tests/answerInterpretWhile.txt','r').read())
+        self.assertEqual(mainFlags(['','Tests/testInterpretWhile.txt','--testing']), open('Tests/answerInterpretWhile.txt','r').read())
     def testDivisionByZero(self):
-        self.assertEqual(mainFlags(['','Tests/testDivisionByZero.txt']), open('Tests/answerDivisionByZero.txt','r').read())
+        self.assertEqual(mainFlags(['','Tests/testDivisionByZero.txt','--testing']), open('Tests/answerDivisionByZero.txt','r').read())
 
 if __name__ == '__main__':
     unittest.main()

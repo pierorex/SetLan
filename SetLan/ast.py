@@ -1,6 +1,5 @@
-import config
+import config, sys
 from st import SymbolTable, get_var_in_scope
-from sys import stdout
 
 
 class Program(object):
@@ -123,9 +122,13 @@ class Print(Statement):
     def execute(self):
         for e in self.print_list:
             if e.return_type == 'set': 
-                stdout.write('{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}')
-            else: 
-                stdout.write(str(e.evaluate()))
+                s = '{'+','.join(map(lambda x: str(x), sorted(set(e.evaluate()))))+'}'
+                sys.stdout.write(s)
+                config.dynamic_checking_log += s
+            else:
+                s = str(e.evaluate())
+                sys.stdout.write(s)
+                config.dynamic_checking_log += s
 
     def repr(self, indent):
         return_string = self.__class__.__name__ + '\n'
@@ -138,7 +141,8 @@ class Print(Statement):
 class Println(Print):
     def execute(self):
         Print.execute(self)
-        stdout.write('\n')
+        sys.stdout.write('\n')
+        config.dynamic_checking_log += '\n'
 
 
 class If(Statement):
@@ -400,17 +404,19 @@ class Div(ArithmeticOp):
     def evaluate(self):
         op2 = self.operand2.evaluate()
         if op2 == 0:
-            stdout.write('\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.\n')
-            return
+            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
+            sys.stdout.write(s)
+            sys.exit()
         return self.operand1.evaluate() / op2
 class Mod(ArithmeticOp):
     def evaluate(self): 
         op2 = self.operand2.evaluate()
         if op2 == 0:
-            config.dynamic_checking_log += '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.(ERROR_FLAG)\n'
-            return
+            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+                    ', column ' + str(self.operand2.column)+'.\n'
+            sys.stdout.write(s)
+            sys.exit()
         return self.operand1.evaluate() % op2
 
 

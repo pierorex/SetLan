@@ -420,7 +420,9 @@ def mainFlags(argv):
     config.dynamic_checking_log = ''
     config.scopes_list = []
     ast.execute()
-    return ''
+    if '--testing' in argv:
+        print 'WWOWOWOWOWOWOWOW'
+        return config.dynamic_checking_log
 
 
 
