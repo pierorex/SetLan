@@ -277,17 +277,6 @@ class Variable(Expression):
         var = get_var_in_scope(self.name)
         if var == None:
             return 0
-        if (self.return_type == 'int'):
-            if (self.value > 2**31-1):
-                s = '\nError: Overflow in line '+ str(self.lineno)+\
-                                ', column '+str(self.column) + '.\n' 
-                sys.stdout.write(s)
-                sys.exit()
-            if (self.value < -2**31 + 1):
-                s = '\nError: Underflow in line '+ str(self.lineno)+\
-                                ', column '+str(self.column) + '.\n'
-                sys.stdout.write(s)
-                sys.exit()
         return var.value
 
     def repr(self, indent):

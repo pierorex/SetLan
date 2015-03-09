@@ -24,10 +24,7 @@ def p_assign(p):
             if (p[3] < -2**31 + 1):
                 config.static_checking_errors += 'Error: Underflow in line '+ str(p.lineno(1))+', column '+str( p.lexpos(1) - lexer.current_column) + '.\n'
     except:
-        if (p[3].evaluate() > 2**31-1):
-            config.static_checking_errors += 'Error: Overflow in line '+ str(p.lineno(1))+', column '+str( p.lexpos(1) - lexer.current_column) + '.\n' 
-        if (p[3].evaluate() < -2**31 + 1):
-            config.static_checking_errors += 'Error: Underflow in line '+ str(p.lineno(1))+', column '+str( p.lexpos(1) - lexer.current_column) + '.\n'
+        pass
     if static_checking: p[0].typecheck()
 
 
@@ -374,16 +371,7 @@ def p_unary_op(p):
                   | MaxSet expression
                   | MinSet expression"""
     global static_checking, parsing_errors
-    if p[1] == '-': 
-        p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
-        if (p[0].evaluate() > 2**31-1):
-            s = '\nError: Overflow in line '+ str(p.lineno(1))+', column '+str( p.lexpos(1) - lexer.current_column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit() 
-        if (p[0].evaluate() < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(p.lineno(1))+', column '+str( p.lexpos(1) - lexer.current_column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
+    if p[1] == '-': p[0] = Uminus(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == 'not': p[0] = Not(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == '$?': p[0] = Len(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
     elif p[1] == '>?': p[0] = MaxSet(p[2], p.lineno(1), p.lexpos(1)-lexer.current_column)
