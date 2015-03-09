@@ -314,7 +314,7 @@ def p_arithmetic_op(p):
                      | expression Div expression
                      | expression Mod expression"""
     
-    global lexer, static_checking, parsing_errors
+    global lexer, static_checking
     if p[2] == '+': p[0] = Plus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '-': p[0] = Minus(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
     elif p[2] == '*': p[0] = Times(p[1], p[3], p.lineno(2), p.lexpos(2)-lexer.current_column)
