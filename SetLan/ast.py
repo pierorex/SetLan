@@ -293,17 +293,7 @@ class Int(Expression):
         self.lineno = lineno
         self.column = column
     
-    def evaluate(self): 
-        if (self.value > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                                ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit()
-        if (self.value < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()        
+    def evaluate(self):        
         return int(self.value)
     
     def repr(self, indent):
@@ -479,6 +469,7 @@ class Mod(ArithmeticOp):
                     ', column ' + str(self.operand2.column)+'.\n'
             sys.stdout.write(s)
             sys.exit()
+        aux = self.operand1.evaluate() % op2
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n' 
@@ -500,7 +491,7 @@ class IntSetOp(BinOp):
     
 class PlusSet(IntSetOp):
     def evaluate(self):
-        aux = self.operand1.evaluate() + int(x) 
+        aux = self.operand1.evaluate()
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n'
@@ -515,7 +506,7 @@ class PlusSet(IntSetOp):
 
 class MinusSet(IntSetOp):
     def evaluate(self): 
-        aux = self.operand1.evaluate() - int(x) 
+        aux = self.operand1.evaluate()
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n'
@@ -530,7 +521,7 @@ class MinusSet(IntSetOp):
 
 class TimesSet(IntSetOp):
     def evaluate(self): 
-        aux = self.operand1.evaluate() * int(x) 
+        aux = self.operand1.evaluate()
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n' 
@@ -545,12 +536,7 @@ class TimesSet(IntSetOp):
 
 class DivSet(IntSetOp):
     def evaluate(self):
-        if int(x) == 0:
-            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.\n'
-            sys.stdout.write(s)
-            sys.exit()
-        aux = self.operand1.evaluate() / int(x) 
+        aux = self.operand1.evaluate() 
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n'
@@ -565,12 +551,7 @@ class DivSet(IntSetOp):
 
 class ModSet(IntSetOp):
     def evaluate(self): 
-        if int(x) == 0:
-            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
-                    ', column ' + str(self.operand2.column)+'.\n'
-            sys.stdout.write(s)
-            sys.exit()        
-        aux = self.operand1.evaluate() % int(x) 
+        aux = self.operand1.evaluate()
         if (aux > 2**31-1):
             s = '\nError: Overflow in line '+ str(self.lineno)+\
                             ', column '+str(self.column) + '.\n'
