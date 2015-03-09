@@ -1,7 +1,5 @@
 import unittest
 from parser import mainFlags
-import sys
-from StringIO import StringIO
 
 class LexerTestSuite(unittest.TestCase):
     def testSimple(self):

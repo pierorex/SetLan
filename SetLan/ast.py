@@ -2,6 +2,17 @@ import config, sys
 from st import SymbolTable, get_var_in_scope
 
 
+def check_flow(number, lineno, column):
+    flow = ''
+    if number > 2**31-1: flow = 'Over'
+    if number < -2**31+1: flow = 'Under'
+    if flow != '':
+        s = '\nError: '+flow+'flow in line '+ str(lineno)+', column '+str(column) + '.\n'
+        sys.stdout.write(s)
+        sys.exit()
+
+
+
 class Program(object):
     def __init__(self, statement):
         self.statement = statement
@@ -294,16 +305,7 @@ class Int(Expression):
         self.column = column
     
     def evaluate(self): 
-        if (self.value > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                                ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit()
-        if (self.value < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()        
+        check_flow(int(self.value), self.lineno, self.column)
         return int(self.value)
     
     def repr(self, indent):
@@ -408,47 +410,20 @@ class ArithmeticOp(BinOp):
 class Plus(ArithmeticOp): 
     def evaluate(self):
         aux = self.operand1.evaluate() + self.operand2.evaluate()         
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()  
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return self.operand1.evaluate() + self.operand2.evaluate()
+        check_flow(aux, self.lineno, self.column)
+        return aux
 
 class Minus(ArithmeticOp):
     def evaluate(self): 
         aux = self.operand1.evaluate() - self.operand2.evaluate()         
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit() 
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return self.operand1.evaluate() - self.operand2.evaluate()
+        check_flow(aux, self.lineno, self.column)
+        return aux
 
 class Times(ArithmeticOp):
     def evaluate(self): 
         aux = self.operand1.evaluate() * self.operand2.evaluate()         
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit() 
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return self.operand1.evaluate() * self.operand2.evaluate()
+        check_flow(aux, self.lineno, self.column) 
+        return aux
 
 class Div(ArithmeticOp):
     def evaluate(self):
@@ -459,17 +434,8 @@ class Div(ArithmeticOp):
             sys.stdout.write(s)
             sys.exit()
         aux = self.operand1.evaluate() / op2         
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit() 
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return self.operand1.evaluate() / op2
+        check_flow(aux, self.lineno, self.column)
+        return aux
 
 class Mod(ArithmeticOp):
     def evaluate(self): 
@@ -479,16 +445,8 @@ class Mod(ArithmeticOp):
                     ', column ' + str(self.operand2.column)+'.\n'
             sys.stdout.write(s)
             sys.exit()
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit()
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()
+        op1 = self.operand1.evaluate()
+        check_flow(op1, self.lineno, self.column)
         return self.operand1.evaluate() % op2
 
 
@@ -497,92 +455,69 @@ class IntSetOp(BinOp):
         self.expected_type1 = 'int'
         self.expected_type2 = 'set'
         self.return_type = 'set'    
-    
+
+
 class PlusSet(IntSetOp):
     def evaluate(self):
-        aux = self.operand1.evaluate() + int(x) 
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()  
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return map(lambda x: str(self.operand1.evaluate() + int(x)), self.operand2.evaluate())
+        op1 = int(self.operand1.evaluate())
+        lst = []
+        for e in self.operand2.evaluate(): 
+            new_e = int(e) + op1
+            check_flow(new_e, self.lineno, self.column)
+            lst.append(str(new_e))
+        return lst
+
 
 class MinusSet(IntSetOp):
-    def evaluate(self): 
-        aux = self.operand1.evaluate() - int(x) 
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()  
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return map(lambda x: str(self.operand1.evaluate() - int(x)), self.operand2.evaluate())
+    def evaluate(self):
+        op1 = int(self.operand1.evaluate())
+        lst = []
+        for e in self.operand2.evaluate():
+            new_e = int(e) - op1
+            check_flow(new_e, self.lineno, self.column)
+            lst.append(str(new_e))
+        return lst
 
 class TimesSet(IntSetOp):
-    def evaluate(self): 
-        aux = self.operand1.evaluate() * int(x) 
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n' 
-            sys.stdout.write(s)
-            sys.exit() 
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'        
-            sys.stdout.write(s)
-            sys.exit() 
-        return map(lambda x: str(self.operand1.evaluate() * int(x)), self.operand2.evaluate())
+    def evaluate(self):
+        op1 = int(self.operand1.evaluate())
+        lst = []
+        for e in self.operand2.evaluate():
+            new_e = int(e) * op1
+            check_flow(new_e, self.lineno, self.column)
+            lst.append(str(new_e))
+        return lst
 
 class DivSet(IntSetOp):
     def evaluate(self):
-        if int(x) == 0:
-            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+        op1 = int(self.operand1.evaluate())
+        lst = []
+        for e in self.operand2.evaluate():
+            if int(e) == 0:
+                s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
                     ', column ' + str(self.operand2.column)+'.\n'
-            sys.stdout.write(s)
-            sys.exit()
-        aux = self.operand1.evaluate() / int(x) 
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit() 
-        return map(lambda x: str(self.operand1.evaluate() / int(x)), self.operand2.evaluate())
+                sys.stdout.write(s)
+                sys.exit() 
+            new_e = int(e) / op1
+            check_flow(new_e, self.lineno, self.column)
+            lst.append(str(new_e))
+        return lst
+        
 
 class ModSet(IntSetOp):
     def evaluate(self): 
-        if int(x) == 0:
-            s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
+        op1 = int(self.operand1.evaluate())
+        lst = []
+        for e in self.operand2.evaluate():
+            if int(e) == 0:
+                s = '\nERROR: division by zero in line ' + str(self.operand2.lineno)+\
                     ', column ' + str(self.operand2.column)+'.\n'
-            sys.stdout.write(s)
-            sys.exit()        
-        aux = self.operand1.evaluate() % int(x) 
-        if (aux > 2**31-1):
-            s = '\nError: Overflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()  
-        if (aux < -2**31 + 1):
-            s = '\nError: Underflow in line '+ str(self.lineno)+\
-                            ', column '+str(self.column) + '.\n'
-            sys.stdout.write(s)
-            sys.exit()  
-        return map(lambda x: str(self.operand1.evaluate() / int(x)), self.operand2.evaluate())
-        return map(lambda x: str(self.operand1.evaluate() % int(x)), self.operand2.evaluate())
+                sys.stdout.write(s)
+                sys.exit() 
+            new_e = int(e) % op1
+            check_flow(new_e, self.lineno, self.column)
+            lst.append(str(new_e))
+        return lst
 
 class Contains(IntSetOp):
     def init(self):
